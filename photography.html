@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — photography</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#080705;font-family:'EB Garamond',serif;color:#fff}
+
+/* ── GRAIN ── */
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.038;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/200px;
+  animation:grainA .1s steps(1) infinite;
+}
+@keyframes grainA{
+  0%{background-position:0 0}10%{background-position:-5% -10%}20%{background-position:10% 5%}
+  30%{background-position:-8% 25%}40%{background-position:20% -5%}50%{background-position:-12% 15%}
+  60%{background-position:5% -20%}70%{background-position:-18% 8%}80%{background-position:15% 22%}
+}
+
+/* ── PERSISTENT OVERLAYS ── */
+.shutter-flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:8500}
+.shutter-flash.pop{animation:sfPop .28s ease-out forwards}
+@keyframes sfPop{0%{opacity:.92}100%{opacity:0}}
+.darkroom-wash{position:fixed;inset:0;background:rgba(128,6,6,0);pointer-events:none;z-index:490;transition:background .7s ease}
+
+/* ── VIEWS ── */
+.view{position:fixed;inset:0;opacity:1;transition:opacity .75s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.view.hidden{opacity:0;pointer-events:none}
+
+/* ── TOP NAV ── */
+.top-nav{position:fixed;top:0;left:0;right:0;padding:20px 36px;display:flex;justify-content:space-between;align-items:center;z-index:50}
+.nav-back{font-size:15px;font-style:italic;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:rgba(255,255,255,.82)}
+.nav-label{font-size:12px;font-style:italic;color:rgba(255,255,255,.16);letter-spacing:2.5px}
+
+/* ════════════════════════════════════
+   1. INTRO
+════════════════════════════════════ */
+#v-intro{background:#050503}
+#v-intro::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at 50% 50%,transparent 42%,rgba(0,0,0,.88) 100%);
+}
+.intro-photos{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2}
+.intro-photo{
+  position:absolute;max-width:72vw;max-height:72vh;width:auto;height:auto;
+  object-fit:contain;opacity:0;
+}
+/* faster: 2s animation, 1.5s between photos */
+.intro-photo.showing{animation:photoIn 2s ease forwards}
+.intro-photo.leaving{animation:photoOut .5s ease forwards}
+@keyframes photoIn{
+  0%  {opacity:0;filter:blur(10px) brightness(.4)}
+  12% {opacity:.88;filter:blur(3px) brightness(.62)}
+  18% {opacity:.84;filter:blur(0) brightness(.76)}
+  20% {opacity:.68;filter:blur(0) brightness(.52)}
+  24% {opacity:.9;filter:blur(0) brightness(.82)}
+  80% {opacity:.88;filter:blur(0) brightness(.8)}
+  100%{opacity:.82;filter:blur(0) brightness(.75)}
+}
+@keyframes photoOut{
+  0%{opacity:.82;filter:blur(0)}
+  100%{opacity:0;filter:blur(6px) brightness(.28)}
+}
+.scan-line{
+  position:absolute;left:0;right:0;height:1px;z-index:5;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  animation:scanMove 3s linear infinite;
+}
+@keyframes scanMove{0%{top:-1px}100%{top:100%}}
+.intro-text{
+  position:absolute;z-index:6;text-align:center;
+  opacity:0;pointer-events:none;transform:translateY(14px);
+  transition:opacity 1.3s ease,transform 1.3s ease;
+  max-width:520px;padding:0 36px;
+}
+.intro-text.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.intro-text p{
+  font-size:19px;font-style:italic;font-weight:400;
+  color:rgba(255,255,255,.68);line-height:2.1;letter-spacing:.3px;
+}
+.continue-btn{
+  margin-top:54px;display:inline-block;font-size:13px;font-style:italic;letter-spacing:3px;
+  color:rgba(255,255,255,.28);background:none;border:none;cursor:pointer;
+  font-family:'EB Garamond',serif;transition:color .25s;padding:6px 0;user-select:none;
+}
+.continue-btn:hover{color:rgba(255,255,255,.82)}
+.continue-btn::after{content:' →'}
+
+/* ════════════════════════════════════
+   2. BOX VIEW
+════════════════════════════════════ */
+#v-box{background:#080705}
+#v-box::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at 50% 50%,transparent 32%,rgba(0,0,0,.88) 100%);
+}
+
+.box-scene{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+
+/* ── BOX CONTAINER (image + camera overlays) ── */
+.box-container{
+  position:relative;
+  width:min(660px,86vw);
+  animation:boxBreathe 5s ease-in-out infinite;
+  filter:drop-shadow(0 24px 80px rgba(0,0,0,.96));
+}
+@keyframes boxBreathe{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-8px) scale(1.006)}
+}
+.box-img{width:100%;height:auto;display:block}
+
+/* gradient that fades the box PNG's white bg into the dark page */
+.box-fade{
+  position:absolute;inset:0;pointer-events:none;z-index:5;
+  background:radial-gradient(ellipse 80% 66% at 50% 46%, transparent 70%, #080705 90%);
+}
+
+/* camera overlays sit on top of the box image + fade */
+.cam-overlay{
+  position:absolute;inset:0;
+  pointer-events:none;
+  z-index:10;
+}
+
+/* ── CAMERA ITEM ── */
+.cam-item{
+  position:absolute;
+  width:var(--w,88px);
+  transform:rotate(var(--r,0deg));
+  transform-origin:center 85%;
+  pointer-events:auto;
+  transition:transform .38s cubic-bezier(.34,1.56,.64,1), filter .3s ease, z-index 0s;
+  z-index:2;
+}
+.cam-item.exposed{cursor:pointer}
+.cam-item.unexposed{cursor:default;filter:grayscale(.8) brightness(.5)}
+.cam-item.deco{pointer-events:none;filter:grayscale(.6) brightness(.55)}
+.cam-item.exposed:hover{
+  transform:rotate(0deg) translateY(-22px)!important;
+  z-index:50!important;
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,.55));
+}
+
+.cam-item img{
+  width:100%;height:auto;display:block;
+}
+
+/* highlight sweep on hover */
+.cam-shine-wrap{position:relative;overflow:hidden}
+.cam-shine{
+  position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:linear-gradient(108deg,transparent 28%,rgba(255,255,255,.18) 50%,transparent 72%);
+  transform:translateX(-160%);
+}
+.cam-item.exposed:hover .cam-shine{animation:shineSweep .5s ease forwards}
+@keyframes shineSweep{from{transform:translateX(-160%)}to{transform:translateX(160%)}}
+
+/* tooltip */
+.cam-tip{
+  position:absolute;bottom:calc(100% + 10px);left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:rgba(8,6,4,.96);border:1px solid rgba(255,255,255,.09);
+  padding:9px 14px;border-radius:3px;white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease;
+  backdrop-filter:blur(12px);z-index:40;
+}
+.cam-item:hover .cam-tip{opacity:1;transform:translateX(-50%) translateY(0)}
+.tip-name{display:block;font-size:13px;font-style:italic;color:rgba(255,255,255,.88);letter-spacing:1px}
+.tip-meta{display:block;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1.5px;margin-top:3px;font-family:'Courier New',monospace}
+.tip-count{
+  display:block;font-size:9px;color:rgba(255,165,50,.78);letter-spacing:1px;
+  margin-top:2px;font-family:'Courier New',monospace;
+  animation:cFlicker 1.2s steps(2) infinite;
+}
+@keyframes cFlicker{0%,100%{opacity:1}50%{opacity:.5}}
+.tip-soon{display:block;font-size:9px;color:rgba(255,255,255,.22);letter-spacing:1.5px;margin-top:3px;font-family:'Courier New',monospace}
+
+.box-hint-label{
+  font-size:11px;font-style:italic;
+  color:rgba(255,255,255,.2);letter-spacing:2.5px;user-select:none;
+}
+
+/* ════════════════════════════════════
+   3. DEVELOPING
+════════════════════════════════════ */
+#v-dev{background:#050402;z-index:100}
+.dev-film-outer{width:100vw;height:94px;overflow:hidden;flex-shrink:0;position:relative}
+.dev-film-track{display:flex;gap:5px;transform:translateX(110vw);will-change:transform}
+.dev-film-track.rolling{animation:filmRoll 1.7s cubic-bezier(.25,.1,.25,1) forwards}
+@keyframes filmRoll{0%{transform:translateX(110vw)}100%{transform:translateX(-130%)}}
+.dev-thumb{
+  width:74px;height:55px;background:#0e0c0a;flex-shrink:0;
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.05);
+}
+.dev-thumb img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.42) saturate(.22) sepia(.35);
+  animation:tFlicker .28s steps(2) infinite;
+}
+@keyframes tFlicker{0%,100%{opacity:.88}50%{opacity:.58}}
+.dev-thumb::before,.dev-thumb::after{
+  content:'';position:absolute;left:0;right:0;height:9px;z-index:2;
+  background:repeating-linear-gradient(90deg,transparent 0 5px,#050402 5px 9px);
+}
+.dev-thumb::before{top:0}.dev-thumb::after{bottom:0}
+.dev-middle{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.dev-spinner{
+  width:30px;height:30px;
+  border:2px solid rgba(255,255,255,.06);border-top-color:rgba(255,255,255,.35);
+  border-radius:50%;animation:devSpin .68s linear infinite;
+}
+@keyframes devSpin{to{transform:rotate(360deg)}}
+.dev-label{
+  font-size:13px;font-style:italic;color:rgba(210,38,18,.85);letter-spacing:4.5px;
+  animation:devPulse 1.4s ease-in-out infinite;
+}
+@keyframes devPulse{0%,100%{opacity:.32}50%{opacity:1}}
+
+/* ════════════════════════════════════
+   4. GALLERY
+════════════════════════════════════ */
+#v-gallery{
+  background:#ece7de;overflow-y:auto;overflow-x:hidden;
+  flex-direction:column;align-items:stretch;justify-content:flex-start;z-index:50;
+}
+.gal-header{
+  position:sticky;top:0;background:#ece7de;border-bottom:1px solid rgba(0,0,0,.09);
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;
+  z-index:10;flex-shrink:0;
+}
+.gal-back{
+  font-size:13px;font-style:italic;color:rgba(0,0,0,.38);
+  background:none;border:none;cursor:pointer;
+  font-family:'EB Garamond',serif;transition:color .2s;letter-spacing:.4px;
+}
+.gal-back:hover{color:rgba(0,0,0,.86)}
+.gal-meta{text-align:right}
+.gal-roll-name{display:block;font-size:14px;font-style:italic;color:rgba(0,0,0,.6);letter-spacing:1px}
+.gal-roll-sub{display:block;font-size:9px;font-family:'Courier New',monospace;color:rgba(0,0,0,.3);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+.film-edge-bar{
+  background:#1a1714;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-evenly;padding:0 8px;
+}
+.spr{width:12px;height:8px;background:#ece7de;border-radius:2px;flex-shrink:0}
+.contact-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:8px;padding:12px 16px 52px;
+}
+.c-cell{cursor:pointer;opacity:0;transform:translateY(9px)}
+.c-cell.appear{animation:cellIn .42s ease forwards}
+@keyframes cellIn{to{opacity:1;transform:translateY(0)}}
+.c-wrap{background:#16130e;overflow:hidden;position:relative}
+.c-wrap::after{
+  content:attr(data-n);position:absolute;top:4px;right:5px;
+  font-family:'Courier New',monospace;font-size:7px;color:rgba(255,255,255,.2);z-index:2;
+}
+.c-img{
+  width:100%;aspect-ratio:3/2;object-fit:cover;display:block;
+  filter:brightness(.94) contrast(1.04) saturate(1.06);
+  transition:transform .3s ease,filter .3s ease;
+}
+.c-cell:hover .c-img{transform:scale(1.04);filter:brightness(.97) contrast(1.07) saturate(1.12)}
+.c-cell:hover .c-wrap{box-shadow:0 4px 22px rgba(0,0,0,.4)}
+.c-cap{background:#cac4ba;padding:3px 6px;display:flex;justify-content:space-between}
+.c-cap span{font-family:'Courier New',monospace;font-size:7.5px;color:rgba(0,0,0,.32);letter-spacing:.5px}
+
+/* ════════════════════════════════════
+   5. MODAL
+════════════════════════════════════ */
+#v-modal{background:rgba(4,3,2,.98);z-index:300}
+.modal-top{
+  position:fixed;top:0;left:0;right:0;padding:18px 30px;
+  display:flex;justify-content:space-between;align-items:center;z-index:310;
+}
+.modal-close-btn{
+  font-size:13px;font-style:italic;color:rgba(255,255,255,.28);
+  background:none;border:none;cursor:pointer;
+  font-family:'EB Garamond',serif;transition:color .2s;letter-spacing:.4px;
+}
+.modal-close-btn:hover{color:rgba(255,255,255,.82)}
+.modal-count{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:2px}
+.modal-stage{position:relative;transition:transform .04s linear}
+.modal-stage::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/150px;
+  opacity:.052;animation:grainA .1s steps(1) infinite;
+}
+.modal-img{
+  max-width:min(86vw,80vh);max-height:80vh;
+  width:auto;height:auto;object-fit:contain;display:block;
+  filter:brightness(.97) contrast(1.03);transition:opacity .22s ease;
+}
+.modal-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  font-size:14px;font-style:italic;color:rgba(255,255,255,.22);
+  background:none;border:none;cursor:pointer;padding:24px;z-index:310;
+  font-family:'EB Garamond',serif;letter-spacing:1px;transition:color .2s;user-select:none;
+}
+.modal-arrow:hover{color:rgba(255,255,255,.78)}
+.modal-arrow.prev{left:6px}.modal-arrow.next{right:6px}
+.modal-fname{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  font-family:'Courier New',monospace;font-size:9px;
+  color:rgba(255,255,255,.16);letter-spacing:1.5px;z-index:310;white-space:nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="shutter-flash" id="sf"></div>
+<div class="darkroom-wash"  id="dw"></div>
+
+<!-- ══ 1. INTRO ══ -->
+<div class="view" id="v-intro">
+  <nav class="top-nav">
+    <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+    <span class="nav-label">photography</span>
+  </nav>
+  <div class="intro-photos" id="intro-photos"></div>
+  <div class="scan-line"></div>
+  <div class="intro-text" id="intro-text">
+    <p>
+      i love film because it forces you to slow down.<br>
+      every frame matters, every roll is finite.<br>
+      there's something honest about a photo you can't take back.<br>
+      it's less about capturing — and more about being there.
+    </p>
+    <button class="continue-btn" onclick="gotoBox()">continue</button>
+  </div>
+</div>
+
+<!-- ══ 2. BOX ══ -->
+<div class="view hidden" id="v-box">
+  <nav class="top-nav">
+    <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+    <span class="nav-label">photography</span>
+  </nav>
+  <div class="box-scene">
+    <div class="box-container" id="box-container">
+      <img class="box-img" src="photography/fuji-box.png" alt="box">
+      <div class="box-fade"></div>
+      <div class="cam-overlay" id="cam-overlay"></div>
+    </div>
+    <p class="box-hint-label">hover a camera · click to develop</p>
+  </div>
+</div>
+
+<!-- ══ 3. DEVELOPING ══ -->
+<div class="view hidden" id="v-dev">
+  <div class="dev-film-outer">
+    <div class="dev-film-track" id="dev-film-track"></div>
+  </div>
+  <div class="dev-middle">
+    <div class="dev-spinner"></div>
+    <div class="dev-label">developing film...</div>
+  </div>
+</div>
+
+<!-- ══ 4. GALLERY ══ -->
+<div class="view hidden" id="v-gallery">
+  <header class="gal-header">
+    <button class="gal-back" onclick="backToBox()">← back to box</button>
+    <div class="gal-meta">
+      <span class="gal-roll-name" id="gal-roll-name">delhi</span>
+      <span class="gal-roll-sub"  id="gal-roll-sub">Fuji 400 · 8 exp · 2026</span>
+    </div>
+  </header>
+  <div class="film-edge-bar" id="film-edge-bar"></div>
+  <div class="contact-grid" id="contact-grid"></div>
+</div>
+
+<!-- ══ 5. MODAL ══ -->
+<div class="view hidden" id="v-modal">
+  <div class="modal-top">
+    <button class="modal-close-btn" onclick="closeModal()">← back to gallery</button>
+    <span class="modal-count" id="modal-count"></span>
+  </div>
+  <div class="modal-stage" id="modal-stage">
+    <img class="modal-img" id="modal-img" src="" alt="">
+  </div>
+  <button class="modal-arrow prev" onclick="modalNav(-1)">←</button>
+  <button class="modal-arrow next" onclick="modalNav(1)">→</button>
+  <div class="modal-fname" id="modal-fname"></div>
+</div>
+
+<script>
+/* ══ ROLL DATA ══ */
+const ROLLS = [
+  {
+    name:'delhi', film:'Fuji 400', year:'2026', exp:8, exposed:true,
+    photos:[
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.14.jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.15.jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.16%20(1).jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.16.jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.17.jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-21%20at%2023.16.13.jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-26%20at%2016.33.31%20(1).jpeg',
+      'photography/rolls/roll-01/WhatsApp%20Image%202026-03-26%20at%2016.33.31.jpeg',
+    ]
+  },
+  ...Array.from({length:9},(_,i)=>({
+    name:`roll 0${i+2}`,film:'Fuji 400',year:'—',exp:0,exposed:false,photos:[]
+  }))
+];
+
+/* ══ CAMERA POSITIONS — 10 interactive cameras (mapped to ROLLS) ══ */
+const CAM_POS = [
+  // back row (4)  — small, y:5-10%
+  {l:'12%', t:'7%',  w:106, r:-22, z:4},
+  {l:'29%', t:'5%',  w:102, r:  8, z:3},
+  {l:'46%', t:'6%',  w:106, r: -7, z:4},
+  {l:'62%', t:'8%',  w:102, r: 16, z:3},
+  // mid row (4)  — medium, y:16-21%
+  {l:'6%',  t:'18%', w:122, r: 19, z:7},
+  {l:'25%', t:'16%', w:120, r:-13, z:6},
+  {l:'44%', t:'17%', w:120, r:  7, z:6},
+  {l:'63%', t:'20%', w:114, r:-17, z:5},
+  // front row (2) — large, y:29-34%
+  {l:'15%', t:'30%', w:148, r: -8, z:9},
+  {l:'50%', t:'29%', w:144, r: 12, z:9},
+];
+
+/* ══ DECORATIVE CAMERAS — pure visual fill, no interaction ══ */
+const DECO_POS = [
+  // far right back + mid-back filler
+  {l:'73%', t:'6%',  w: 98, r: -5, z:3},
+  {l:'74%', t:'18%', w:112, r: 20, z:5},
+  // fill the gap between back and mid rows
+  {l:'20%', t:'13%', w:112, r: -6, z:5},
+  {l:'39%', t:'12%', w:110, r: 11, z:5},
+  {l:'57%', t:'13%', w:108, r: -9, z:5},
+  // front row fillers
+  {l:'34%', t:'29%', w:142, r: -2, z:9},
+  {l:'67%', t:'28%', w:136, r:-14, z:8},
+  // far left column
+  {l:'-2%', t:'24%', w:116, r: 24, z:6},
+];
+
+/* ══ REFS ══ */
+const vIntro  = document.getElementById('v-intro');
+const vBox    = document.getElementById('v-box');
+const vDev    = document.getElementById('v-dev');
+const vGal    = document.getElementById('v-gallery');
+const vModal  = document.getElementById('v-modal');
+const sf      = document.getElementById('sf');
+const dw      = document.getElementById('dw');
+const introPhotosEl = document.getElementById('intro-photos');
+const introTextEl   = document.getElementById('intro-text');
+const camOverlay    = document.getElementById('cam-overlay');
+const devFilmTrack  = document.getElementById('dev-film-track');
+const contactGrid   = document.getElementById('contact-grid');
+const filmEdgeBar   = document.getElementById('film-edge-bar');
+const modalStage    = document.getElementById('modal-stage');
+const modalImgEl    = document.getElementById('modal-img');
+const modalCountEl  = document.getElementById('modal-count');
+const modalFnameEl  = document.getElementById('modal-fname');
+const galRollName   = document.getElementById('gal-roll-name');
+const galRollSub    = document.getElementById('gal-roll-sub');
+
+let currentRoll = null;
+let modalIndex  = 0;
+
+/* ══ VIEW SWITCH ══ */
+function showView(v){
+  [vIntro,vBox,vDev,vGal,vModal].forEach(x=>x.classList.toggle('hidden',x!==v));
+}
+
+/* ══ BUILD CAMERA OVERLAYS ══ */
+function makeCamEl(pos, cls, imgAlt) {
+  const item = document.createElement('div');
+  item.className = 'cam-item ' + cls;
+  item.style.left   = pos.l;
+  item.style.top    = pos.t;
+  item.style.zIndex = pos.z || 2;
+  item.style.setProperty('--w', pos.w + 'px');
+  item.style.setProperty('--r', pos.r + 'deg');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'cam-shine-wrap';
+  const img = document.createElement('img');
+  img.src = 'photography/fuji-camera.png';
+  img.alt = imgAlt || '';
+  const shine = document.createElement('div');
+  shine.className = 'cam-shine';
+  wrap.appendChild(img);
+  wrap.appendChild(shine);
+  item.appendChild(wrap);
+  return item;
+}
+
+// Interactive cameras (mapped to ROLLS)
+ROLLS.forEach((roll, i) => {
+  const pos  = CAM_POS[i];
+  const item = makeCamEl(pos, roll.exposed ? 'exposed' : 'unexposed', roll.name);
+
+  const tip = document.createElement('div');
+  tip.className = 'cam-tip';
+  if (roll.exposed) {
+    tip.innerHTML = `
+      <span class="tip-name">${roll.name}</span>
+      <span class="tip-meta">${roll.film} · ${roll.year}</span>
+      <span class="tip-count">${roll.exp} / 27</span>`;
+    item.addEventListener('click', () => startDeveloping(i));
+  } else {
+    tip.innerHTML = `
+      <span class="tip-name">${roll.name}</span>
+      <span class="tip-soon">roll coming soon</span>`;
+  }
+  item.appendChild(tip);
+  camOverlay.appendChild(item);
+});
+
+// Decorative cameras (visual fill only — no pointer events)
+DECO_POS.forEach(pos => {
+  camOverlay.appendChild(makeCamEl(pos, 'deco', ''));
+});
+
+/* ══ FILM EDGE SPROCKETS ══ */
+for(let i=0;i<28;i++){
+  const s=document.createElement('div');s.className='spr';
+  filmEdgeBar.appendChild(s);
+}
+
+/* ══════════════════════════════
+   INTRO SEQUENCE
+══════════════════════════════ */
+const INTRO_SRCS = ROLLS[0].photos.slice(0, 4);
+let introDone=false, introIdx=0, introTimer=null;
+const introImgs=[];
+
+INTRO_SRCS.forEach(src=>{
+  const img=document.createElement('img');
+  img.className='intro-photo';img.src=src;img.alt='';
+  introPhotosEl.appendChild(img);
+  introImgs.push(img);
+});
+
+function showNextPhoto(){
+  if(introDone) return;
+  if(introIdx>0){
+    const prev=introImgs[introIdx-1];
+    prev.classList.remove('showing');
+    prev.classList.add('leaving');
+    setTimeout(()=>prev.classList.remove('leaving'),500);
+  }
+  if(introIdx>=introImgs.length){
+    setTimeout(()=>{if(!introDone)revealText();},500);
+    return;
+  }
+  introImgs[introIdx].classList.add('showing');
+  introIdx++;
+  introTimer=setTimeout(showNextPhoto,1500); // faster: 1.5s per photo
+}
+
+function revealText(){
+  introDone=true;
+  introImgs.forEach(img=>{img.classList.remove('showing');img.classList.add('leaving');});
+  setTimeout(()=>introTextEl.classList.add('visible'),380);
+}
+
+function skipIntro(){
+  if(introDone) return;
+  if(introTimer) clearTimeout(introTimer);
+  introDone=true;
+  introImgs.forEach(img=>{img.style.transition='opacity .35s ease';img.style.opacity='0';});
+  setTimeout(()=>introTextEl.classList.add('visible'),350);
+}
+
+vIntro.addEventListener('click',e=>{
+  if(!introDone && !e.target.closest('.continue-btn')) skipIntro();
+});
+setTimeout(showNextPhoto, 600);
+
+/* ══════════════════════════════
+   NAVIGATION
+══════════════════════════════ */
+function gotoBox(){ showView(vBox); }
+function backToBox(){ showView(vBox); }
+
+/* ══════════════════════════════
+   DEVELOPING
+══════════════════════════════ */
+function startDeveloping(rollIndex){
+  const roll = ROLLS[rollIndex];
+  currentRoll = roll;
+
+  devFilmTrack.innerHTML='';
+  roll.photos.forEach(src=>{
+    const d=document.createElement('div');d.className='dev-thumb';
+    const img=document.createElement('img');img.src=src;
+    d.appendChild(img);devFilmTrack.appendChild(d);
+  });
+  devFilmTrack.classList.remove('rolling');
+  void devFilmTrack.offsetHeight;
+
+  sf.classList.remove('pop');void sf.offsetHeight;sf.classList.add('pop');
+
+  setTimeout(()=>{
+    showView(vDev);
+    dw.style.transition='none';dw.style.background='rgba(128,6,6,0)';
+    void dw.offsetHeight;
+    dw.style.transition='background .72s ease';
+    dw.style.background='rgba(128,6,6,0.28)';
+
+    setTimeout(()=>devFilmTrack.classList.add('rolling'),240);
+    setTimeout(()=>{dw.style.background='rgba(128,6,6,0)';},2300);
+    setTimeout(()=>{
+      buildGallery(roll);showView(vGal);vGal.scrollTop=0;
+    },3700);
+  },85);
+}
+
+/* ══════════════════════════════
+   GALLERY
+══════════════════════════════ */
+function buildGallery(roll){
+  galRollName.textContent=roll.name;
+  galRollSub.textContent=`${roll.film} · ${roll.exp} exp · ${roll.year}`;
+  contactGrid.innerHTML='';
+  roll.photos.forEach((src,i)=>{
+    const cell=document.createElement('div');cell.className='c-cell';
+    cell.onclick=()=>openModal(i);
+    const wrap=document.createElement('div');wrap.className='c-wrap';
+    wrap.setAttribute('data-n',String(i+1).padStart(2,'0'));
+    const img=document.createElement('img');img.className='c-img';img.src=src;img.alt='';
+    const cap=document.createElement('div');cap.className='c-cap';
+    cap.innerHTML=`<span>${String(i+1).padStart(2,'0')} ▲</span><span>○</span>`;
+    wrap.appendChild(img);cell.appendChild(wrap);cell.appendChild(cap);
+    contactGrid.appendChild(cell);
+    setTimeout(()=>cell.classList.add('appear'),100+i*65);
+  });
+}
+
+/* ══════════════════════════════
+   MODAL
+══════════════════════════════ */
+function openModal(index){
+  if(!currentRoll) return;
+  modalIndex=index;
+  modalImgEl.style.opacity='1';
+  modalImgEl.src=currentRoll.photos[index];
+  modalCountEl.textContent=`${index+1} / ${currentRoll.photos.length}`;
+  modalFnameEl.textContent=`${currentRoll.name}_${String(index+1).padStart(2,'0')}.jpg`;
+  showView(vModal);
+}
+function closeModal(){showView(vGal);}
+function modalNav(dir){
+  if(!currentRoll) return;
+  const n=currentRoll.photos.length;
+  modalIndex=(modalIndex+dir+n)%n;
+  modalImgEl.style.opacity='0';
+  setTimeout(()=>{
+    modalImgEl.src=currentRoll.photos[modalIndex];
+    modalImgEl.onload=()=>{modalImgEl.style.opacity='1';};
+    modalCountEl.textContent=`${modalIndex+1} / ${n}`;
+    modalFnameEl.textContent=`${currentRoll.name}_${String(modalIndex+1).padStart(2,'0')}.jpg`;
+  },150);
+}
+
+document.addEventListener('mousemove',e=>{
+  if(vModal.classList.contains('hidden')) return;
+  const x=(e.clientX/window.innerWidth-.5)*14;
+  const y=(e.clientY/window.innerHeight-.5)*9;
+  modalStage.style.transform=`translate(${x}px,${y}px)`;
+});
+
+document.addEventListener('keydown',e=>{
+  if(!vModal.classList.contains('hidden')){
+    if(e.key==='ArrowRight') modalNav(1);
+    if(e.key==='ArrowLeft')  modalNav(-1);
+    if(e.key==='Escape')     closeModal();
+  }
+});
+</script>
+</body>
+</html>
