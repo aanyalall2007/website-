@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — photobooth</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#0c0a08;font-family:'EB Garamond',serif;text-transform:lowercase;color:#fff;cursor:none}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.04;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/200px;animation:gr .1s steps(1) infinite}
+@keyframes gr{0%{background-position:0 0}50%{background-position:-12% 15%}100%{background-position:15% 22%}}
+#cursor{width:9px;height:9px;background:#fff;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;mix-blend-mode:difference;transform:translate(-50%,-50%)}
+.top-nav{position:fixed;top:0;left:0;right:0;padding:20px 36px;display:flex;justify-content:space-between;align-items:center;z-index:100}
+.nav-back{font-size:15px;font-style:italic;color:rgba(255,255,255,.32);text-decoration:none;transition:color .2s;cursor:none}
+.nav-back:hover{color:rgba(255,255,255,.78)}
+.nav-label{font-size:11px;font-style:italic;color:rgba(255,255,255,.13);letter-spacing:3px}
+
+/* ── LAYOUT ── */
+.booth{display:flex;height:100vh;align-items:center;justify-content:center;gap:40px;padding:70px 48px 32px}
+
+/* ── CAMERA WINDOW ── */
+.cam-wrap{position:relative;flex-shrink:0}
+.cam-frame{width:360px;height:270px;border-radius:6px;overflow:hidden;
+  border:.5px solid rgba(255,255,255,.12);background:#000;position:relative}
+#preview{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.cam-vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse,transparent 50%,rgba(0,0,0,.45) 100%)}
+.cam-corner{position:absolute;width:16px;height:16px;opacity:.5;pointer-events:none}
+.cam-corner.tl{top:8px;left:8px;border-top:.5px solid #fff;border-left:.5px solid #fff}
+.cam-corner.tr{top:8px;right:8px;border-top:.5px solid #fff;border-right:.5px solid #fff}
+.cam-corner.bl{bottom:8px;left:8px;border-bottom:.5px solid #fff;border-left:.5px solid #fff}
+.cam-corner.br{bottom:8px;right:8px;border-bottom:.5px solid #fff;border-right:.5px solid #fff}
+
+/* countdown overlay */
+.countdown-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;pointer-events:none}
+.countdown-num{font-size:96px;font-style:italic;color:rgba(255,255,255,.88);opacity:0;
+  text-shadow:0 0 30px rgba(0,0,0,.8);animation:countPop .7s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes countPop{0%{transform:scale(.4);opacity:0}40%{transform:scale(1.15);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(1.1);opacity:0}}
+
+/* flash */
+.flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5000;transition:opacity .06s}
+.flash.pop{opacity:1}
+
+/* ── FILTER STRIP ── */
+.filter-row{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.filter-btn{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.1);
+  border-radius:4px;padding:5px 12px;font-family:'EB Garamond',serif;
+  font-size:12px;font-style:italic;color:rgba(255,255,255,.42);cursor:none;
+  transition:all .18s}
+.filter-btn:hover,.filter-btn.active{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.78);background:rgba(255,255,255,.08)}
+
+/* ── SHUTTER ── */
+.shutter-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:20px}
+.shutter-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.08);
+  border:2px solid rgba(255,255,255,.25);cursor:none;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1)}
+.shutter-btn:hover{background:rgba(255,255,255,.15);transform:scale(1.08);border-color:rgba(255,255,255,.5)}
+.shutter-btn:active{transform:scale(.94)}
+.shutter-btn.disabled{opacity:.3;pointer-events:none}
+.shutter-lbl{font-size:12px;font-style:italic;color:rgba(255,255,255,.3);letter-spacing:2px}
+
+/* permission state */
+.perm-prompt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;background:#000;border-radius:6px;z-index:20}
+.perm-txt{font-size:15px;font-style:italic;color:rgba(255,255,255,.45);text-align:center;padding:0 20px;line-height:1.8}
+.perm-btn{background:transparent;border:.5px solid rgba(255,255,255,.2);border-radius:20px;
+  padding:8px 20px;font-family:'EB Garamond',serif;font-size:14px;font-style:italic;
+  color:rgba(255,255,255,.55);cursor:none;transition:all .2s}
+.perm-btn:hover{border-color:rgba(255,255,255,.5);color:rgba(255,255,255,.88)}
+
+/* ── PHOTO STRIP ── */
+.strip-wrap{display:flex;flex-direction:column;align-items:center;gap:0}
+.strip{width:120px;background:#111;border:.5px solid rgba(255,255,255,.1);
+  border-radius:4px;overflow:hidden;padding:8px 8px 4px}
+.strip-top{text-align:center;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.28);padding-bottom:6px}
+.strip-frame{width:104px;height:78px;background:#1a1a1a;border-radius:2px;margin-bottom:6px;overflow:hidden;position:relative}
+.strip-frame canvas,.strip-frame img{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
+.strip-frame.empty{display:flex;align-items:center;justify-content:center}
+.strip-frame.empty span{font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px}
+.strip-bot{text-align:center;font-size:8px;letter-spacing:1.5px;color:rgba(255,255,255,.2);padding-top:4px}
+
+/* save button */
+.save-btn{margin-top:14px;background:transparent;border:.5px solid rgba(255,255,255,.15);
+  border-radius:20px;padding:7px 18px;font-family:'EB Garamond',serif;font-size:13px;
+  font-style:italic;color:rgba(255,255,255,.4);cursor:none;transition:all .2s;opacity:.4}
+.save-btn.ready{opacity:1}
+.save-btn.ready:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#0a0905;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="grain"></div>
+<div id="cursor"></div>
+<div class="flash" id="flash"></div>
+
+<nav class="top-nav">
+  <a href="sidequests.html" class="nav-back">← back to desk</a>
+  <span class="nav-label">photobooth</span>
+</nav>
+
+<div class="booth">
+  <!-- camera + controls -->
+  <div>
+    <div class="cam-wrap">
+      <div class="cam-frame" id="cam-frame">
+        <div class="perm-prompt" id="perm-prompt">
+          <p class="perm-txt">need camera access<br>to take your photos</p>
+          <button class="perm-btn" onclick="startCamera()">allow camera</button>
+        </div>
+        <video id="preview" autoplay playsinline muted></video>
+        <div class="cam-vignette"></div>
+        <div class="cam-corner tl"></div>
+        <div class="cam-corner tr"></div>
+        <div class="cam-corner bl"></div>
+        <div class="cam-corner br"></div>
+        <div class="countdown-overlay" id="countdown-overlay"></div>
+      </div>
+
+      <div class="filter-row" id="filter-row">
+        <button class="filter-btn active" data-filter="none" onclick="setFilter(this,'none')">natural</button>
+        <button class="filter-btn" data-filter="grayscale(100%)" onclick="setFilter(this,'grayscale(100%)')">b&w</button>
+        <button class="filter-btn" data-filter="sepia(80%) contrast(1.1)" onclick="setFilter(this,'sepia(80%) contrast(1.1)')">warm</button>
+        <button class="filter-btn" data-filter="contrast(1.2) brightness(1.05) saturate(.8)" onclick="setFilter(this,'contrast(1.2) brightness(1.05) saturate(.8)')">crisp</button>
+      </div>
+    </div>
+
+    <div class="shutter-wrap">
+      <button class="shutter-btn disabled" id="shutter-btn" onclick="startSequence()"></button>
+      <span class="shutter-lbl" id="shutter-lbl">4 photos · 3s apart</span>
+    </div>
+  </div>
+
+  <!-- photo strip -->
+  <div class="strip-wrap">
+    <div class="strip">
+      <div class="strip-top">photobooth</div>
+      <div class="strip-frame empty" id="f0"><span>01</span></div>
+      <div class="strip-frame empty" id="f1"><span>02</span></div>
+      <div class="strip-frame empty" id="f2"><span>03</span></div>
+      <div class="strip-frame empty" id="f3"><span>04</span></div>
+      <div class="strip-bot">aanya · <span id="strip-date"></span></div>
+    </div>
+    <button class="save-btn" id="save-btn" onclick="saveStrip()">save strip</button>
+  </div>
+</div>
+
+<script>
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+document.getElementById('strip-date').textContent = new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'}).toLowerCase();
+
+let stream, currentFilter = 'none', photosTaken = 0, running = false;
+const video = document.getElementById('preview');
+const shutter = document.getElementById('shutter-btn');
+const shutterLbl = document.getElementById('shutter-lbl');
+const frames = [0,1,2,3].map(i => document.getElementById('f'+i));
+
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:'user'},audio:false});
+    video.srcObject = stream;
+    document.getElementById('perm-prompt').style.display = 'none';
+    shutter.classList.remove('disabled');
+    shutterLbl.textContent = '4 photos · 3s apart';
+  } catch(e) {
+    document.querySelector('.perm-txt').textContent = 'camera not available.\ntry a different browser.';
+  }
+}
+
+function setFilter(btn, f) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = f;
+  video.style.filter = f;
+}
+
+function startSequence() {
+  if (running || !stream) return;
+  running = true;
+  shutter.classList.add('disabled');
+  photosTaken = 0;
+  // reset frames
+  frames.forEach(f => { f.innerHTML = '<span>'+(frames.indexOf(f)+1).toString().padStart(2,'0')+'</span>'; f.classList.add('empty'); });
+  document.getElementById('save-btn').classList.remove('ready');
+  takeNextPhoto();
+}
+
+function takeNextPhoto() {
+  if (photosTaken >= 4) {
+    running = false;
+    shutter.classList.remove('disabled');
+    shutterLbl.textContent = 'take another set';
+    document.getElementById('save-btn').classList.add('ready');
+    return;
+  }
+  // countdown 3,2,1
+  let count = 3;
+  const overlay = document.getElementById('countdown-overlay');
+  const tick = () => {
+    overlay.innerHTML = `<span class="countdown-num">${count}</span>`;
+    if (count === 0) {
+      setTimeout(() => {
+        overlay.innerHTML = '';
+        snapPhoto();
+      }, 400);
+    } else {
+      count--;
+      setTimeout(tick, 900);
+    }
+  };
+  tick();
+}
+
+function snapPhoto() {
+  // flash
+  const fl = document.getElementById('flash');
+  fl.classList.add('pop');
+  setTimeout(() => fl.classList.remove('pop'), 120);
+
+  // capture
+  const canvas = document.createElement('canvas');
+  canvas.width = 104; canvas.height = 78;
+  const ctx = canvas.getContext('2d');
+  if (currentFilter !== 'none') {
+    ctx.filter = currentFilter;
+  }
+  // mirror horizontally to match preview
+  ctx.save(); ctx.translate(104,0); ctx.scale(-1,1);
+  ctx.drawImage(video, 0, 0, 104, 78);
+  ctx.restore();
+
+  const frame = frames[photosTaken];
+  frame.classList.remove('empty');
+  frame.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = canvas.toDataURL('image/jpeg', .9);
+  img.style.filter = currentFilter !== 'none' ? currentFilter : '';
+  img.style.transform = 'none'; // already mirrored in canvas
+  frame.appendChild(img);
+
+  photosTaken++;
+  shutterLbl.textContent = `photo ${photosTaken}/4`;
+  setTimeout(takeNextPhoto, 1200);
+}
+
+function saveStrip() {
+  if (photosTaken < 4) return;
+
+  const sc = 3; // scale for retina quality
+  const padX  = 8  * sc;
+  const padT  = 8  * sc;
+  const padB  = 6  * sc;
+  const innerW = 104 * sc;
+  const frameH = 78  * sc;
+  const frameGap = 6 * sc;
+  const headerH = 20 * sc;
+  const gapAfterHeader = 6 * sc;
+  const footerH = 16 * sc;
+  const gapBeforeFooter = 5 * sc;
+
+  const W = 120 * sc;
+  const H = padT + headerH + gapAfterHeader
+          + (frameH + frameGap) * 3 + frameH
+          + gapBeforeFooter + footerH + padB;
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#111111';
+  ctx.fillRect(0, 0, W, H);
+
+  // Header text
+  ctx.fillStyle = 'rgba(255,255,255,0.28)';
+  ctx.font = `${9 * sc}px Georgia, serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('photobooth', W / 2, padT + headerH * 0.8);
+
+  // Photos
+  const frameImgs = [0,1,2,3].map(i => {
+    const f = document.getElementById('f' + i);
+    return f ? f.querySelector('img') : null;
+  });
+
+  const photosStartY = padT + headerH + gapAfterHeader;
+  frameImgs.forEach((img, i) => {
+    const y = photosStartY + i * (frameH + frameGap);
+    if (img && img.src && img.src.startsWith('data:')) {
+      ctx.drawImage(img, padX, y, innerW, frameH);
+    } else {
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(padX, y, innerW, frameH);
+    }
+  });
+
+  // Footer text
+  const dateText = document.getElementById('strip-date').textContent;
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = `${8 * sc}px Georgia, serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`aanya · ${dateText}`, W / 2, H - padB - 2 * sc);
+
+  // Trigger download
+  const link = document.createElement('a');
+  link.download = `photobooth-aanya-${new Date().toISOString().slice(0,10)}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// auto-start camera
+startCamera();
+</script>
+</body>
+</html>

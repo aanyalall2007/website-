@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — spaces i created</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
+body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+
+.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
+nav,section,.divider,.guestbook{position:relative;z-index:1}
+
+/* ── NAV ── */
+nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:.5px solid var(--border);position:sticky;top:0;
+  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
+.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--ink)}
+.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+
+/* ── HERO ── */
+.hero{max-width:680px;margin:64px auto 48px;padding:0 24px}
+.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
+.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:500px}
+
+/* ── EVENTS ── */
+.events{max-width:840px;margin:0 auto;padding:0 24px}
+.events-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:36px}
+
+.event-entry{
+  position:relative;padding:0;margin-bottom:2px;
+  opacity:0;transform:translateY(16px);
+  animation:entIn .65s cubic-bezier(.4,0,.2,1) forwards var(--delay,0s)}
+@keyframes entIn{to{opacity:1;transform:none}}
+
+.event-bar{
+  display:flex;align-items:center;gap:20px;
+  padding:26px 0;border-top:.5px solid var(--border);
+  cursor:pointer;user-select:none;transition:border-color .2s}
+.event-entry:hover .event-bar{border-top-color:rgba(13,13,13,.25)}
+
+.event-stripe{width:3px;height:36px;border-radius:2px;flex-shrink:0;
+  background:var(--color,var(--gold));opacity:.6;
+  transition:height .3s cubic-bezier(.34,1.56,.64,1),opacity .2s}
+.event-entry:hover .event-stripe,.event-entry.open .event-stripe{height:52px;opacity:1}
+
+.event-name{font-size:24px;font-style:italic;color:rgba(13,13,13,.65);flex:1;transition:color .2s}
+.event-entry:hover .event-name,.event-entry.open .event-name{color:var(--ink)}
+.event-type{font-size:12px;letter-spacing:2px;color:var(--color,var(--gold));opacity:.85}
+.event-year{font-size:13px;color:var(--muted)}
+.event-toggle{
+  width:28px;height:28px;border-radius:50%;
+  border:.5px solid var(--border);background:transparent;
+  color:var(--muted);font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.event-entry.open .event-toggle{
+  transform:rotate(45deg);
+  border-color:var(--color,var(--gold));
+  color:var(--color,var(--gold));background:rgba(138,115,85,.06)}
+
+/* ── EVENT EXPANDED ── */
+.event-body{max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1)}
+.event-entry.open .event-body{max-height:480px}
+.event-content{padding:4px 0 36px 23px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:640px){.event-content{grid-template-columns:1fr}}
+
+.event-desc{font-size:16px;font-style:italic;color:var(--muted);line-height:1.95}
+.event-details{display:flex;flex-direction:column;gap:12px}
+.event-detail-item{display:flex;flex-direction:column;gap:3px}
+.detail-key{font-size:10px;letter-spacing:3px;color:rgba(13,13,13,.3)}
+.detail-val{font-size:14px;font-style:italic;color:rgba(13,13,13,.55)}
+
+.event-photo-row{display:flex;gap:10px;margin-top:20px;grid-column:1/-1}
+.event-photo{
+  height:100px;flex:1;border-radius:4px;
+  background:rgba(13,13,13,.04);border:.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center}
+.event-photo-icon{font-size:18px;opacity:.25}
+
+/* ── DIVIDER ── */
+.divider{max-width:840px;margin:60px auto 40px;padding:0 24px;display:flex;align-items:center;gap:24px}
+.divider-line{flex:1;height:.5px;background:var(--border)}
+.divider-text{font-size:11px;letter-spacing:3px;color:var(--muted);font-style:italic}
+
+/* ── GUESTBOOK ── */
+.guestbook{max-width:680px;margin:0 auto;padding:0 24px 100px}
+.gb-title{font-size:32px;font-style:italic;color:var(--ink);margin-bottom:8px}
+.gb-sub{font-size:15px;font-style:italic;color:var(--muted);margin-bottom:36px;line-height:1.8}
+
+.gb-form{display:flex;flex-direction:column;gap:14px;margin-bottom:48px}
+.gb-row{display:flex;gap:12px}
+.gb-row input,.gb-form textarea{
+  font-family:'EB Garamond',serif;font-size:15px;font-style:italic;
+  background:rgba(13,13,13,.03);border:.5px solid var(--border);
+  color:var(--ink);padding:12px 16px;border-radius:4px;
+  outline:none;transition:border-color .2s,background .2s;cursor:text;
+  text-transform:lowercase}
+.gb-row input{flex:1}
+.gb-row input:focus,.gb-form textarea:focus{
+  border-color:rgba(138,115,85,.4);background:rgba(13,13,13,.02)}
+.gb-form textarea{resize:none;height:90px;width:100%}
+.gb-submit{
+  align-self:flex-start;font-family:'EB Garamond',serif;font-size:14px;
+  font-style:italic;background:transparent;border:.5px solid rgba(138,115,85,.4);
+  color:var(--gold);padding:10px 24px;border-radius:20px;cursor:pointer;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);text-transform:lowercase}
+.gb-submit:hover{border-color:var(--gold);color:var(--ink);transform:scale(1.03)}
+
+.gb-entries{display:flex;flex-direction:column;gap:0}
+.gb-entry{border-top:.5px solid var(--border);padding:20px 0;opacity:0;animation:entIn .5s ease forwards}
+.gb-entry-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.gb-name{font-size:14px;font-style:italic;color:rgba(13,13,13,.6)}
+.gb-date{font-size:12px;color:var(--muted)}
+.gb-text{font-size:16px;font-style:italic;color:var(--muted);line-height:1.85}
+.gb-empty{font-size:15px;font-style:italic;color:var(--muted);padding:24px 0}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="scrapbook">
+  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:21%;opacity:0.20;transform:rotate(8deg);top:22%;left:1%;"    src="background scrapbook/ChatGPT_Image_May_8__2026__01_58_51_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(4deg);top:52%;left:3%;"    src="background scrapbook/31a1ae57-af37-4164-8146-ca160390fb23.png">
+  <img style="width:19%;opacity:0.20;transform:rotate(-7deg);top:68%;left:-1%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.50.56_PM-removebg-preview.png">
+  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(7deg);top:38%;right:-1%;"  src="background scrapbook/febc243b-5f4c-4ee8-b520-b1813e77146b.png">
+  <img style="width:13%;opacity:0.24;transform:rotate(4deg);top:62%;right:1%;"   src="background scrapbook/74c6d361-28fc-48ee-be7d-ac880a32ec1b.png">
+  <img style="width:15%;opacity:0.26;transform:rotate(3deg);top:80%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
+</div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <span class="nav-label">spaces i created</span>
+</nav>
+
+<section class="hero">
+  <span class="room-tag">event archive</span>
+  <h1>rooms i've<br>made for people</h1>
+  <p class="hero-sub">events are temporary architecture. you build them, fill them with people, and then they're gone — but the people remember.</p>
+</section>
+
+<section class="events">
+  <p class="events-label">events</p>
+  <div id="event-list"></div>
+</section>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-text">guestbook</span>
+  <div class="divider-line"></div>
+</div>
+
+<section class="guestbook">
+  <h2 class="gb-title">leave a note</h2>
+  <p class="gb-sub">if you were at one of these events, or just want to say something — this is the spot.</p>
+  <form class="gb-form" id="gb-form">
+    <div class="gb-row">
+      <input type="text" id="gb-name" placeholder="your name" maxlength="40" autocomplete="off">
+      <input type="text" id="gb-event-ref" placeholder="which event? (optional)" maxlength="60" autocomplete="off">
+    </div>
+    <textarea id="gb-msg" placeholder="what do you want to leave here?" maxlength="300"></textarea>
+    <button type="submit" class="gb-submit">leave a note</button>
+  </form>
+  <div id="gb-entries"></div>
+</section>
+
+<script>
+const EVENTS = [
+  {
+    name:'khel khel mein',type:'community event',year:'2024',color:'#c06a4f',
+    desc:'a south asian play night — board games, desi snacks, and the specific joy of games that require you to argue with your cousins. the name means "in play" — and it was.',
+    details:{venue:'usc campus',format:'in-person, 80+ attendees',role:'lead organizer'},
+    photos:3,delay:'.08s'
+  },
+  {
+    name:'nigeria day',type:'cultural celebration',year:'2024',color:'#3d8a60',
+    desc:'a celebration of nigerian culture, food, and community at usc. coordinated across student orgs to build something that felt real — not performative, but genuinely joyful.',
+    details:{venue:'usc campus',format:'in-person, cross-org collab',role:'co-organizer'},
+    photos:3,delay:'.18s'
+  },
+  {
+    name:'intragrade matches',type:'sports + community',year:'2024',color:'#4a7aaa',
+    desc:'inter-class sports matches designed to actually get people off their laptops. not just a game — a reason to show up for each other in the middle of midterms.',
+    details:{venue:'usc recreation park',format:'tournament-style',role:'event lead'},
+    photos:2,delay:'.28s'
+  },
+  {
+    name:'sandbox makeathon',type:'design sprint',year:'2024',color:'#c48a3a',
+    desc:'a one-day makeathon with sandbox — usc\'s innovation hub. teams built things, pitched things, and mostly just proved that good work happens when you give people a deadline and a problem they care about.',
+    details:{venue:'usc sandbox',format:'12-hour sprint, 10+ teams',role:'organizer + mentor'},
+    photos:3,delay:'.36s'
+  },
+];
+
+const eList = document.getElementById('event-list');
+EVENTS.forEach(ev => {
+  const entry = document.createElement('div');
+  entry.className = 'event-entry';
+  entry.style.cssText = `--delay:${ev.delay};--color:${ev.color}`;
+  const photos = Array.from({length:ev.photos},()=>`<div class="event-photo"><span class="event-photo-icon">□</span></div>`).join('');
+  entry.innerHTML = `
+    <div class="event-bar">
+      <div class="event-stripe"></div>
+      <span class="event-name">${ev.name}</span>
+      <span class="event-type">${ev.type}</span>
+      <span class="event-year">${ev.year}</span>
+      <button class="event-toggle" aria-label="expand">+</button>
+    </div>
+    <div class="event-body">
+      <div class="event-content">
+        <p class="event-desc">${ev.desc}</p>
+        <div class="event-details">
+          ${Object.entries(ev.details).map(([k,v])=>`
+            <div class="event-detail-item">
+              <span class="detail-key">${k}</span>
+              <span class="detail-val">${v}</span>
+            </div>`).join('')}
+        </div>
+        <div class="event-photo-row">${photos}</div>
+      </div>
+    </div>`;
+  entry.querySelector('.event-bar').addEventListener('click', () => entry.classList.toggle('open'));
+  eList.appendChild(entry);
+});
+
+const STORE_KEY = 'aanya_guestbook_v1';
+function loadEntries(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch{return[];}}
+function saveEntries(arr){localStorage.setItem(STORE_KEY,JSON.stringify(arr));}
+function formatDate(ts){return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toLowerCase();}
+function renderEntries(){
+  const container=document.getElementById('gb-entries');
+  const entries=loadEntries();
+  if(!entries.length){container.innerHTML='<p class="gb-empty">no notes yet — be the first.</p>';return;}
+  container.innerHTML='';
+  [...entries].reverse().forEach(e=>{
+    const el=document.createElement('div');el.className='gb-entry';
+    el.innerHTML=`
+      <div class="gb-entry-header">
+        <span class="gb-name">${e.name}${e.event?` · <em style="opacity:.6">${e.event}</em>`:''}</span>
+        <span class="gb-date">${formatDate(e.ts)}</span>
+      </div>
+      <p class="gb-text">${e.msg}</p>`;
+    container.appendChild(el);
+  });
+}
+document.getElementById('gb-form').addEventListener('submit',ev=>{
+  ev.preventDefault();
+  const name=document.getElementById('gb-name').value.trim();
+  const msg=document.getElementById('gb-msg').value.trim();
+  const event=document.getElementById('gb-event-ref').value.trim();
+  if(!name||!msg)return;
+  const entries=loadEntries();
+  entries.push({name,msg,event,ts:Date.now()});
+  saveEntries(entries);
+  document.getElementById('gb-name').value='';
+  document.getElementById('gb-msg').value='';
+  document.getElementById('gb-event-ref').value='';
+  renderEntries();
+});
+renderEntries();
+</script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — art</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'EB Garamond', serif;
+  color: #f7f3eb;
+  text-transform: lowercase;
+  cursor: default;
+}
+
+/* ── MUSEUM ROOM ── */
+.gallery-room {
+  position: fixed; inset: 0;
+  background: #1a1008 url('digital art/museum-bg.jpg') center center / contain no-repeat;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 36px;
+  background: transparent;
+}
+.nav-back {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px; font-style: italic;
+  color: rgba(247,243,235,0.75);
+  text-decoration: none;
+  transition: color 0.2s;
+  letter-spacing: 0.5px;
+}
+.nav-back:hover { color: #fff; }
+.nav-logo {
+  font-family: 'EB Garamond', serif;
+  font-size: 22px; font-weight: 500;
+  letter-spacing: 3px;
+  color: rgba(247,243,235,0.55);
+  text-decoration: none;
+}
+.nav-right { width: 80px; }
+
+/* ── PAINTING HOTSPOTS ── */
+/* Invisible clickable overlays over the paintings in museum-bg.jpg */
+.painting-spot {
+  position: fixed;
+  cursor: pointer;
+  overflow: hidden;
+  background: transparent;
+}
+.painting-spot img {
+  display: none;
+}
+
+/* Positions are set dynamically by JS based on rendered image size */
+#spot-left, #spot-right {
+  transition: none;
+}
+
+/* ── LIGHTBOX ── */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(8,5,2,0.93);
+  z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(24px, 4vw, 60px);
+  padding: clamp(20px,4vh,48px) clamp(24px,4vw,60px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.lightbox.active { opacity: 1; pointer-events: all; }
+
+.lightbox-image {
+  flex: 0 0 auto;
+  max-height: 80vh;
+  max-width: 50%;
+  opacity: 0;
+  transform: scale(0.88) translateY(20px);
+  transition: opacity 0.4s ease 0.1s, transform 0.4s cubic-bezier(.34,1.56,.64,1) 0.1s;
+}
+.lightbox.active .lightbox-image { opacity: 1; transform: scale(1) translateY(0); }
+.lightbox-image img {
+  max-height: 80vh;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.85), 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.lightbox-card {
+  flex: 0 0 auto;
+  width: clamp(260px, 28vw, 360px);
+  background: #faf8f4;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  padding: clamp(24px,3vw,40px);
+  box-shadow: 4px 8px 40px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
+  text-transform: none;
+  color: #0d0d0d;
+}
+.lightbox.active .lightbox-card { opacity: 1; transform: translateX(0); }
+
+.card-title {
+  font-size: clamp(18px,2.2vw,26px);
+  font-weight: 500;
+  line-height: 1.2;
+  color: #0d0d0d;
+  margin-bottom: 4px;
+}
+.card-subtitle {
+  font-size: clamp(13px,1.4vw,16px);
+  font-style: italic;
+  color: #6a5a3a;
+  margin-bottom: 20px;
+}
+.card-meta {
+  font-size: clamp(12px,1.2vw,14px);
+  color: #3a3028;
+  line-height: 1.9;
+  margin-bottom: 20px;
+  border-top: 0.5px solid rgba(0,0,0,0.1);
+  border-bottom: 0.5px solid rgba(0,0,0,0.1);
+  padding: 14px 0;
+}
+.card-desc {
+  font-size: clamp(13px,1.3vw,15px);
+  line-height: 1.75;
+  color: #2a2018;
+}
+.card-desc p + p { margin-top: 12px; }
+
+.lightbox-close {
+  position: absolute;
+  top: clamp(16px,3vh,28px);
+  right: clamp(20px,3vw,36px);
+  font-family: 'EB Garamond', serif;
+  font-size: 28px; font-style: italic;
+  color: rgba(247,243,235,0.45);
+  background: none; border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.lightbox-close:hover { color: rgba(247,243,235,0.9); }
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#0a0905;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+
+<div class="gallery-room"></div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <a href="aanya-portfolio-v14.html" class="nav-logo">aanya</a>
+  <div class="nav-right"></div>
+</nav>
+
+<!-- clickable painting over left frame (LeBron) -->
+<div class="painting-spot" id="spot-left" onclick="openLightbox(0)">
+  <img src="digital art/lebron film.png" alt="sandbox makeathon promotion">
+</div>
+
+<!-- clickable painting over right frame (SZA) -->
+<div class="painting-spot" id="spot-right" onclick="openLightbox(1)">
+  <img src="digital art/sza album cover .png" alt="sandbox makeathon promotion">
+</div>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" onclick="handleLightboxClick(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <div class="lightbox-image">
+    <img id="lb-img" src="" alt="">
+  </div>
+  <div class="lightbox-card" id="lb-card"></div>
+</div>
+
+<script>
+const pieces = [
+  {
+    src: 'digital art/lebron film.png',
+    title: 'sandbox makeathon promotion',
+    subtitle: 'made on Reve',
+    medium: 'Digital Art',
+    year: '2026',
+    dimensions: 'variable',
+    edition: '1',
+    desc: [
+      "Promotional campaign for the Sandbox × Reve Makeathon, Sandbox's first community event where participants were challenged to create their world using Reve.",
+      "Part of Sandbox's ongoing mission to empower the next generation of creators."
+    ]
+  },
+  {
+    src: 'digital art/sza album cover .png',
+    title: 'sandbox makeathon promotion',
+    subtitle: 'made on Reve',
+    medium: 'Digital Art',
+    year: '2026',
+    dimensions: 'variable',
+    edition: '1',
+    desc: [
+      "Promotional campaign for the Sandbox × Reve Makeathon, Sandbox's first community event where participants were challenged to create their world using Reve.",
+      "Part of Sandbox's ongoing mission to empower the next generation of creators."
+    ]
+  }
+];
+
+function openLightbox(index) {
+  const p = pieces[index];
+  document.getElementById('lb-img').src = p.src;
+  document.getElementById('lb-card').innerHTML = `
+    <div class="card-title">${p.title}</div>
+    <div class="card-subtitle">${p.subtitle}</div>
+    <div class="card-meta">
+      ${p.medium}<br>
+      ${p.year}<br>
+      Dimensions ${p.dimensions}<br>
+      Edition of ${p.edition}
+    </div>
+    <div class="card-desc">${p.desc.map(t => `<p>${t}</p>`).join('')}</div>
+  `;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleLightboxClick(e) {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// ── DYNAMIC PAINTING HOTSPOT POSITIONING ──
+// museum-bg.jpg is 1536×1024, displayed with background-size:contain
+// so we calculate the rendered image bounds and map painting coords to screen px
+function positionPaintings() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const imgW = 1536, imgH = 1024;
+  const scale = Math.min(vw / imgW, vh / imgH);
+  const renderedW = imgW * scale, renderedH = imgH * scale;
+  const offsetX = (vw - renderedW) / 2;
+  const offsetY = (vh - renderedH) / 2;
+
+  // coords as % of the source image dimensions
+  const paintings = [
+    { id: 'spot-left',  x: 8.5,  y: 12.2, w: 18.2, h: 55.7 },
+    { id: 'spot-right', x: 44.6, y: 7.8,  w: 24.7, h: 56.6 },
+  ];
+
+  paintings.forEach(p => {
+    const el = document.getElementById(p.id);
+    if (!el) return;
+    el.style.left   = (offsetX + p.x / 100 * renderedW) + 'px';
+    el.style.top    = (offsetY + p.y / 100 * renderedH) + 'px';
+    el.style.width  = (p.w / 100 * renderedW) + 'px';
+    el.style.height = (p.h / 100 * renderedH) + 'px';
+  });
+}
+
+positionPaintings();
+window.addEventListener('resize', positionPaintings);
+</script>
+</body>
+</html>

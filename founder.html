@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — as a founder</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
+body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+
+.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
+nav,section,.board-canvas{position:relative;z-index:1}
+
+/* ── NAV ── */
+nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:.5px solid var(--border);position:sticky;top:0;
+  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
+.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--ink)}
+.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+
+/* ── HERO ── */
+.hero{max-width:680px;margin:64px auto 48px;padding:0 24px}
+.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
+.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:500px}
+
+/* ── BOARD CANVAS ── */
+.board-canvas{
+  max-width:1080px;margin:0 auto;padding:0 24px 80px;
+  display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media(max-width:720px){.board-canvas{grid-template-columns:1fr}}
+.board-label{grid-column:1/-1;font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:8px}
+
+/* ── PROJECT PANEL ── */
+.project-panel{
+  position:relative;padding:32px 28px;
+  background:#fff;border:.5px solid var(--border);border-radius:4px;
+  box-shadow:0 2px 16px rgba(0,0,0,.05);
+  opacity:0;animation:panelIn .65s cubic-bezier(.4,0,.2,1) forwards var(--delay,0s);
+  transition:border-color .25s,box-shadow .25s}
+@keyframes panelIn{to{opacity:1;transform:none}}
+.project-panel:hover{border-color:rgba(138,115,85,.3);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+
+.project-panel::before{
+  content:'';position:absolute;top:24px;left:0;width:3px;height:calc(100% - 48px);
+  background:linear-gradient(to bottom,var(--accent,rgba(138,115,85,.7)),transparent);
+  border-radius:0 2px 2px 0}
+
+.proj-org{font-size:10px;letter-spacing:3px;color:var(--accent-text,var(--gold));margin-bottom:14px;display:block}
+.proj-name{font-size:28px;font-style:italic;color:var(--ink);line-height:1.2;margin-bottom:14px}
+.proj-tagline{font-size:15px;font-style:italic;color:var(--muted);line-height:1.85;margin-bottom:20px}
+
+.proj-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:20px;
+  padding-top:18px;border-top:.5px solid var(--border)}
+.proj-stat{display:flex;flex-direction:column;gap:3px}
+.stat-val{font-size:22px;font-style:italic;color:rgba(13,13,13,.7)}
+.stat-key{font-size:10px;letter-spacing:2px;color:var(--muted)}
+
+.proj-more{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0}
+.project-panel.open .proj-more{max-height:600px;opacity:1}
+.proj-more-inner{padding-top:18px;border-top:.5px solid var(--border);margin-top:4px}
+.proj-body{font-size:15px;font-style:italic;color:var(--muted);line-height:2;margin-bottom:14px}
+
+.proj-milestones{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.proj-milestones li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;font-style:italic;color:var(--muted);line-height:1.6}
+.proj-milestones li::before{content:'→';color:var(--accent-text,var(--gold));flex-shrink:0;margin-top:2px}
+
+.proj-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.proj-tag{font-size:11px;letter-spacing:1.5px;color:var(--accent-text,var(--gold));
+  border:.5px solid var(--border);border-radius:20px;padding:3px 10px}
+
+.proj-expand{
+  display:flex;align-items:center;gap:10px;margin-top:18px;cursor:pointer;
+  font-size:13px;font-style:italic;color:var(--muted);transition:color .2s}
+.proj-expand:hover{color:var(--ink)}
+.project-panel.open .proj-expand{color:var(--accent-text,var(--gold))}
+
+/* ── DIAGRAM PANEL ── */
+.diagram-panel{
+  grid-column:1/-1;position:relative;padding:36px 28px;
+  background:#fff;border:.5px dashed var(--border);border-radius:4px;
+  opacity:0;animation:panelIn .65s cubic-bezier(.4,0,.2,1) forwards .55s}
+.diagram-label{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:24px;display:block}
+.diagram-nodes{display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px}
+.d-node{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;
+  opacity:0;animation:nodeIn .4s ease forwards var(--nd,0s)}
+@keyframes nodeIn{to{opacity:1}}
+.d-circle{
+  width:60px;height:60px;border-radius:50%;
+  border:.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-style:italic;color:var(--muted);text-align:center;
+  background:rgba(138,115,85,.04)}
+.d-label{font-size:11px;font-style:italic;color:var(--muted);text-align:center;max-width:72px;line-height:1.4}
+.d-arrow{width:32px;height:1px;background:var(--border);flex-shrink:0;position:relative;top:-28px}
+.d-arrow::after{content:'›';position:absolute;right:-4px;top:-10px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="scrapbook">
+  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:21%;opacity:0.20;transform:rotate(8deg);top:22%;left:1%;"    src="background scrapbook/ChatGPT_Image_May_8__2026__01_58_51_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(4deg);top:52%;left:3%;"    src="background scrapbook/31a1ae57-af37-4164-8146-ca160390fb23.png">
+  <img style="width:19%;opacity:0.20;transform:rotate(-7deg);top:70%;left:-1%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.50.56_PM-removebg-preview.png">
+  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(-4deg);top:28%;right:-2%;" src="background scrapbook/Screenshot_2026-05-08_at_1.55.53_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.20;transform:rotate(7deg);top:54%;right:-1%;"  src="background scrapbook/febc243b-5f4c-4ee8-b520-b1813e77146b.png">
+  <img style="width:15%;opacity:0.26;transform:rotate(3deg);top:78%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
+</div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <span class="nav-label">as a founder</span>
+</nav>
+
+<section class="hero">
+  <span class="room-tag">the whiteboard room</span>
+  <h1>things i've<br>started from scratch</h1>
+  <p class="hero-sub">building organizations and products — learning what it means to care enough about a problem to do something about it.</p>
+</section>
+
+<div class="board-canvas" id="board">
+  <p class="board-label">active projects</p>
+</div>
+
+<script>
+const PROJECTS = [
+  {
+    org:'national org · chapter lead',
+    name:'design for america',
+    accent:'rgba(80,140,100,.7)',
+    accentText:'#3d7a55',
+    tagline:'building the usc chapter and the la chapter of a national design-for-social-impact network.',
+    stats:[
+      {val:'usc + la',key:'chapters'},
+      {val:'20+',key:'members'},
+      {val:'4+',key:'projects run'},
+    ],
+    body:'design for america is a national network that helps students apply design thinking to real social problems. i run the usc chapter — managing projects, hosting workshops, and trying to make "human-centered design" mean something beyond a buzzword.\n\ni\'m also building the los angeles chapter to connect dfa to the broader la ecosystem of nonprofits, community orgs, and social enterprises.',
+    milestones:[
+      'launched usc chapter with founding cohort',
+      'partnered with 3 la-based nonprofits for semester-long design projects',
+      'hosted design jams and community workshops on campus',
+      'building la chapter to bridge campus ↔ city',
+    ],
+    tags:['community design','social impact','usc','los angeles','nonprofit'],
+    delay:'.1s'
+  },
+  {
+    org:'app · in development',
+    name:'la side',
+    accent:'rgba(180,110,60,.7)',
+    accentText:'#a0622a',
+    tagline:'an app for finding what\'s actually happening in los angeles this weekend.',
+    stats:[
+      {val:'1',key:'city'},
+      {val:'∞',key:'things happening'},
+      {val:'0',key:'sponsored posts'},
+    ],
+    body:'la is enormous and chronically under-indexed. you always hear about cool things after they happened — a pop-up, a show, a market, a screening in a parking lot.\n\nla side is a curation app built on good taste, not algorithms. the feed is human-curated, specific, and honest. if it\'s in there, it\'s actually worth going to.',
+    milestones:[
+      'identified the problem through personal frustration + user interviews',
+      'designed initial app concept and user flows',
+      'ongoing: building, iterating, figuring out the right curation model',
+      'future: launch with a small trusted curator network',
+    ],
+    tags:['product design','ios','los angeles','curation','community'],
+    delay:'.2s'
+  },
+];
+
+const board = document.getElementById('board');
+PROJECTS.forEach(p => {
+  const panel = document.createElement('div');
+  panel.className = 'project-panel';
+  panel.style.cssText = `--delay:${p.delay};--accent:${p.accent};--accent-text:${p.accentText}`;
+  panel.innerHTML = `
+    <span class="proj-org">${p.org}</span>
+    <h2 class="proj-name">${p.name}</h2>
+    <p class="proj-tagline">${p.tagline}</p>
+    <div class="proj-stats">
+      ${p.stats.map(s=>`<div class="proj-stat"><span class="stat-val">${s.val}</span><span class="stat-key">${s.key}</span></div>`).join('')}
+    </div>
+    <div class="proj-more">
+      <div class="proj-more-inner">
+        ${p.body.split('\n\n').map(t=>`<p class="proj-body">${t}</p>`).join('')}
+        <ul class="proj-milestones">
+          ${p.milestones.map(m=>`<li>${m}</li>`).join('')}
+        </ul>
+        <div class="proj-tags">${p.tags.map(t=>`<span class="proj-tag">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div class="proj-expand">read more →</div>`;
+  panel.querySelector('.proj-expand').addEventListener('click', () => {
+    panel.classList.toggle('open');
+    panel.querySelector('.proj-expand').textContent = panel.classList.contains('open') ? 'show less ←' : 'read more →';
+  });
+  board.appendChild(panel);
+});
+
+const diag = document.createElement('div');
+diag.className = 'diagram-panel';
+diag.innerHTML = `
+  <span class="diagram-label">how it connects</span>
+  <div class="diagram-nodes">
+    ${[
+      {label:'identify a gap',nd:'.6s'},
+      {label:'build a team',nd:'.75s'},
+      {label:'run something',nd:'.9s'},
+      {label:'learn + iterate',nd:'1.05s'},
+      {label:'make it bigger',nd:'1.2s'},
+    ].map((n,i,arr)=>`
+      <div class="d-node" style="--nd:${n.nd}">
+        <div class="d-circle">${String(i+1).padStart(2,'0')}</div>
+        <span class="d-label">${n.label}</span>
+      </div>
+      ${i<arr.length-1?'<div class="d-arrow"></div>':''}`).join('')}
+  </div>`;
+board.appendChild(diag);
+</script>
+</body>
+</html>

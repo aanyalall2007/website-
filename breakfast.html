@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — make my breakfast</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#0c0905;font-family:'EB Garamond',serif;text-transform:lowercase;color:#fff;cursor:none}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.04;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/200px;animation:gr .1s steps(1) infinite}
+@keyframes gr{0%{background-position:0 0}50%{background-position:-12% 15%}100%{background-position:15% 22%}}
+#cursor{width:9px;height:9px;background:#fff;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;mix-blend-mode:difference;transform:translate(-50%,-50%)}
+.top-nav{position:fixed;top:0;left:0;right:0;padding:20px 36px;display:flex;justify-content:space-between;z-index:100;align-items:center}
+.nav-back{font-size:15px;font-style:italic;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;cursor:none}
+.nav-back:hover{color:rgba(255,255,255,.78)}
+.nav-label{font-size:11px;font-style:italic;color:rgba(255,255,255,.13);letter-spacing:3px}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(0,0,0,.75) 100%)}
+/* warm morning glow */
+.glow{position:fixed;top:-10%;left:20%;width:80vw;height:80vh;border-radius:50%;background:radial-gradient(ellipse,rgba(180,120,40,.07) 0%,transparent 65%);pointer-events:none;z-index:1}
+
+/* ── STAGE ── */
+.stage{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;position:relative;z-index:10}
+
+/* step system */
+.step{display:none;flex-direction:column;align-items:center;gap:0;text-align:center;max-width:480px;padding:0 32px}
+.step.show{display:flex}
+.step-tag{font-size:10px;letter-spacing:4px;color:rgba(200,150,80,.5);margin-bottom:18px}
+.step-title{font-size:clamp(32px,4vw,54px);font-style:italic;color:rgba(255,255,255,.82);line-height:1.15;margin-bottom:14px}
+.step-sub{font-size:16px;font-style:italic;color:rgba(255,255,255,.32);line-height:1.9;margin-bottom:32px}
+
+/* ── INTERACTIVE OBJECTS ── */
+.interact-zone{position:relative;width:200px;height:200px;margin-bottom:32px}
+
+/* bread */
+.bread{position:absolute;width:80px;height:60px;background:linear-gradient(160deg,#8b6340,#6b4520);border-radius:12px 12px 6px 6px;top:50%;left:50%;transform:translate(-50%,-50%);cursor:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.bread::before{content:'';position:absolute;top:0;left:6px;right:6px;height:20px;background:linear-gradient(160deg,#a07848,#8b6340);border-radius:14px 14px 0 0}
+.bread:hover{transform:translate(-50%,-54%) scale(1.08)}
+.bread.toasting{animation:toastShake .6s ease-in-out}
+@keyframes toastShake{0%,100%{transform:translate(-50%,-50%) rotate(0)}25%{transform:translate(-52%,-52%) rotate(-5deg)}75%{transform:translate(-48%,-52%) rotate(5deg)}}
+.bread.toasted{filter:brightness(.7) sepia(.4)}
+
+/* egg */
+.egg{position:absolute;cursor:none}
+.egg-white{width:60px;height:50px;background:rgba(240,235,220,.08);border:.5px solid rgba(240,235,220,.2);border-radius:50%;transition:background .5s,border-color .5s}
+.egg-yolk{width:22px;height:22px;background:rgba(200,150,40,.3);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition:background .5s}
+.egg.cracking{animation:eggCrack .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes eggCrack{0%{transform:scale(1) rotate(0)}50%{transform:scale(1.15) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
+.egg.cooked .egg-white{background:rgba(240,235,220,.65);border-color:rgba(255,255,255,.3)}
+.egg.cooked .egg-yolk{background:rgba(220,160,30,.85)}
+
+/* coffee cup */
+.mug{width:56px;height:56px;position:absolute;cursor:none}
+.mug-body{width:100%;height:76%;background:linear-gradient(160deg,#8a1a1a,#6a0f0f);border-radius:4px 4px 6px 6px;position:relative}
+.mug-handle{position:absolute;right:-12px;top:20%;width:14px;height:22px;border:3px solid #8a1a1a;border-left:none;border-radius:0 12px 12px 0}
+.mug-liquid{position:absolute;top:8px;left:8px;right:8px;height:24px;background:rgba(40,20,5,.6);border-radius:2px;transition:background 1s ease}
+.mug-steam{position:absolute;top:-20px;left:50%;transform:translateX(-50%);display:flex;gap:6px;opacity:0;transition:opacity .5s}
+.steam-line{width:2px;height:14px;background:rgba(255,255,255,.2);border-radius:2px;animation:steamRise 1.8s ease-in-out infinite var(--sd,0s)}
+@keyframes steamRise{0%,100%{transform:scaleY(0) translateY(0);opacity:0}50%{transform:scaleY(1) translateY(-4px);opacity:.5}}
+.mug.brewing .mug-liquid{background:rgba(80,35,8,.85)}
+.mug.brewing .mug-steam{opacity:1}
+
+/* avocado */
+.avo{width:50px;height:62px;position:absolute;cursor:none}
+.avo-outer{width:100%;height:100%;background:linear-gradient(160deg,#2a4a1a,#1a3010);border-radius:50% 50% 45% 45%;position:relative;overflow:hidden}
+.avo-inner{position:absolute;top:15%;left:15%;right:15%;bottom:10%;background:linear-gradient(160deg,#7ab04a,#5a9030);border-radius:inherit}
+.avo-pit{position:absolute;top:35%;left:50%;transform:translateX(-50%);width:18px;height:22px;background:linear-gradient(160deg,#6b3a1a,#4a2510);border-radius:50%}
+
+/* action button */
+.action-btn{background:transparent;border:.5px solid rgba(255,255,255,.18);border-radius:20px;padding:10px 24px;
+  font-family:'EB Garamond',serif;font-size:15px;font-style:italic;color:rgba(255,255,255,.55);cursor:none;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1)}
+.action-btn:hover{border-color:rgba(200,150,80,.4);color:rgba(255,255,255,.85);background:rgba(200,150,80,.06);transform:scale(1.04)}
+.action-btn:active{transform:scale(.97)}
+.action-btn.done{border-color:rgba(100,180,100,.3);color:rgba(100,200,100,.6);pointer-events:none}
+
+/* ── PLATE ── */
+.plate-view{display:none;flex-direction:column;align-items:center;gap:0}
+.plate-view.show{display:flex}
+.plate{width:180px;height:180px;border-radius:50%;background:linear-gradient(160deg,rgba(220,210,190,.1),rgba(180,170,150,.06));
+  border:.5px solid rgba(220,210,190,.2);position:relative;margin-bottom:24px;display:flex;align-items:center;justify-content:center}
+.plate-item{font-size:40px;position:absolute;opacity:0;animation:plateIn .5s cubic-bezier(.34,1.56,.64,1) forwards var(--pd,0s)}
+@keyframes plateIn{0%{transform:scale(0) rotate(-20deg);opacity:0}100%{transform:scale(1) rotate(var(--pr,0deg));opacity:1}}
+.plate-label{font-size:18px;font-style:italic;color:rgba(255,255,255,.55);margin-bottom:8px}
+.plate-sub{font-size:14px;font-style:italic;color:rgba(255,255,255,.28);line-height:1.8}
+
+/* progress dots */
+.progress-dots{display:flex;gap:8px;margin-bottom:28px}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .3s}
+.dot.done{background:rgba(200,150,80,.6)}
+.dot.active{background:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#0a0905;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="grain"></div>
+<div id="cursor"></div>
+<div class="glow"></div>
+<div class="vignette"></div>
+
+<nav class="top-nav">
+  <a href="sidequests.html" class="nav-back">← back to desk</a>
+  <span class="nav-label">breakfast</span>
+</nav>
+
+<div class="stage">
+  <div class="progress-dots" id="dots"></div>
+
+  <!-- step 0: welcome -->
+  <div class="step show" id="step-0">
+    <span class="step-tag">morning routine</span>
+    <h1 class="step-title">make my breakfast<br>with me</h1>
+    <p class="step-sub">avocado toast, poached eggs, and coffee. in that order. tap to cook.</p>
+    <button class="action-btn" onclick="nextStep()">let's start →</button>
+  </div>
+
+  <!-- step 1: toast the bread -->
+  <div class="step" id="step-1">
+    <span class="step-tag">step 1 of 4</span>
+    <h2 class="step-title">toast the bread</h2>
+    <p class="step-sub">click the bread to put it in the toaster.</p>
+    <div class="interact-zone" style="height:120px">
+      <div class="bread" id="bread" onclick="toastBread()"></div>
+    </div>
+    <p id="toast-status" style="font-size:14px;font-style:italic;color:rgba(255,255,255,.3);min-height:20px;margin-bottom:24px"></p>
+    <button class="action-btn" id="toast-next" style="opacity:0;pointer-events:none" onclick="nextStep()">next →</button>
+  </div>
+
+  <!-- step 2: crack the eggs -->
+  <div class="step" id="step-2">
+    <span class="step-tag">step 2 of 4</span>
+    <h2 class="step-title">crack the eggs</h2>
+    <p class="step-sub">two eggs. click each one to crack it.</p>
+    <div class="interact-zone" style="height:130px;width:160px">
+      <div class="egg" id="egg1" style="top:20px;left:10px" onclick="crackEgg('egg1')">
+        <div class="egg-white"></div><div class="egg-yolk"></div>
+      </div>
+      <div class="egg" id="egg2" style="top:20px;right:10px" onclick="crackEgg('egg2')">
+        <div class="egg-white"></div><div class="egg-yolk"></div>
+      </div>
+    </div>
+    <button class="action-btn" id="egg-next" style="opacity:0;pointer-events:none" onclick="nextStep()">next →</button>
+  </div>
+
+  <!-- step 3: brew coffee -->
+  <div class="step" id="step-3">
+    <span class="step-tag">step 3 of 4</span>
+    <h2 class="step-title">brew the coffee</h2>
+    <p class="step-sub">click the mug to start brewing.</p>
+    <div class="interact-zone" style="height:130px;width:100px">
+      <div class="mug" id="mug" style="top:30px;left:22px" onclick="brewCoffee()">
+        <div class="mug-body">
+          <div class="mug-steam"><div class="steam-line" style="--sd:0s"></div><div class="steam-line" style="--sd:.4s"></div><div class="steam-line" style="--sd:.8s"></div></div>
+          <div class="mug-liquid" id="mug-liquid"></div>
+        </div>
+        <div class="mug-handle"></div>
+      </div>
+    </div>
+    <p id="brew-status" style="font-size:14px;font-style:italic;color:rgba(255,255,255,.3);min-height:20px;margin-bottom:24px"></p>
+    <button class="action-btn" id="brew-next" style="opacity:0;pointer-events:none" onclick="nextStep()">plate it up →</button>
+  </div>
+
+  <!-- step 4: the plate -->
+  <div class="step" id="step-4">
+    <span class="step-tag">breakfast is served</span>
+    <h2 class="step-title">there it is.</h2>
+    <div class="interact-zone" style="height:220px;width:220px;margin-bottom:12px">
+      <div class="plate">
+        <span class="plate-item" style="--pd:.2s;--pr:-10deg;top:28%;left:22%">🥑</span>
+        <span class="plate-item" style="--pd:.4s;--pr:5deg;top:35%;left:45%">🍳</span>
+        <span class="plate-item" style="--pd:.6s;--pr:-5deg;top:55%;left:30%">🍞</span>
+        <span class="plate-item" style="--pd:.8s;--pr:8deg;top:20%;left:58%">🍳</span>
+      </div>
+    </div>
+    <p class="step-sub" style="margin-bottom:24px">avocado toast. poached eggs. coffee on the side.</p>
+    <button class="action-btn" onclick="location.href='sidequests.html'">← back to the desk</button>
+  </div>
+</div>
+
+<script>
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+const STEPS = 5;
+let currentStep = 0;
+const dots = document.getElementById('dots');
+for (let i = 0; i < STEPS-1; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.id = 'dot'+i;
+  dots.appendChild(d);
+}
+
+function nextStep() {
+  document.getElementById('step-'+currentStep).classList.remove('show');
+  document.getElementById('dot'+currentStep)?.classList.replace('active','done');
+  currentStep++;
+  document.getElementById('step-'+currentStep).classList.add('show');
+  document.getElementById('dot'+currentStep)?.classList.add('active');
+}
+
+/* bread toasting */
+let breadDone = false;
+function toastBread() {
+  if (breadDone) return;
+  const b = document.getElementById('bread');
+  b.classList.add('toasting');
+  document.getElementById('toast-status').textContent = 'toasting...';
+  setTimeout(() => {
+    b.classList.remove('toasting');
+    b.classList.add('toasted');
+    document.getElementById('toast-status').textContent = 'perfectly golden. ✓';
+    breadDone = true;
+    const btn = document.getElementById('toast-next');
+    btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+  }, 1800);
+}
+
+/* eggs */
+let eggsCracked = 0;
+function crackEgg(id) {
+  const egg = document.getElementById(id);
+  if (egg.classList.contains('cooked')) return;
+  egg.classList.add('cracking');
+  setTimeout(() => {
+    egg.classList.remove('cracking');
+    egg.classList.add('cooked');
+    eggsCracked++;
+    if (eggsCracked >= 2) {
+      const btn = document.getElementById('egg-next');
+      btn.style.opacity='1';btn.style.pointerEvents='auto';
+    }
+  }, 400);
+}
+
+/* coffee */
+let brewing = false, brewed = false;
+function brewCoffee() {
+  if (brewing || brewed) return;
+  brewing = true;
+  const mug = document.getElementById('mug');
+  mug.classList.add('brewing');
+  document.getElementById('brew-status').textContent = 'brewing...';
+  setTimeout(() => {
+    brewed = true;
+    document.getElementById('brew-status').textContent = 'ready. ✓';
+    const btn = document.getElementById('brew-next');
+    btn.style.opacity='1'; btn.style.pointerEvents='auto';
+  }, 2200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — as a researcher</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
+body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+
+.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
+nav,section,.shelf-section,.reader-wrap{position:relative;z-index:1}
+
+/* ── NAV ── */
+nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:.5px solid var(--border);position:sticky;top:0;
+  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
+.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--ink)}
+.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+
+/* ── HERO ── */
+.hero{max-width:680px;margin:64px auto 48px;padding:0 24px}
+.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
+.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:480px}
+
+/* ── BOOKSHELF ── */
+.shelf-section{padding:48px 24px 0;overflow-x:auto;max-width:1080px;margin:0 auto}
+.shelf-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:24px;padding:0 24px}
+
+.shelf{
+  display:flex;align-items:flex-end;gap:3px;
+  padding:0 24px;min-width:max-content;position:relative}
+.shelf::after{
+  content:'';position:absolute;bottom:-6px;left:0;right:0;height:6px;
+  background:linear-gradient(to bottom,rgba(138,115,85,.35),rgba(100,80,40,.2));
+  border-radius:0 0 2px 2px}
+
+.book{
+  height:var(--h,120px);width:var(--w,28px);
+  background:var(--bg,#2a1f10);
+  border-radius:1px 3px 3px 1px;
+  position:relative;cursor:pointer;flex-shrink:0;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .2s,box-shadow .2s;
+  opacity:0;animation:bookIn .5s ease forwards var(--bd,0s);
+  box-shadow:2px 4px 8px rgba(0,0,0,.15)}
+@keyframes bookIn{to{opacity:1}}
+.book:hover{transform:translateY(-16px) scale(1.04);filter:brightness(1.2);box-shadow:4px 8px 20px rgba(0,0,0,.25)}
+.book.active{transform:translateY(-18px) scale(1.06)}
+.book-spine{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  writing-mode:vertical-rl;text-orientation:mixed;
+  font-size:10px;font-style:italic;
+  color:rgba(255,255,255,.55);letter-spacing:1.5px;
+  padding:8px 0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.book::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:rgba(220,180,100,.3);border-radius:3px 3px 0 0}
+
+/* ── READER PANEL ── */
+.reader-wrap{padding:36px 24px 100px;max-width:820px;margin:0 auto;min-height:360px}
+
+.reader-panel{
+  opacity:0;transform:translateY(12px);
+  transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+.reader-panel.visible{opacity:1;transform:none;pointer-events:auto}
+
+.reader-category{font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:14px;display:block}
+.reader-title{font-size:30px;font-style:italic;color:var(--ink);line-height:1.25;margin-bottom:16px}
+.reader-meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:20px;border-bottom:.5px solid var(--border)}
+.meta-item{display:flex;flex-direction:column;gap:2px}
+.meta-key{font-size:10px;letter-spacing:2.5px;color:var(--muted)}
+.meta-val{font-size:14px;font-style:italic;color:rgba(13,13,13,.55)}
+.reader-abstract{font-size:16px;font-style:italic;color:var(--muted);line-height:2;margin-bottom:20px}
+.reader-findings{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.reader-findings li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;font-style:italic;color:var(--muted);line-height:1.75}
+.reader-findings li::before{content:'—';color:var(--gold);flex-shrink:0;margin-top:2px}
+.reader-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.reader-tag{font-size:11px;letter-spacing:1.5px;color:var(--gold);
+  border:.5px solid rgba(138,115,85,.3);border-radius:20px;padding:3px 10px}
+
+.reader-placeholder{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:260px;gap:12px}
+.reader-placeholder p{font-size:17px;font-style:italic;color:var(--muted);line-height:1.9}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="scrapbook">
+  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:21%;opacity:0.20;transform:rotate(8deg);top:20%;left:1%;"    src="background scrapbook/ChatGPT_Image_May_8__2026__01_58_51_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(-3deg);top:44%;left:-2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.51.28_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(4deg);top:66%;left:3%;"    src="background scrapbook/31a1ae57-af37-4164-8146-ca160390fb23.png">
+  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(-4deg);top:26%;right:-2%;" src="background scrapbook/Screenshot_2026-05-08_at_1.55.53_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(-5deg);top:52%;right:2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.54.17_PM-removebg-preview.png">
+  <img style="width:17%;opacity:0.20;transform:rotate(-8deg);top:72%;right:-1%;" src="background scrapbook/7e2bd913-7927-41fe-8677-fa678ec2b04a.png">
+</div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <span class="nav-label">researcher</span>
+</nav>
+
+<section class="hero">
+  <span class="room-tag">the archive</span>
+  <h1>things i've read,<br>studied, and sat with</h1>
+  <p class="hero-sub">research as curiosity made rigorous. pull a book from the shelf to read the notes.</p>
+</section>
+
+<div class="shelf-section">
+  <p class="shelf-label">the shelf</p>
+  <div class="shelf" id="shelf"></div>
+</div>
+
+<div class="reader-wrap">
+  <div id="reader">
+    <div class="reader-placeholder">
+      <p>select a book from the shelf above<br>to read the notes inside.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const BOOKS = [
+  {id:'b1',spine:'community',h:138,w:24,bg:'#2a1810',category:'community + design',title:'how communities sustain themselves',meta:{method:'ethnographic observation',context:'usc + los angeles',year:'2024'},abstract:'what makes a community last beyond its founding energy? this research looks at how student orgs, neighborhood collectives, and online spaces develop the structures and rituals that keep them alive — and what usually kills them.',findings:['community identity forms around shared language before shared values','rituals matter more than mission statements','the people who stay are more important than the people who show up','scale is often the enemy of depth'],tags:['community design','sociology','student orgs','los angeles'],bd:'.06s'},
+  {id:'b2',spine:'design ethics',h:118,w:20,bg:'#1a2818',category:'design + ethics',title:'design as a political act',meta:{method:'literature review + case studies',context:'dfa projects',year:'2024'},abstract:'every design decision allocates attention, access, and power. this is a collection of notes on the moments where design choices silently encode assumptions about who the world is built for.',findings:['neutral design does not exist — only invisible politics','accessibility is not an add-on, it\'s the baseline','the people excluded from the process are always the ones most affected by the product'],tags:['design ethics','social impact','accessibility','dfa'],bd:'.14s'},
+  {id:'b3',spine:'product research',h:152,w:26,bg:'#12181e',category:'product + user research',title:'what people say vs. what people do',meta:{method:'user interviews + usability testing',context:'la side app',year:'2025'},abstract:'a set of notes from early user research for la side. the core tension: people say they want curation, but their behavior shows they trust algorithmic feeds. unpacking that contradiction.',findings:['stated preferences and actual usage patterns diverge by ~40%','trust in curation is built through specificity, not volume','users want to feel like they found something, not that it was served to them','scarcity of options increases perceived value'],tags:['user research','product','la side','curation'],bd:'.22s'},
+  {id:'b4',spine:'belonging',h:130,w:22,bg:'#200e18',category:'sociology + belonging',title:'the architecture of belonging',meta:{method:'interviews + literature',context:'usc + cultural orgs',year:'2024'},abstract:'what does it feel like to belong somewhere, and what does the space — physical or social — need to do to create that feeling? exploring through cultural events, student orgs, and the gaps between them.',findings:['belonging is felt, not stated — it\'s in the details, not the branding','shared meals and shared stakes create faster bonds than shared identity labels','the third places theory still holds — but digital third places are fundamentally different'],tags:['sociology','belonging','third places','cultural events'],bd:'.30s'},
+  {id:'b5',spine:'systems',h:110,w:18,bg:'#0e1a10',category:'systems thinking',title:'feedback loops in social systems',meta:{method:'systems mapping',context:'community organizing',year:'2025'},abstract:'placeholder notes — research in progress. mapping feedback loops in community organizations to understand why some interventions stick and others evaporate.',findings:['most community problems are feedback problems, not resource problems','changing a system requires changing at least two leverage points simultaneously','in progress: more findings forthcoming'],tags:['systems thinking','community','feedback loops'],bd:'.38s'},
+  {id:'b6',spine:'storytelling',h:126,w:21,bg:'#1e1608',category:'narrative + communication',title:'how stories move people',meta:{method:'content analysis + reflection',context:'writing + presenting',year:'2024'},abstract:'notes on what makes a story land — from pitches to essays to event programming. pattern-recognition from paying close attention to what makes you feel something.',findings:['specificity is empathy — the more precise the detail, the more universally it lands','the turn is everything — good stories change direction at least once','what you leave out shapes the story as much as what you include'],tags:['storytelling','communication','writing','presenting'],bd:'.46s'},
+  {id:'b7',spine:'more soon',h:96,w:16,bg:'#141414',category:'coming soon',title:'the next thing i\'m reading into',meta:{method:'—',context:'—',year:'—'},abstract:'there\'s always a next question. this shelf keeps growing.',findings:['check back soon'],tags:[],bd:'.54s'},
+];
+
+const shelf = document.getElementById('shelf');
+const reader = document.getElementById('reader');
+let activeId = null;
+
+BOOKS.forEach(b => {
+  const book = document.createElement('div');
+  book.className = 'book';
+  book.style.cssText = `--h:${b.h}px;--w:${b.w}px;--bg:${b.bg};--bd:${b.bd}`;
+  book.innerHTML = `<div class="book-spine">${b.spine}</div>`;
+  book.addEventListener('click', () => {
+    if (activeId === b.id) {
+      book.classList.remove('active'); activeId = null; showPlaceholder(); return;
+    }
+    document.querySelectorAll('.book').forEach(bk => bk.classList.remove('active'));
+    book.classList.add('active'); activeId = b.id; showBook(b);
+  });
+  shelf.appendChild(book);
+});
+
+function showPlaceholder() {
+  reader.innerHTML = '<div class="reader-placeholder"><p>select a book from the shelf above<br>to read the notes inside.</p></div>';
+}
+function showBook(b) {
+  const panel = document.createElement('div');
+  panel.className = 'reader-panel';
+  panel.innerHTML = `
+    <p class="reader-category">${b.category}</p>
+    <h2 class="reader-title">${b.title}</h2>
+    <div class="reader-meta">
+      ${Object.entries(b.meta).map(([k,v])=>`<div class="meta-item"><span class="meta-key">${k}</span><span class="meta-val">${v}</span></div>`).join('')}
+    </div>
+    <p class="reader-abstract">${b.abstract}</p>
+    <ul class="reader-findings">${b.findings.map(f=>`<li>${f}</li>`).join('')}</ul>
+    ${b.tags.length?`<div class="reader-tags">${b.tags.map(t=>`<span class="reader-tag">${t}</span>`).join('')}</div>`:''}`;
+  reader.innerHTML = '';
+  reader.appendChild(panel);
+  requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add('visible')));
+}
+</script>
+</body>
+</html>

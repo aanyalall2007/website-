@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — blog</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #f7f3eb;
+  --ink: #0d0d0d;
+  --ink-soft: #2a2a2a;
+  --gold: #8a7355;
+  --muted: rgba(13,13,13,0.4);
+  --border: rgba(13,13,13,0.1);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'EB Garamond', serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  text-transform: lowercase;
+  cursor: default;
+}
+
+/* ── LAYOUT ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── NAV ── */
+nav {
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(247,243,235,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+.nav-back {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--ink); }
+.nav-name {
+  font-size: 18px;
+  font-style: italic;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+.nav-links { display: flex; gap: 28px; align-items: baseline; }
+.nav-links a {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--ink); }
+
+/* ── FEED PAGE ── */
+.feed-header {
+  max-width: 680px;
+  margin: 64px auto 48px;
+  padding: 0 24px;
+}
+.feed-title {
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.feed-title em { color: var(--gold); font-style: italic; }
+.feed-desc {
+  font-size: 16px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.feed {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+.post-card {
+  padding: 32px 0;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.post-card:hover { opacity: 0.7; }
+
+.post-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.post-date {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
+.post-tag {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  border: 0.5px solid rgba(138,115,85,0.4);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.post-title-feed {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.post-preview {
+  font-size: 16px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-read-more {
+  margin-top: 10px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--gold);
+}
+
+.feed-empty {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* ── POST PAGE ── */
+.post-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 56px 24px 120px;
+}
+.post-back {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 40px;
+  transition: color 0.2s;
+}
+.post-back:hover { color: var(--ink); }
+
+.post-header-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.post-title-full {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+.post-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 28px 0;
+}
+.post-body {
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+}
+.post-body p { margin-bottom: 24px; }
+.post-body p:last-child { margin-bottom: 0; }
+.post-body em { font-style: italic; color: var(--ink); }
+.post-body strong { font-weight: 600; }
+.post-body img {
+  display: block;
+  max-width: 100%;
+  max-height: 620px;
+  object-fit: contain;
+  margin: 34px auto;
+  border-radius: 3px;
+  filter: drop-shadow(0 8px 26px rgba(0,0,0,0.13));
+}
+
+/* ── WRITE PAGE ── */
+.write-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 120px;
+}
+.write-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 0.5px solid var(--border);
+}
+.write-header h2 {
+  font-size: 22px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* password gate */
+.auth-page {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 88px 24px 120px;
+}
+.auth-box {
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  padding: 32px 0;
+}
+.auth-title {
+  font-size: 24px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.auth-form {
+  display: flex;
+  gap: 10px;
+}
+.auth-input {
+  flex: 1;
+  min-width: 0;
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid var(--border);
+  padding: 9px 0;
+  outline: none;
+}
+.auth-input::placeholder { color: rgba(0,0,0,0.22); font-style: italic; }
+.auth-submit {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--gold);
+  background: transparent;
+  border: 0.5px solid rgba(138,115,85,0.35);
+  border-radius: 999px;
+  padding: 8px 18px;
+  cursor: pointer;
+  text-transform: lowercase;
+}
+.auth-submit:hover { color: var(--ink); border-color: rgba(0,0,0,0.3); }
+.auth-error {
+  min-height: 20px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* post list in writer */
+.draft-list { margin-bottom: 40px; }
+.draft-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 0.5px solid var(--border);
+  gap: 16px;
+}
+.draft-item-title { font-size: 16px; font-weight: 500; flex: 1; }
+.draft-item-date { font-size: 12px; font-style: italic; color: var(--muted); white-space: nowrap; }
+.draft-item-actions { display: flex; gap: 12px; }
+.btn-ghost {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 0;
+  transition: color 0.2s;
+  text-transform: lowercase;
+}
+.btn-ghost:hover { color: var(--ink); }
+.btn-ghost.delete:hover { color: #c0392b; }
+
+/* editor */
+.editor-wrap {
+  background: white;
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+}
+.editor-toolbar {
+  padding: 10px 20px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.toolbar-btn {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  background: none;
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 10px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.15s;
+  text-transform: lowercase;
+}
+.toolbar-btn:hover { background: var(--cream); color: var(--ink); border-color: rgba(0,0,0,0.2); }
+.editor-image-input { display: none; }
+
+.editor-fields { padding: 28px 32px; }
+.editor-field-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: var(--ink);
+  background: transparent;
+  margin-bottom: 8px;
+  text-transform: lowercase;
+}
+.editor-field-title::placeholder { color: rgba(0,0,0,0.2); }
+
+.editor-field-tag {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: var(--gold);
+  background: transparent;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+}
+.editor-field-tag::placeholder { color: rgba(138,115,85,0.3); }
+
+.editor-divider { width: 32px; height: 1px; background: var(--border); margin-bottom: 20px; }
+
+.editor-body {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  line-height: 1.85;
+  border: none;
+  outline: none;
+  width: 100%;
+  min-height: 320px;
+  color: var(--ink-soft);
+  background: transparent;
+  resize: none;
+  text-transform: none;
+}
+.editor-body::placeholder { color: rgba(0,0,0,0.18); font-style: italic; }
+.editor-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+.editor-image-card {
+  position: relative;
+  min-height: 118px;
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--cream);
+}
+.editor-image-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 118px;
+  object-fit: cover;
+  display: block;
+}
+.editor-image-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink);
+  background: rgba(247,243,235,0.92);
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 999px;
+  padding: 2px 8px;
+  cursor: pointer;
+  text-transform: lowercase;
+}
+
+.editor-actions {
+  padding: 16px 32px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.editor-status { font-size: 13px; font-style: italic; color: var(--muted); }
+
+.btn-publish {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  font-style: italic;
+  background: var(--ink);
+  color: var(--cream);
+  border: none;
+  padding: 8px 24px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  text-transform: lowercase;
+}
+.btn-publish:hover { opacity: 0.8; }
+.btn-publish.draft {
+  background: none;
+  color: var(--muted);
+  border: 0.5px solid var(--border);
+  margin-right: 12px;
+}
+.btn-publish.draft:hover { color: var(--ink); border-color: rgba(0,0,0,0.3); opacity: 1; }
+
+.new-post-btn {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  font-style: italic;
+  background: none;
+  border: 0.5px solid var(--border);
+  padding: 7px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+  text-transform: lowercase;
+}
+.new-post-btn:hover { color: var(--ink); border-color: rgba(0,0,0,0.3); }
+
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  padding: 10px 24px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* ── SCRAPBOOK MARGINS ── */
+.blog-scrapbook {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.blog-scrapbook img {
+  position: absolute;
+  display: block;
+  object-fit: contain;
+  filter: saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,0.13));
+  user-select: none;
+}
+nav, .page { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<div class="blog-scrapbook">
+  <!-- LEFT SIDE -->
+  <img style="width:18%;opacity:0.38;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:21%;opacity:0.28;transform:rotate(8deg);top:20%;left:1%;"    src="background scrapbook/ChatGPT_Image_May_8__2026__01_58_51_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.34;transform:rotate(-3deg);top:36%;left:-2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.51.28_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.36;transform:rotate(5deg);top:50%;left:3%;"    src="background scrapbook/8c2b2ba7-a861-4ed8-9037-ee6a7e83735d-1.png">
+  <img style="width:19%;opacity:0.30;transform:rotate(-7deg);top:62%;left:-1%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.50.56_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.34;transform:rotate(4deg);top:74%;left:1%;"    src="background scrapbook/31a1ae57-af37-4164-8146-ca160390fb23.png">
+  <img style="width:13%;opacity:0.36;transform:rotate(-6deg);top:84%;left:2%;"   src="background scrapbook/playbill-chess.jpg">
+  <!-- RIGHT SIDE -->
+  <img style="width:16%;opacity:0.36;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:21%;opacity:0.28;transform:rotate(-4deg);top:21%;right:-2%;" src="background scrapbook/Screenshot_2026-05-08_at_1.55.53_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.32;transform:rotate(7deg);top:36%;right:-1%;"  src="background scrapbook/febc243b-5f4c-4ee8-b520-b1813e77146b.png">
+  <img style="width:15%;opacity:0.34;transform:rotate(-5deg);top:50%;right:2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.54.17_PM-removebg-preview.png">
+  <img style="width:13%;opacity:0.32;transform:rotate(4deg);top:63%;right:1%;"   src="background scrapbook/74c6d361-28fc-48ee-be7d-ac880a32ec1b.png">
+  <img style="width:17%;opacity:0.28;transform:rotate(-8deg);top:74%;right:-1%;" src="background scrapbook/7e2bd913-7927-41fe-8677-fa678ec2b04a.png">
+  <img style="width:15%;opacity:0.36;transform:rotate(3deg);top:85%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <a href="aanya-portfolio-v14.html" class="nav-name">aanya</a>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('feed')" id="nav-feed" class="active">posts</a>
+    <a href="#write" onclick="showPage('write')" id="nav-write" style="display:none">write</a>
+  </div>
+</nav>
+
+<!-- ── FEED PAGE ── -->
+<div class="page active" id="page-feed">
+  <div class="feed-header">
+    <h1 class="feed-title">thoughts, unfiltered.<br><em>and everything in between.</em></h1>
+    <p class="feed-desc">no theme, no schedule, no audience in mind. just writing.</p>
+  </div>
+  <div class="feed" id="feed-list">
+    <div class="feed-empty" id="feed-empty">
+      nothing here yet.<br>go write something.
+    </div>
+  </div>
+</div>
+
+<!-- ── POST PAGE ── -->
+<div class="page" id="page-post">
+  <div class="post-page">
+    <div class="post-back" onclick="showPage('feed')">← back</div>
+    <div class="post-header-meta">
+      <span class="post-tag" id="view-tag"></span>
+      <span class="post-date" id="view-date"></span>
+    </div>
+    <h1 class="post-title-full" id="view-title"></h1>
+    <div class="post-divider"></div>
+    <div class="post-body" id="view-body"></div>
+  </div>
+</div>
+
+<!-- ── PASSWORD PAGE ── -->
+<div class="page" id="page-auth">
+  <div class="auth-page">
+    <div class="auth-box">
+      <h1 class="auth-title">writer access</h1>
+      <form class="auth-form" onsubmit="unlockWrite(event)">
+        <input class="auth-input" id="write-password" placeholder="password" type="password" autocomplete="current-password">
+        <button class="auth-submit" type="submit">enter</button>
+      </form>
+      <div class="auth-error" id="auth-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WRITE PAGE ── -->
+<div class="page" id="page-write">
+  <div class="write-page">
+    <div class="write-header">
+      <h2>your posts</h2>
+      <button class="new-post-btn" onclick="newPost()">+ new post</button>
+    </div>
+
+    <div class="draft-list" id="draft-list"></div>
+
+    <!-- editor -->
+    <div class="editor-wrap" id="editor-wrap">
+      <div class="editor-toolbar">
+        <button class="toolbar-btn" onclick="fmt('bold')"><strong>b</strong></button>
+        <button class="toolbar-btn" onclick="fmt('italic')"><em>i</em></button>
+        <button class="toolbar-btn" onclick="insertHr()">— divider</button>
+        <button class="toolbar-btn" onclick="pickImage()">image</button>
+        <input class="editor-image-input" id="post-image" type="file" accept="image/*" onchange="insertImage(this)">
+      </div>
+      <div class="editor-fields">
+        <input class="editor-field-title" id="post-title" placeholder="title" type="text">
+        <input class="editor-field-tag" id="post-tag" placeholder="tag (e.g. on life, lately, rant)" type="text">
+        <div class="editor-divider"></div>
+        <textarea class="editor-body" id="post-body" placeholder="write anything. no one's watching."></textarea>
+        <div class="editor-images" id="editor-images"></div>
+      </div>
+      <div class="editor-actions">
+        <span class="editor-status" id="editor-status">unsaved</span>
+        <div>
+          <button class="btn-publish draft" onclick="savePost(false)">save draft</button>
+          <button class="btn-publish" onclick="savePost(true)">publish →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let posts = [];
+let editingId = null;
+let autoSaveTimer = null;
+let writeUnlocked = false;
+let currentImages = [];
+
+// ── STORAGE ──
+const STORAGE_KEY = 'aanya-blog-posts';
+const WRITE_PASSWORD = 'write';
+const WRITE_AUTH_KEY = 'aanya-blog-write-unlocked';
+
+async function loadPosts() {
+  posts = loadLocalPosts();
+  try {
+    if (posts.length === 0 && window.storage) {
+      const result = await window.storage.get(STORAGE_KEY);
+      if (result && result.value) {
+        posts = JSON.parse(result.value);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      }
+    }
+  } catch(e) {
+    posts = loadLocalPosts();
+  }
+  renderFeed();
+  renderDraftList();
+}
+
+function loadLocalPosts() {
+  try {
+    const result = localStorage.getItem(STORAGE_KEY);
+    return result ? JSON.parse(result) : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+async function savePosts() {
+  const value = JSON.stringify(posts);
+  try {
+    localStorage.setItem(STORAGE_KEY, value);
+  } catch(e) {
+    console.error('storage error', e);
+  }
+  try {
+    if (window.storage) {
+      await window.storage.set(STORAGE_KEY, value);
+    }
+  } catch(e) {}
+}
+
+// ── NAVIGATION ──
+function showPage(name) {
+  if (name === 'write' && !writeUnlocked) {
+    showAuthPage();
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (name === 'feed') document.getElementById('nav-feed').classList.add('active');
+  if (name === 'write') document.getElementById('nav-write').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showAuthPage() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-auth').classList.add('active');
+  window.scrollTo(0, 0);
+  setTimeout(() => document.getElementById('write-password').focus(), 0);
+}
+
+function unlockWrite(event) {
+  event.preventDefault();
+  const input = document.getElementById('write-password');
+  const error = document.getElementById('auth-error');
+  if (input.value === WRITE_PASSWORD) {
+    writeUnlocked = true;
+    try {
+      sessionStorage.setItem(WRITE_AUTH_KEY, 'true');
+    } catch(e) {}
+    document.getElementById('nav-write').style.display = '';
+    error.textContent = '';
+    window.location.hash = 'write';
+    showPage('write');
+    return;
+  }
+  input.value = '';
+  error.textContent = 'wrong password';
+  input.focus();
+}
+
+function isWriteRoute() {
+  const path = window.location.pathname.toLowerCase();
+  const search = window.location.search.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  return hash === '#write' || search.includes('write') || path.endsWith('/write') || path.endsWith('/blog.html/write');
+}
+
+// ── FEED ──
+function renderFeed() {
+  const list = document.getElementById('feed-list');
+  const empty = document.getElementById('feed-empty');
+  const published = posts.filter(p => p.published).sort((a,b) => b.date - a.date);
+
+  if (published.length === 0) {
+    empty.style.display = 'block';
+    // remove any existing cards
+    list.querySelectorAll('.post-card').forEach(c => c.remove());
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.querySelectorAll('.post-card').forEach(c => c.remove());
+
+  published.forEach(post => {
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    card.onclick = () => openPost(post.id);
+    const preview = post.body.replace(/<[^>]+>/g,'').slice(0, 140);
+    card.innerHTML = `
+      <div class="post-meta">
+        ${post.tag ? `<span class="post-tag">${post.tag}</span>` : ''}
+        <span class="post-date">${formatDate(post.date)}</span>
+      </div>
+      <div class="post-title-feed">${post.title || 'untitled'}</div>
+      <div class="post-preview">${preview}${preview.length >= 140 ? '…' : ''}</div>
+      <div class="post-read-more">read →</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function openPost(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  document.getElementById('view-title').textContent = post.title || 'untitled';
+  document.getElementById('view-date').textContent = formatDate(post.date);
+  document.getElementById('view-tag').textContent = post.tag || '';
+  document.getElementById('view-tag').style.display = post.tag ? '' : 'none';
+  document.getElementById('view-body').innerHTML = renderPostBody(post.body, post.images || []);
+  showPage('post');
+}
+
+function renderPostBody(body, images = []) {
+  const textHtml = (body || '').split('\n\n').map(block => {
+    const trimmed = block.trim();
+    if (!trimmed) return '';
+    if (trimmed.startsWith('<img ')) return trimmed;
+    return `<p>${trimmed.replace(/\n/g,'<br>')}</p>`;
+  }).join('');
+  const imageHtml = images.map(src => `<img src="${src}" alt="">`).join('');
+  return textHtml + imageHtml;
+}
+
+// ── WRITER ──
+function renderDraftList() {
+  const list = document.getElementById('draft-list');
+  list.innerHTML = '';
+  if (posts.length === 0) {
+    list.innerHTML = '<p style="font-style:italic;color:var(--muted);font-size:15px;padding:16px 0 24px;">no posts yet.</p>';
+    return;
+  }
+  const sorted = [...posts].sort((a,b) => b.date - a.date);
+  sorted.forEach(post => {
+    const div = document.createElement('div');
+    div.className = 'draft-item';
+    div.innerHTML = `
+      <span class="draft-item-title">${post.title || 'untitled'} ${post.published ? '<span style="font-size:11px;color:var(--gold);letter-spacing:1px;">live</span>' : '<span style="font-size:11px;color:var(--muted);letter-spacing:1px;">draft</span>'}</span>
+      <span class="draft-item-date">${formatDate(post.date)}</span>
+      <div class="draft-item-actions">
+        <button class="btn-ghost" onclick="editPost('${post.id}')">edit</button>
+        <button class="btn-ghost delete" onclick="deletePost('${post.id}')">delete</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function newPost() {
+  editingId = null;
+  document.getElementById('post-title').value = '';
+  document.getElementById('post-tag').value = '';
+  document.getElementById('post-body').value = '';
+  currentImages = [];
+  renderEditorImages();
+  document.getElementById('editor-status').textContent = 'new post';
+  document.getElementById('post-title').focus();
+  document.getElementById('editor-wrap').scrollIntoView({ behavior: 'smooth' });
+}
+
+function editPost(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  editingId = id;
+  document.getElementById('post-title').value = post.title;
+  document.getElementById('post-tag').value = post.tag || '';
+  const normalized = extractBodyImages(post.body || '');
+  document.getElementById('post-body').value = normalized.body;
+  currentImages = [...(post.images || []), ...normalized.images];
+  renderEditorImages();
+  document.getElementById('editor-status').textContent = 'editing';
+  document.getElementById('editor-wrap').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function savePost(publish) {
+  const title = document.getElementById('post-title').value.trim();
+  const tag = document.getElementById('post-tag').value.trim();
+  let body = document.getElementById('post-body').value.trim();
+  const normalized = extractBodyImages(body);
+  body = normalized.body;
+  if (normalized.images.length) {
+    currentImages = [...currentImages, ...normalized.images];
+    renderEditorImages();
+  }
+
+  if (!title && !body && currentImages.length === 0) { showToast('add a title, words, or an image first'); return; }
+
+  if (editingId) {
+    const idx = posts.findIndex(p => p.id === editingId);
+    if (idx !== -1) {
+      // preserve original date if just editing, update only if publishing fresh
+      posts[idx].title = title;
+      posts[idx].tag = tag;
+      posts[idx].body = body;
+      posts[idx].images = [...currentImages];
+      if (publish && !posts[idx].published) {
+        posts[idx].date = Date.now(); // set publish date first time
+      }
+      posts[idx].published = publish;
+    }
+  } else {
+    const newPost = {
+      id: Date.now().toString(),
+      title, tag, body,
+      images: [...currentImages],
+      published: publish,
+      date: Date.now()
+    };
+    posts.push(newPost);
+    editingId = newPost.id;
+  }
+
+  await savePosts();
+  renderFeed();       // mirror changes immediately
+  renderDraftList();
+  document.getElementById('editor-status').textContent = publish ? 'published ✓' : 'draft saved ✓';
+  showToast(publish ? 'published — live on your blog!' : 'saved as draft');
+}
+
+function extractBodyImages(body) {
+  const images = [];
+  const cleaned = body.replace(/<img\s+[^>]*src="([^"]+)"[^>]*>/gi, (match, src) => {
+    images.push(src);
+    return '';
+  }).replace(/\n{3,}/g, '\n\n').trim();
+  return { body: cleaned, images };
+}
+
+async function deletePost(id) {
+  if (!confirm('delete this post?')) return;
+  posts = posts.filter(p => p.id !== id);
+  if (editingId === id) {
+    editingId = null;
+    document.getElementById('post-title').value = '';
+    document.getElementById('post-tag').value = '';
+    document.getElementById('post-body').value = '';
+    currentImages = [];
+    renderEditorImages();
+    document.getElementById('editor-status').textContent = 'deleted';
+  }
+  await savePosts();
+  renderFeed();
+  renderDraftList();
+  showToast('deleted');
+}
+
+// ── FORMATTING ──
+function fmt(cmd) {
+  const ta = document.getElementById('post-body');
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  const sel = ta.value.slice(start, end);
+  if (!sel) return;
+  const wrap = cmd === 'bold' ? ['**','**'] : ['_','_'];
+  ta.value = ta.value.slice(0,start) + wrap[0] + sel + wrap[1] + ta.value.slice(end);
+  ta.focus();
+}
+
+function insertHr() {
+  const ta = document.getElementById('post-body');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0,pos) + '\n\n—\n\n' + ta.value.slice(pos);
+  ta.focus();
+}
+
+function pickImage() {
+  document.getElementById('post-image').click();
+}
+
+function insertImage(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = event => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 1400;
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.76);
+      currentImages.push(dataUrl);
+      renderEditorImages();
+      document.getElementById('editor-status').textContent = 'unsaved';
+      showToast('image added');
+      input.value = '';
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderEditorImages() {
+  const wrap = document.getElementById('editor-images');
+  wrap.innerHTML = '';
+  currentImages.forEach((src, index) => {
+    const card = document.createElement('div');
+    card.className = 'editor-image-card';
+    card.innerHTML = `
+      <img src="${src}" alt="">
+      <button class="editor-image-remove" onclick="removeImage(${index})">remove</button>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function removeImage(index) {
+  currentImages.splice(index, 1);
+  renderEditorImages();
+  document.getElementById('editor-status').textContent = 'unsaved';
+}
+
+function insertAtCursor(text) {
+  const ta = document.getElementById('post-body');
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  ta.value = ta.value.slice(0, start) + text + ta.value.slice(end);
+  const next = start + text.length;
+  ta.setSelectionRange(next, next);
+  ta.focus();
+}
+
+// auto-save draft every 2s while typing; also save on blur + warn on close
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('post-body');
+  const titleEl = document.getElementById('post-title');
+  [ta, titleEl].forEach(el => {
+    el.addEventListener('input', () => {
+      document.getElementById('editor-status').textContent = 'unsaved';
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => savePost(false), 2000);
+    });
+    el.addEventListener('blur', () => {
+      const hasContent = document.getElementById('post-title').value.trim() || document.getElementById('post-body').value.trim();
+      if (hasContent && document.getElementById('editor-status').textContent === 'unsaved') {
+        savePost(false);
+      }
+    });
+  });
+  window.addEventListener('beforeunload', e => {
+    if (document.getElementById('editor-status').textContent === 'unsaved') {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+  try {
+    writeUnlocked = sessionStorage.getItem(WRITE_AUTH_KEY) === 'true';
+  } catch(e) { writeUnlocked = false; }
+  if (writeUnlocked) document.getElementById('nav-write').style.display = '';
+  loadPosts();
+  if (isWriteRoute()) {
+    if (!writeUnlocked) { showAuthPage(); return; }
+    showPage('write');
+  } else {
+    showPage('feed');
+  }
+});
+
+// ── UTILS ──
+function formatDate(ts) {
+  return new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toLowerCase();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

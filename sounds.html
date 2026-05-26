@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — sounds</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
+body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+
+.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
+nav,section,.archive-end{position:relative;z-index:1}
+
+/* ── NAV ── */
+nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:.5px solid var(--border);position:sticky;top:0;
+  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
+.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--ink)}
+.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+
+/* ── HERO ── */
+.hero{max-width:680px;margin:64px auto 32px;padding:0 24px}
+.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
+.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:480px}
+
+/* ── WAVEFORM ── */
+.waveform-wrap{max-width:680px;margin:0 auto 8px;padding:0 24px;display:flex;align-items:flex-end;gap:4px;opacity:.18}
+.waveform-bar{width:3px;border-radius:2px;background:linear-gradient(to top,var(--gold),rgba(138,115,85,.3));
+  animation:wavePulse var(--dur,1.2s) ease-in-out infinite alternate var(--del,0s)}
+@keyframes wavePulse{0%{height:var(--hmin,6px);opacity:.35}100%{height:var(--hmax,36px);opacity:.9}}
+
+/* ── ARCHIVE ── */
+.archive{max-width:680px;margin:0 auto;padding:0 24px 100px}
+.archive-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:36px}
+
+/* ── PERFORMANCE CARD ── */
+.perf-card{border-top:.5px solid var(--border);
+  opacity:0;animation:cardIn .65s cubic-bezier(.4,0,.2,1) forwards var(--delay,0s)}
+@keyframes cardIn{to{opacity:1;transform:none}}
+
+.perf-header{display:flex;align-items:baseline;gap:16px;padding:22px 0;cursor:pointer;user-select:none}
+.perf-header:hover .perf-title{color:var(--ink)}
+
+.perf-title{font-size:21px;font-style:italic;color:rgba(13,13,13,.6);transition:color .22s;flex:1;min-width:0}
+.perf-type{font-size:12px;letter-spacing:2px;color:var(--gold);white-space:nowrap;flex-shrink:0}
+.perf-year{font-size:13px;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.perf-venue{font-size:13px;font-style:italic;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.expand-btn{
+  width:26px;height:26px;border-radius:50%;
+  border:.5px solid var(--border);background:transparent;
+  color:var(--muted);font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);flex-shrink:0}
+.perf-card.open .expand-btn{
+  border-color:rgba(138,115,85,.4);color:var(--gold);
+  transform:rotate(45deg);background:rgba(138,115,85,.06)}
+
+/* ── EXPANDABLE BODY ── */
+.perf-body{max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1)}
+.perf-card.open .perf-body{max-height:520px}
+
+.embed-zone{
+  background:rgba(138,115,85,.06);border:.5px solid rgba(138,115,85,.2);
+  border-radius:8px;padding:36px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:14px;margin-bottom:20px}
+.embed-pulse{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(138,115,85,.12);border:1px solid rgba(138,115,85,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:rgba(138,115,85,.7);
+  animation:heartbeat 2.2s ease-in-out infinite}
+@keyframes heartbeat{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(138,115,85,.3)}
+  40%{transform:scale(1.06);box-shadow:0 0 0 10px rgba(138,115,85,0)}}
+.embed-caption{font-size:12px;font-style:italic;color:var(--muted);text-align:center;line-height:1.7}
+.perf-note{font-size:15px;font-style:italic;color:var(--muted);line-height:2;padding-bottom:28px}
+
+.archive-end{max-width:680px;margin:0 auto;padding:0 24px;
+  border-top:.5px solid var(--border);padding-top:28px;padding-bottom:28px;
+  opacity:0;animation:cardIn .6s ease forwards 1.2s}
+.archive-end-text{font-size:12px;font-style:italic;color:var(--muted);letter-spacing:2px}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="scrapbook">
+  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(5deg);top:40%;left:3%;"    src="background scrapbook/8c2b2ba7-a861-4ed8-9037-ee6a7e83735d-1.png">
+  <img style="width:19%;opacity:0.20;transform:rotate(-7deg);top:62%;left:-1%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.50.56_PM-removebg-preview.png">
+  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(-4deg);top:28%;right:-2%;" src="background scrapbook/Screenshot_2026-05-08_at_1.55.53_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(-5deg);top:54%;right:2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.54.17_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.26;transform:rotate(3deg);top:74%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
+</div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <span class="nav-label">sounds</span>
+</nav>
+
+<section class="hero">
+  <span class="room-tag">the listening chamber</span>
+  <h1>things i've sung<br>into rooms</h1>
+  <p class="hero-sub">a record of performances, rehearsals, and the kind of music that lives in the body before it ever leaves the throat.</p>
+</section>
+
+<div class="waveform-wrap" id="waveform"></div>
+
+<section class="archive">
+  <p class="archive-label">performance archive</p>
+  <div id="perf-list"></div>
+</section>
+
+<div class="archive-end"><p class="archive-end-text">more recordings forthcoming</p></div>
+
+<script>
+const wf = document.getElementById('waveform');
+const HEIGHTS = [10,18,32,24,44,16,36,54,28,20,48,33,22,46,14,52,40,24,42,16,38,28,50,18,34,12,48,30,20,42,26,36,14,44,30];
+HEIGHTS.forEach((h, i) => {
+  const b = document.createElement('div');
+  b.className = 'waveform-bar';
+  b.style.cssText = `--hmin:${Math.round(h*.35)}px;--hmax:${h}px;--dur:${(.75+Math.random()*.95).toFixed(2)}s;--del:${(i*.055).toFixed(2)}s`;
+  wf.appendChild(b);
+});
+
+const PERFS = [
+  {
+    title: 'spring arts showcase',
+    type: 'vocal solo',
+    venue: 'bovard auditorium',
+    year: '2025',
+    note: 'a single prepared piece. there is something about singing in a room that big — the sound travels out and you have no idea where it lands. you just hope it lands somewhere soft.'
+  },
+  {
+    title: 'open mic night',
+    type: 'acoustic set',
+    venue: 'ground zero coffee house',
+    year: '2025',
+    note: 'three songs, borrowed guitar, a lot of nerves. the kind of night that reminds you why you started — not for the applause, but for the three seconds right before it begins.'
+  },
+  {
+    title: 'winter formal',
+    type: 'featured vocalist',
+    venue: 'royce hall ballroom',
+    year: '2024',
+    note: 'performed with the house band for the first time. the acoustics were impossibly good — every note came back to you just a half-second later, like an echo you hadn\'t earned yet.'
+  },
+  {
+    title: 'fall choir concert',
+    type: 'ensemble, soprano',
+    venue: 'newman recital hall',
+    year: '2024',
+    note: 'fifteen voices, one hall. there\'s a specific feeling of locking into a chord with fourteen other people — it vibrates differently in the chest. you become briefly, a frequency.'
+  },
+  {
+    title: 'culture night',
+    type: 'guest performance',
+    venue: 'dfa courtyard, usc',
+    year: '2024',
+    note: 'impromptu — someone brought a speaker and it became a circle. the best performances are the ones nobody planned. i sang two songs and forgot the words to one of them. it didn\'t matter.'
+  },
+];
+
+const list = document.getElementById('perf-list');
+PERFS.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'perf-card';
+  card.style.setProperty('--delay', `${.08 + i * .13}s`);
+  card.innerHTML = `
+    <div class="perf-header">
+      <span class="perf-title">${p.title}</span>
+      <span class="perf-type">${p.type}</span>
+      <span class="perf-venue">${p.venue}</span>
+      <span class="perf-year">${p.year}</span>
+      <button class="expand-btn" aria-label="expand">+</button>
+    </div>
+    <div class="perf-body">
+      <div class="embed-zone">
+        <div class="embed-pulse">▷</div>
+        <p class="embed-caption">recording / video<br><span style="opacity:.5">coming soon</span></p>
+      </div>
+      <p class="perf-note">${p.note}</p>
+    </div>`;
+  card.querySelector('.perf-header').addEventListener('click', () => card.classList.toggle('open'));
+  list.appendChild(card);
+});
+</script>
+</body>
+</html>

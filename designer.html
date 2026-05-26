@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — as a designer</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
+body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+
+.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
+nav,section,.swatch-section,.work-section,.notes-section{position:relative;z-index:1}
+
+/* ── NAV ── */
+nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:.5px solid var(--border);position:sticky;top:0;
+  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
+.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--ink)}
+.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+
+/* ── HERO ── */
+.hero{max-width:680px;margin:64px auto 48px;padding:0 24px}
+.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
+.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:480px}
+
+/* ── SWATCH ROW ── */
+.swatch-section{max-width:1080px;margin:0 auto;padding:8px 24px 48px}
+.swatch-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:20px}
+.swatch-row{display:flex;gap:0;align-items:stretch;height:56px;border-radius:4px;overflow:hidden;
+  opacity:0;animation:swatchIn .8s cubic-bezier(.4,0,.2,1) forwards .1s;
+  box-shadow:0 2px 16px rgba(0,0,0,.1)}
+@keyframes swatchIn{to{opacity:1}}
+.swatch{flex:var(--flex,1);background:var(--c);cursor:default;position:relative;
+  transition:flex .4s cubic-bezier(.34,1.56,.64,1)}
+.swatch:hover{flex:3}
+.swatch-name{
+  position:absolute;bottom:8px;left:10px;
+  font-size:10px;letter-spacing:1.5px;color:rgba(0,0,0,.45);
+  opacity:0;transition:opacity .2s;white-space:nowrap}
+.swatch:hover .swatch-name{opacity:1}
+.swatch.light .swatch-name{color:rgba(255,255,255,.55)}
+
+/* ── WORK GRID ── */
+.work-section{max-width:1080px;margin:0 auto;padding:0 24px 80px}
+.work-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:32px}
+.work-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
+.proj-card{
+  position:relative;background:#fff;border:.5px solid var(--border);
+  border-radius:6px;overflow:hidden;cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+  opacity:0;animation:cardIn .6s cubic-bezier(.4,0,.2,1) forwards var(--delay,0s);
+  transition:border-color .25s,transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
+@keyframes cardIn{to{opacity:1;transform:none}}
+.proj-card:hover{border-color:rgba(138,115,85,.3);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.12)}
+
+.proj-thumb{
+  width:100%;aspect-ratio:16/9;overflow:hidden;
+  background:var(--thumb-bg,#1a1a20);
+  display:flex;align-items:center;justify-content:center;position:relative}
+.proj-thumb-pattern{
+  position:absolute;inset:0;opacity:.4;
+  background:repeating-linear-gradient(
+    var(--angle,45deg),rgba(255,255,255,.06) 0px,rgba(255,255,255,.06) 1px,transparent 1px,transparent 12px)}
+.proj-thumb-label{
+  position:relative;z-index:1;
+  font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.4);text-align:center;padding:8px}
+
+.proj-foot{padding:18px 18px 20px}
+.proj-type{font-size:10px;letter-spacing:2.5px;color:var(--gold);margin-bottom:8px;display:block}
+.proj-name{font-size:18px;font-style:italic;color:var(--ink);margin-bottom:8px;line-height:1.3}
+.proj-desc{font-size:13px;font-style:italic;color:var(--muted);line-height:1.8}
+
+.proj-overlay{
+  position:absolute;inset:0;background:rgba(247,243,235,.96);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:24px;opacity:0;transition:opacity .3s ease;pointer-events:none}
+.proj-card.open .proj-overlay{opacity:1;pointer-events:auto}
+.proj-overlay-text{font-size:15px;font-style:italic;color:var(--muted);line-height:1.9;margin-bottom:12px}
+.proj-overlay-tags{display:flex;flex-wrap:wrap;gap:6px}
+.proj-overlay-tag{font-size:10px;letter-spacing:1.5px;color:var(--gold);
+  border:.5px solid rgba(138,115,85,.3);border-radius:20px;padding:2px 8px}
+
+/* ── PROCESS NOTES ── */
+.notes-section{max-width:640px;margin:0 auto;padding:40px 24px 80px;border-top:.5px solid var(--border)}
+.notes-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:24px}
+.note-item{display:flex;gap:20px;padding:16px 0;border-top:.5px solid var(--border);
+  opacity:0;animation:cardIn .5s ease forwards var(--nd,0s)}
+.note-num{font-size:13px;font-style:italic;color:var(--muted);flex-shrink:0;padding-top:2px}
+.note-text{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="scrapbook">
+  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:21%;opacity:0.20;transform:rotate(8deg);top:22%;left:1%;"    src="background scrapbook/ChatGPT_Image_May_8__2026__01_58_51_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.24;transform:rotate(5deg);top:48%;left:3%;"    src="background scrapbook/8c2b2ba7-a861-4ed8-9037-ee6a7e83735d-1.png">
+  <img style="width:13%;opacity:0.26;transform:rotate(-6deg);top:74%;left:2%;"   src="background scrapbook/playbill-chess.jpg">
+  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(-4deg);top:26%;right:-2%;" src="background scrapbook/Screenshot_2026-05-08_at_1.55.53_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.20;transform:rotate(7deg);top:50%;right:-1%;"  src="background scrapbook/febc243b-5f4c-4ee8-b520-b1813e77146b.png">
+  <img style="width:15%;opacity:0.26;transform:rotate(3deg);top:76%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
+</div>
+
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <span class="nav-label">designer</span>
+</nav>
+
+<section class="hero">
+  <span class="room-tag">the material lab</span>
+  <h1>making things<br>that feel right</h1>
+  <p class="hero-sub">design as a practice of attention — to detail, to people, to what a thing should feel like before you know what it should look like.</p>
+</section>
+
+<div class="swatch-section">
+  <p class="swatch-label">palette</p>
+  <div class="swatch-row" id="swatches"></div>
+</div>
+
+<section class="work-section">
+  <p class="work-label">selected work</p>
+  <div class="work-grid" id="work-grid"></div>
+</section>
+
+<section class="notes-section">
+  <p class="notes-label">how i work</p>
+  <div id="notes-list"></div>
+</section>
+
+<script>
+const SWATCHES = [
+  {c:'#f4efe4',name:'warm cream',dark:false},
+  {c:'#d4c4a0',name:'aged paper',dark:false},
+  {c:'#8a7355',name:'gold ink',dark:false},
+  {c:'#4a3a20',name:'dark oak',dark:true},
+  {c:'#1a1410',name:'deep brown',dark:true},
+  {c:'#0d0d0d',name:'near black',dark:true},
+  {c:'#3d5a80',name:'study blue',dark:true},
+  {c:'#e07a5f',name:'warm coral',dark:false},
+  {c:'#81b29a',name:'soft sage',dark:false},
+  {c:'#f2cc8f',name:'soft gold',dark:false},
+];
+const swRow = document.getElementById('swatches');
+SWATCHES.forEach(s => {
+  const el = document.createElement('div');
+  el.className = 'swatch' + (s.dark ? '' : ' light');
+  el.style.cssText = `--c:${s.c}`;
+  el.innerHTML = `<span class="swatch-name">${s.name}</span>`;
+  swRow.appendChild(el);
+});
+
+const WORK = [
+  {type:'ux · community platform',name:'dfa usc — project hub',desc:'a workspace for chapter projects: shared briefs, timelines, and deliverables. designed for students who are running projects for the first time.',detail:'built end-to-end: discovery interviews with 12 students, wireframes, hi-fi in figma, usability testing. focused on reducing friction for first-time project leads.',tags:['figma','ux research','product design'],thumbBg:'#12181e',angle:'45deg',delay:'.1s'},
+  {type:'app design · product',name:'la side — discovery feed',desc:'the core screen: a curated feed of what\'s happening in la. no algorithm. no ads. just things worth going to.',detail:'designed the information architecture, card system, and curation interface. ongoing — iterating on trust signals and how to surface context without clutter.',tags:['ios','product design','figma','ux'],thumbBg:'#141010',angle:'-35deg',delay:'.2s'},
+  {type:'visual + event design',name:'spaces — event graphics',desc:'visual identities for khel khel mein, nigeria day, sandbox makeathon. each event needed to feel different, but look like they belonged together.',detail:'designed posters, digital assets, and environmental graphics. built a small visual system that could flex across events without losing coherence.',tags:['visual design','event design','brand'],thumbBg:'#18100c',angle:'60deg',delay:'.3s'},
+  {type:'interaction design',name:'this website',desc:'a personal portfolio built to feel like a place, not a page. scrapbook, darkroom, listening chamber.',detail:'every page is its own spatial metaphor. designed in the browser — html, css, vanilla js. no frameworks, no templates.',tags:['interaction design','css','design systems'],thumbBg:'#0e0e18',angle:'-50deg',delay:'.4s'},
+  {type:'placeholder · coming soon',name:'next project',desc:'something is always in progress. check back when it has a name.',detail:'',tags:[],thumbBg:'#1a1814',angle:'30deg',delay:'.5s'},
+];
+const grid = document.getElementById('work-grid');
+WORK.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'proj-card';
+  card.style.cssText = `--delay:${p.delay}`;
+  card.innerHTML = `
+    <div class="proj-thumb" style="--thumb-bg:${p.thumbBg}">
+      <div class="proj-thumb-pattern" style="--angle:${p.angle}"></div>
+      <span class="proj-thumb-label">${p.type.split('·')[0].trim()}</span>
+    </div>
+    <div class="proj-foot">
+      <span class="proj-type">${p.type}</span>
+      <h3 class="proj-name">${p.name}</h3>
+      <p class="proj-desc">${p.desc}</p>
+    </div>
+    ${p.detail?`<div class="proj-overlay">
+      <p class="proj-overlay-text">${p.detail}</p>
+      <div class="proj-overlay-tags">${p.tags.map(t=>`<span class="proj-overlay-tag">${t}</span>`).join('')}</div>
+    </div>`:''}`;
+  if (p.detail) card.addEventListener('click', () => card.classList.toggle('open'));
+  grid.appendChild(card);
+});
+
+const NOTES = [
+  {num:'01',text:'start by asking who it\'s for, and what they\'re actually trying to do — not what they said they want.'},
+  {num:'02',text:'spend more time in the problem than the solution. the solution should feel almost inevitable.'},
+  {num:'03',text:'the details are the design. spacing, weight, the exact word — none of it is decoration.'},
+  {num:'04',text:'if it needs explaining, it needs redesigning. but sometimes it needs explaining first.'},
+];
+const notesList = document.getElementById('notes-list');
+NOTES.forEach((n,i) => {
+  const el = document.createElement('div');
+  el.className = 'note-item';
+  el.style.setProperty('--nd', `${.1+i*.12}s`);
+  el.innerHTML = `<span class="note-num">${n.num}</span><p class="note-text">${n.text}</p>`;
+  notesList.appendChild(el);
+});
+</script>
+</body>
+</html>

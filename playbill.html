@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — the playbill pile</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
+body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+
+/* scrapbook margins */
+.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
+
+nav,section,.notes-section{position:relative;z-index:1}
+
+/* ── NAV ── */
+nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:.5px solid var(--border);position:sticky;top:0;
+  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
+.nav-back{font-family:'EB Garamond',serif;font-size:15px;font-style:italic;color:var(--muted);
+  text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--ink)}
+.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+
+/* ── HERO ── */
+.hero{max-width:680px;margin:64px auto 48px;padding:0 24px}
+.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
+.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9}
+
+/* ── TIER SYSTEM ── */
+.tiers{max-width:680px;margin:0 auto;padding:0 24px 80px}
+.tiers-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:36px}
+
+.tier{margin-bottom:2px;opacity:0;animation:tierIn .6s cubic-bezier(.4,0,.2,1) forwards var(--td,0s)}
+@keyframes tierIn{to{opacity:1;transform:none}}
+
+.tier-header{display:flex;align-items:center;gap:16px;padding:16px 0;
+  border-top:.5px solid var(--border)}
+.tier-rank{font-size:12px;letter-spacing:3px;color:var(--muted);width:28px;flex-shrink:0}
+.tier-name{font-size:13px;letter-spacing:2.5px;color:var(--tier-c,var(--gold));flex:1}
+.tier-count{font-size:12px;color:var(--muted)}
+
+.tier-shows{display:flex;flex-wrap:wrap;gap:8px;padding:0 44px 20px}
+.show-pill{
+  font-size:14px;font-style:italic;color:var(--ink-soft);
+  background:rgba(13,13,13,.04);border:.5px solid var(--border);
+  border-radius:20px;padding:5px 14px;cursor:default;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1)}
+.show-pill:hover{background:rgba(13,13,13,.08);border-color:var(--tier-c,var(--gold));color:var(--ink);transform:scale(1.04)}
+
+/* tier accent bars */
+.tier[data-tier="s"] .tier-header{border-top-color:rgba(180,140,60,.35)}
+.tier[data-tier="a"] .tier-header{border-top-color:rgba(138,115,85,.25)}
+.tier[data-tier="b"] .tier-header{border-top-color:rgba(80,120,180,.2)}
+.tier[data-tier="c"] .tier-header{border-top-color:rgba(80,140,100,.18)}
+
+/* ── NOTES ── */
+.notes-section{max-width:640px;margin:0 auto;padding:40px 24px 80px;
+  border-top:.5px solid var(--border)}
+.notes-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:24px}
+.note{font-size:16px;font-style:italic;color:var(--muted);line-height:1.95;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
+<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
+
+<div class="scrapbook">
+  <img style="width:18%;opacity:0.28;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(-3deg);top:36%;left:-2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.51.28_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.26;transform:rotate(5deg);top:55%;left:3%;"    src="background scrapbook/8c2b2ba7-a861-4ed8-9037-ee6a7e83735d-1.png">
+  <img style="width:13%;opacity:0.28;transform:rotate(-6deg);top:76%;left:2%;"   src="background scrapbook/playbill-chess.jpg">
+  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
+  <img style="width:19%;opacity:0.22;transform:rotate(7deg);top:38%;right:-1%;"  src="background scrapbook/febc243b-5f4c-4ee8-b520-b1813e77146b.png">
+  <img style="width:15%;opacity:0.26;transform:rotate(-5deg);top:56%;right:2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.54.17_PM-removebg-preview.png">
+  <img style="width:15%;opacity:0.28;transform:rotate(3deg);top:76%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
+</div>
+
+<nav>
+  <a href="sidequests.html" class="nav-back">← back to desk</a>
+  <span class="nav-label">the playbill pile</span>
+</nav>
+
+<section class="hero">
+  <span class="room-tag">theatre · shows · concerts</span>
+  <h1>everything i've<br>seen, ranked</h1>
+  <p class="hero-sub">a living pyramid. the top rarely changes. the bottom keeps getting longer.</p>
+</section>
+
+<section class="tiers">
+  <p class="tiers-label">tier ranking</p>
+  <div id="tier-list"></div>
+</section>
+
+<section class="notes-section">
+  <p class="notes-label">on theatre</p>
+  <p class="note">"the best shows make you feel like the room was built specifically so that thing could happen, that night, for those people."</p>
+  <p class="note">"i've cried at things i didn't expect to cry at. that's always the sign."</p>
+</section>
+
+<script>
+const TIERS = [
+  {
+    id:'s', label:'s — changed something in me', color:'rgba(160,120,40,.7)',
+    shows:['wicked','hamilton','hadestown','the band\'s visit','fun home'],
+    td:'.06s'
+  },
+  {
+    id:'a', label:'a — exceptional', color:'rgba(138,115,85,.8)',
+    shows:['into the woods','company','sweeney todd','parade','dear evan hansen'],
+    td:'.14s'
+  },
+  {
+    id:'b', label:'b — really good', color:'rgba(80,120,180,.7)',
+    shows:['rent','chicago','grease','les misérables','come from away'],
+    td:'.22s'
+  },
+  {
+    id:'c', label:'c — solid', color:'rgba(80,140,100,.65)',
+    shows:['mamma mia','the phantom of the opera','cats','spring awakening'],
+    td:'.30s'
+  },
+];
+
+const list = document.getElementById('tier-list');
+TIERS.forEach(t => {
+  const div = document.createElement('div');
+  div.className = 'tier';
+  div.dataset.tier = t.id;
+  div.style.cssText = `--td:${t.td};--tier-c:${t.color}`;
+  div.innerHTML = `
+    <div class="tier-header">
+      <span class="tier-rank">${t.id}</span>
+      <span class="tier-name">${t.label}</span>
+      <span class="tier-count">${t.shows.length}</span>
+    </div>
+    <div class="tier-shows">
+      ${t.shows.map(s=>`<span class="show-pill">${s}</span>`).join('')}
+    </div>`;
+  list.appendChild(div);
+});
+</script>
+</body>
+</html>
