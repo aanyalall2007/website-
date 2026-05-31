@@ -4,775 +4,958 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>aanya · work</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0c0c0c;
-  --cream: rgba(244,239,228,0.9);
-  --cream-muted: rgba(244,239,228,0.4);
+  --cream: #f0ede6;
+  --ink: #0d0d0d;
   --gold: #8a7355;
-  --font: 'EB Garamond', serif;
-}
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--font);
-  text-transform: lowercase;
-  background: var(--bg);
-  color: var(--cream);
-  cursor: none;
-  overflow-x: hidden;
+  --muted: rgba(13,13,13,0.4);
+  --sep: rgba(13,13,13,0.12);
 }
 
-/* SCROLL PROGRESS */
-#progress-bar {
-  position: fixed;
-  top: 0; left: 0;
-  height: 1px;
-  background: var(--gold);
-  width: 0%;
-  z-index: 1000;
-  transition: width 0.1s linear;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* GRAIN */
-.grain {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 500;
-  opacity: 0.045;
-}
-
-/* BOKEH ORBS */
-.bokeh-wrap {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
+html, body {
+  height: 100%;
   overflow: hidden;
+  font-family: 'EB Garamond', serif;
+  text-transform: lowercase;
+  background: var(--cream);
+  color: var(--ink);
+  cursor: none;
 }
-.orb {
-  position: absolute;
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(0,0,0,0.035) 0,
+    rgba(0,0,0,0.035) 1px,
+    transparent 1px,
+    transparent 44px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* CUSTOM CURSOR */
+#cursor {
+  position: fixed;
+  width: 9px;
+  height: 9px;
+  background: white;
   border-radius: 50%;
-  filter: blur(120px);
-  animation: drift linear infinite;
-  opacity: 0.18;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
 }
-.orb-pink {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, #d4507a, transparent 70%);
-  top: 10%; left: -10%;
-  animation-duration: 40s;
-  animation-delay: 0s;
-}
-.orb-purple {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, #7c3aed, transparent 70%);
-  top: 50%; right: -5%;
-  animation-duration: 55s;
-  animation-delay: -18s;
-}
-.orb-amber {
-  width: 350px; height: 350px;
-  background: radial-gradient(circle, #c8923a, transparent 70%);
-  bottom: 15%; left: 30%;
-  animation-duration: 45s;
-  animation-delay: -30s;
-}
-@keyframes drift {
-  0%   { transform: translate(0px, 0px) scale(1); }
-  25%  { transform: translate(60px, -40px) scale(1.05); }
-  50%  { transform: translate(30px, 80px) scale(0.95); }
-  75%  { transform: translate(-40px, 30px) scale(1.03); }
-  100% { transform: translate(0px, 0px) scale(1); }
+
+/* PAGE TRANSITION */
+#page-transition {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 9000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 
 /* NAV */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 600;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 40px;
-  background: rgba(12,12,12,0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  padding: 0 32px;
+  background: rgba(240,237,230,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 500;
+  border-bottom: 0.5px solid var(--sep);
 }
+
 .nav-back {
-  font-family: var(--font);
-  font-size: 15px;
-  font-style: italic;
-  color: var(--cream-muted);
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  color: var(--muted);
   text-decoration: none;
-  transition: color 0.2s;
   letter-spacing: 0.02em;
+  transition: color 0.2s;
 }
-.nav-back:hover { color: var(--cream); }
-.nav-tabs { display: flex; gap: 32px; }
+.nav-back:hover { color: var(--ink); }
+
+.nav-tabs {
+  display: flex;
+  gap: 2px;
+}
+
 .nav-tab {
-  font-family: var(--font);
-  font-size: 15px;
-  font-style: italic;
-  color: var(--cream-muted);
-  text-decoration: none;
-  letter-spacing: 0.03em;
-  transition: color 0.25s;
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: none;
+  padding: 6px 14px;
+  letter-spacing: 0.04em;
   position: relative;
+  transition: color 0.2s;
 }
 .nav-tab::after {
   content: '';
   position: absolute;
-  bottom: -2px; left: 0; right: 0;
+  bottom: 2px; left: 14px; right: 14px;
   height: 1px;
   background: var(--gold);
   transform: scaleX(0);
-  transition: transform 0.3s ease;
+  transform-origin: left;
+  transition: transform 0.25s ease;
 }
-.nav-tab.active,
-.nav-tab:hover { color: var(--gold); }
-.nav-tab.active::after { transform: scaleX(1); }
+.nav-tab.active {
+  color: var(--ink);
+}
+.nav-tab.active::after {
+  transform: scaleX(1);
+}
+.nav-tab:hover { color: var(--ink); }
 
-/* HERO */
-.hero {
-  position: relative;
+/* PROGRESS BAR */
+#progress {
+  position: fixed;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--gold);
+  z-index: 200;
+  transition: width 0.08s linear;
+  width: 0%;
+}
+
+/* PANEL DOTS */
+#dots {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 300;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sep);
+  border: 1px solid rgba(13,13,13,0.2);
+  cursor: none;
+  transition: background 0.25s, transform 0.25s;
+}
+.dot.active {
+  background: var(--gold);
+  transform: scale(1.3);
+}
+
+/* HORIZONTAL SCROLL */
+.h-scroll {
+  display: flex;
   height: 100vh;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  position: relative;
+  z-index: 1;
+}
+.h-scroll::-webkit-scrollbar { display: none; }
+
+/* PANELS */
+.panel {
+  flex-shrink: 0;
+  width: 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  padding-top: 52px;
+}
+
+/* PANEL INNER LAYOUT */
+.panel-split {
+  display: flex;
+  height: 100%;
+}
+.panel-sidebar {
+  width: 30%;
+  border-right: 0.5px solid var(--sep);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-  padding: 0 10vw;
-  z-index: 2;
+  padding: 48px 40px;
+  gap: 20px;
+  position: relative;
 }
-.hero-eyebrow {
-  font-size: 13px;
+.panel-content {
+  width: 70%;
+  padding: 48px 56px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.panel-content::-webkit-scrollbar { display: none; }
+
+/* SIDEBAR LABEL */
+.sidebar-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 11px;
   letter-spacing: 0.18em;
   color: var(--gold);
-  margin-bottom: 28px;
-  font-style: normal;
+  font-weight: 500;
+  text-transform: lowercase;
+  align-self: flex-start;
 }
-.hero-title {
-  font-size: clamp(48px, 7vw, 96px);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.05;
-  color: var(--cream);
-  margin-bottom: 24px;
-  max-width: 820px;
-}
-.hero-sub {
-  font-size: 20px;
-  color: var(--cream-muted);
-  font-style: italic;
-  margin-bottom: 80px;
-}
-.scroll-cue {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--cream-muted);
-  font-size: 13px;
-  letter-spacing: 0.12em;
-}
-.scroll-line { width: 48px; height: 1px; background: var(--cream-muted); }
-
-/* SECTIONS */
-.section {
-  position: relative;
-  z-index: 2;
-  padding: 100px 10vw;
-  min-height: 100vh;
-}
-.section-label {
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  color: var(--gold);
-  margin-bottom: 60px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.section-label::before {
-  content: '';
-  width: 32px; height: 1px;
+.sidebar-rule {
+  width: 1px;
+  height: 60px;
   background: var(--gold);
   opacity: 0.5;
 }
-
-/* DESIGNER CARDS */
-.cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+.sidebar-brief {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  line-height: 1.8;
 }
-.project-card {
-  border-radius: 16px;
-  padding: 36px 32px;
-  cursor: none;
-  transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.2s;
-  position: relative;
-  overflow: hidden;
-  min-height: 200px;
+
+/* PANEL 0 HERO */
+#panel-0 {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0;
 }
-.project-card::before {
+
+.hero-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  margin-bottom: 28px;
+}
+
+.hero-title {
+  font-size: clamp(38px, 5.5vw, 72px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--muted);
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+
+.scroll-cue {
+  margin-top: 52px;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  animation: fadePulse 2.2s ease-in-out infinite;
+}
+@keyframes fadePulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* POLAROID FRAMES */
+.polaroid {
+  position: absolute;
+  background: white;
+  box-shadow: 0 2px 12px rgba(13,13,13,0.08);
+  pointer-events: none;
+  padding: 7px 7px 20px;
+}
+.polaroid-inner {
+  width: 100%;
+  height: 100%;
+  background: rgba(13,13,13,0.04);
+}
+.p1 { width: 90px; height: 105px; top: 12%; left: 6%; transform: rotate(-6deg); }
+.p2 { width: 70px; height: 85px; top: 18%; right: 8%; transform: rotate(4deg); }
+.p3 { width: 80px; height: 96px; bottom: 15%; left: 9%; transform: rotate(3deg); }
+.p4 { width: 65px; height: 78px; bottom: 18%; right: 7%; transform: rotate(-5deg); }
+.p5 { width: 55px; height: 68px; top: 60%; left: 4%; transform: rotate(7deg); opacity: 0.6; }
+.p6 { width: 60px; height: 74px; top: 55%; right: 4%; transform: rotate(-3deg); opacity: 0.6; }
+
+/* DESIGNER ROWS */
+.designer-rows-wrap {
+  margin-top: 8px;
+}
+.designer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 0.5px solid var(--sep);
+  cursor: none;
+  position: relative;
+  overflow: hidden;
+  gap: 16px;
+}
+.designer-row::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0);
-  transition: background 0.25s;
+  background: var(--gold);
+  opacity: 0.08;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
 }
-.project-card:hover { transform: translateY(-4px); }
-.project-card:hover::before { background: rgba(255,255,255,0.03); }
-.card-name {
-  font-size: 22px;
-  font-style: italic;
+.designer-row:hover::before { transform: scaleX(1); }
+.designer-row:hover .row-arrow { transform: translateX(4px); color: var(--gold); }
+
+.row-title {
+  font-size: 17px;
   font-weight: 400;
-  color: var(--cream);
-  margin-bottom: 6px;
+  color: var(--ink);
+  min-width: 160px;
+  flex: 0 0 auto;
   position: relative;
-  z-index: 1;
 }
-.card-meta {
+.row-meta {
   font-size: 13px;
-  color: var(--gold);
-  letter-spacing: 0.06em;
+  color: var(--muted);
+  flex: 1;
+  text-align: center;
+  letter-spacing: 0.03em;
   position: relative;
-  z-index: 1;
+}
+.row-year {
+  font-size: 13px;
+  color: var(--muted);
+  flex: 0 0 50px;
+  text-align: right;
+  position: relative;
+}
+.row-arrow {
+  font-size: 14px;
+  color: var(--muted);
+  flex: 0 0 20px;
+  text-align: right;
+  transition: transform 0.2s ease, color 0.2s ease;
+  position: relative;
 }
 
-/* RESEARCHER LISTS */
-.research-subsection { margin-bottom: 60px; }
-.research-sublabel {
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  color: var(--cream-muted);
-  margin-bottom: 24px;
-  font-style: normal;
-}
-.research-row {
+/* RESEARCHER */
+.research-cols {
   display: flex;
-  align-items: baseline;
-  gap: 20px;
-  padding: 14px 8px;
-  border-bottom: 1px solid rgba(244,239,228,0.06);
-  cursor: default;
-  transition: background 0.2s;
-  border-radius: 4px;
-  margin-left: -8px;
+  gap: 48px;
+  margin-top: 28px;
 }
-.research-row:hover { background: rgba(138,115,85,0.07); }
-.research-num {
-  font-size: 12px;
+.research-col {
+  flex: 1;
+}
+.research-col-label {
+  font-size: 11px;
+  letter-spacing: 0.18em;
   color: var(--gold);
-  opacity: 0.6;
-  min-width: 24px;
-  font-style: normal;
-  letter-spacing: 0.06em;
+  margin-bottom: 20px;
+  font-weight: 500;
 }
-.research-title {
-  font-size: 17px;
-  font-style: italic;
-  color: var(--cream);
+.research-list {
+  list-style: none;
+}
+.research-list li {
+  font-size: 15px;
+  color: var(--ink);
+  padding: 10px 0;
+  border-bottom: 0.5px solid var(--sep);
   line-height: 1.4;
+  display: flex;
+  gap: 12px;
+}
+.research-list li::before {
+  content: attr(data-n);
+  color: var(--muted);
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-style: italic;
 }
 
 /* RESEARCH FORM */
 .research-form-wrap {
-  margin-top: 64px;
-  padding-top: 40px;
-  border-top: 1px solid rgba(244,239,228,0.08);
-  max-width: 480px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 0.5px solid var(--sep);
 }
 .research-form-label {
   font-size: 13px;
-  letter-spacing: 0.14em;
-  color: var(--gold);
-  margin-bottom: 24px;
-  display: block;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 20px;
 }
 .research-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
+  max-width: 480px;
 }
 .research-form input,
 .research-form textarea {
-  font-family: var(--font);
-  font-size: 16px;
-  font-style: italic;
-  background: rgba(244,239,228,0.04);
-  border: 1px solid rgba(244,239,228,0.1);
-  border-radius: 10px;
-  padding: 14px 18px;
-  color: var(--cream);
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid var(--gold);
+  padding: 10px 0;
   outline: none;
-  transition: border-color 0.25s, background 0.25s;
   resize: none;
+  margin-bottom: 20px;
   text-transform: lowercase;
 }
 .research-form input::placeholder,
-.research-form textarea::placeholder { color: var(--cream-muted); }
-.research-form input:focus,
-.research-form textarea:focus {
-  border-color: var(--gold);
-  background: rgba(138,115,85,0.06);
+.research-form textarea::placeholder {
+  color: var(--muted);
 }
-.research-form textarea { min-height: 100px; }
 .research-form button {
-  font-family: var(--font);
-  font-size: 16px;
-  font-style: italic;
-  background: transparent;
-  border: 1px solid var(--gold);
-  border-radius: 10px;
-  padding: 13px 24px;
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  letter-spacing: 0.1em;
   color: var(--gold);
+  background: none;
+  border: 0.5px solid var(--gold);
+  padding: 10px 24px;
   cursor: none;
-  text-transform: lowercase;
-  transition: background 0.25s, color 0.25s;
   align-self: flex-start;
+  transition: background 0.2s, color 0.2s;
 }
 .research-form button:hover {
   background: var(--gold);
-  color: var(--bg);
+  color: var(--cream);
 }
 
-/* FOUNDER CARDS */
-.founder-grid {
+/* FOUNDER */
+.founder-blocks {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0;
+  margin-top: 8px;
 }
-.founder-card {
-  border-radius: 20px;
-  padding: 60px 56px;
-  position: relative;
-  overflow: hidden;
+.founder-block {
+  padding: 36px 0;
+  border-bottom: 0.5px solid var(--sep);
+}
+.founder-block:first-child {
+  border-top: 0.5px solid var(--sep);
+}
+.founder-block-header {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 220px;
-  text-decoration: none;
-  cursor: none;
-  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
 }
-.founder-card:hover { transform: translateY(-3px) scale(1.005); }
-.founder-badge {
-  position: absolute;
-  top: 28px; right: 28px;
+.founder-block-title {
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 400;
+}
+.founder-tag {
   font-size: 11px;
   letter-spacing: 0.14em;
-  border: 1px solid rgba(244,239,228,0.3);
+  color: var(--gold);
+  border: 0.5px solid var(--gold);
+  padding: 3px 10px;
   border-radius: 20px;
-  padding: 5px 12px;
-  color: var(--cream-muted);
 }
-.founder-name {
-  font-size: 36px;
-  font-style: italic;
-  color: var(--cream);
-  margin-bottom: 12px;
-}
-.founder-desc {
-  font-size: 17px;
-  color: var(--cream-muted);
-  font-style: italic;
-  max-width: 600px;
-  line-height: 1.6;
-}
-
-/* OUTRO */
-.outro {
-  position: relative;
-  z-index: 2;
-  padding: 100px 10vw;
-  text-align: center;
-}
-.outro-text {
-  font-size: clamp(28px, 4vw, 52px);
-  font-style: italic;
-  color: var(--cream-muted);
-  margin-bottom: 32px;
-}
-.outro-link {
+.founder-block-body {
   font-size: 15px;
-  font-style: italic;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+.founder-link {
+  font-size: 13px;
   color: var(--gold);
   text-decoration: none;
   letter-spacing: 0.08em;
+  border-bottom: 0.5px solid var(--gold);
+  padding-bottom: 2px;
   transition: opacity 0.2s;
 }
-.outro-link:hover { opacity: 0.6; }
+.founder-link:hover { opacity: 0.7; }
 
-/* iOS SHEET */
-.sheet-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s;
-  z-index: 800;
+/* PANEL 4 OUTRO */
+#panel-4 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 28px;
 }
-.sheet-overlay.open { opacity: 1; pointer-events: all; }
-.ios-sheet {
+.outro-title {
+  font-size: clamp(28px, 4vw, 56px);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+}
+.outro-back {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: color 0.2s;
+}
+.outro-back:hover { color: var(--gold); }
+
+/* BOTTOM SHEET */
+#sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13,13,13,0);
+  z-index: 800;
+  pointer-events: none;
+  transition: background 0.35s ease;
+}
+#sheet-overlay.open {
+  background: rgba(13,13,13,0.35);
+  pointer-events: all;
+}
+
+#bottom-sheet {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: rgba(18,18,18,0.97);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-radius: 24px 24px 0 0;
+  background: var(--cream);
+  border-top: 0.5px solid var(--sep);
+  border-radius: 16px 16px 0 0;
+  padding: 32px 40px 48px;
+  z-index: 900;
   transform: translateY(100%);
-  transition: transform 0.45s linear(0,0.01,0.04,0.1,0.18,0.27,0.37,0.47,0.57,0.66,0.74,0.81,0.87,0.92,0.96,0.99,1.01,1.02,1.02,1.01,1);
-  z-index: 801;
-  max-height: 75vh;
+  transition: transform 0.4s cubic-bezier(0.34,1.3,0.64,1);
+  max-height: 60vh;
   overflow-y: auto;
-  padding: 0 0 48px;
+  scrollbar-width: none;
 }
-.ios-sheet.open { transform: translateY(0); }
+#bottom-sheet::-webkit-scrollbar { display: none; }
+#bottom-sheet.open {
+  transform: translateY(0);
+}
+
 .sheet-handle {
-  width: 36px; height: 4px;
-  background: rgba(244,239,228,0.2);
+  width: 36px;
+  height: 4px;
+  background: var(--sep);
   border-radius: 2px;
-  margin: 16px auto 0;
+  margin: 0 auto 28px;
 }
-.sheet-inner { padding: 32px 40px 0; }
 .sheet-title {
-  font-size: 32px;
+  font-size: 26px;
   font-style: italic;
-  color: var(--cream);
-  margin-bottom: 10px;
-  line-height: 1.1;
+  margin-bottom: 8px;
 }
 .sheet-meta {
   font-size: 13px;
   color: var(--gold);
   letter-spacing: 0.1em;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 .sheet-body {
-  font-size: 18px;
-  color: var(--cream-muted);
-  font-style: italic;
-  line-height: 1.75;
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.8;
 }
 .sheet-close {
   position: absolute;
-  top: 20px; right: 24px;
-  background: rgba(244,239,228,0.08);
+  top: 28px; right: 32px;
+  font-size: 20px;
+  color: var(--muted);
+  background: none;
   border: none;
-  border-radius: 50%;
-  width: 32px; height: 32px;
-  color: var(--cream-muted);
-  font-size: 18px;
   cursor: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-  font-family: var(--font);
+  transition: color 0.2s;
 }
-.sheet-close:hover { background: rgba(244,239,228,0.15); }
+.sheet-close:hover { color: var(--ink); }
 
-/* PAGE TRANSITION */
-#page-overlay {
-  position: fixed; inset: 0;
-  background: var(--bg);
-  z-index: 2000;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-#cursor {
-  width: 9px; height: 9px;
-  background: white;
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  transform: translate(-50%,-50%);
+.section-heading {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 20px;
+  font-weight: 500;
 }
 </style>
 </head>
 <body>
 
 <div id="cursor"></div>
-<div id="page-overlay"></div>
-<div id="progress-bar"></div>
-
-<!-- GRAIN -->
-<svg class="grain" xmlns="http://www.w3.org/2000/svg">
-  <filter id="grain-filter">
-    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
-    <feColorMatrix type="saturate" values="0"/>
-  </filter>
-  <rect width="100%" height="100%" filter="url(#grain-filter)"/>
-</svg>
-
-<!-- BOKEH -->
-<div class="bokeh-wrap">
-  <div class="orb orb-pink"></div>
-  <div class="orb orb-purple"></div>
-  <div class="orb orb-amber"></div>
-</div>
+<div id="page-transition"></div>
 
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-back">← playground</a>
   <div class="nav-tabs">
-    <a href="#designer" class="nav-tab" data-section="designer">designer</a>
-    <a href="#researcher" class="nav-tab" data-section="researcher">researcher</a>
-    <a href="#founder" class="nav-tab" data-section="founder">founder</a>
+    <button class="nav-tab active" data-panel="0">overview</button>
+    <button class="nav-tab" data-panel="1">designer</button>
+    <button class="nav-tab" data-panel="2">researcher</button>
+    <button class="nav-tab" data-panel="3">founder</button>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <p class="hero-eyebrow">selected work · 2024–2026</p>
-  <h1 class="hero-title">making, researching, building.</h1>
-  <p class="hero-sub">three ways i show up in the world.</p>
-  <div class="scroll-cue">
-    <div class="scroll-line"></div>
-    scroll
-  </div>
-</section>
+<!-- HORIZONTAL SCROLL -->
+<div class="h-scroll" id="hscroll">
 
-<!-- DESIGNER SECTION -->
-<section class="section" id="designer">
-  <div class="section-label">designer</div>
-  <div class="cards-grid">
+  <!-- PANEL 0: HERO -->
+  <div class="panel" id="panel-0">
+    <div class="polaroid p1"><div class="polaroid-inner"></div></div>
+    <div class="polaroid p2"><div class="polaroid-inner"></div></div>
+    <div class="polaroid p3"><div class="polaroid-inner"></div></div>
+    <div class="polaroid p4"><div class="polaroid-inner"></div></div>
+    <div class="polaroid p5"><div class="polaroid-inner"></div></div>
+    <div class="polaroid p6"><div class="polaroid-inner"></div></div>
 
-    <div class="project-card" style="background: linear-gradient(135deg, rgba(244,239,228,0.08), rgba(138,115,85,0.15));"
-      data-title="tomol28"
-      data-meta="2026 · practice of design, usc"
-      data-body="redesigned the la 2028 olympic visitor experience to foreground los angeles's indigenous heritage, centring the chumash tomol (ocean-going canoe) as a cultural anchor. developed a journey concept tracing the city's shoreline — integrating wayfinding, cultural storytelling, and site-specific design across key olympic touchpoints.">
-      <div class="card-name">tomol28</div>
-      <div class="card-meta">2026 · practice of design, usc</div>
-    </div>
-
-    <div class="project-card" style="background: linear-gradient(135deg, rgba(255,149,0,0.12), rgba(244,239,228,0.06));"
-      data-title="troy eats"
-      data-meta="2026 · practice of design, usc"
-      data-body="led end-to-end redesign of the usc campus dining system — ux research, service prototyping, visual identity, brand strategy. developed the troy eats brand including naming, marketing direction, and cohesive design system.">
-      <div class="card-name">troy eats</div>
-      <div class="card-meta">2026 · practice of design, usc</div>
-    </div>
-
-    <div class="project-card" style="background: linear-gradient(135deg, rgba(0,122,255,0.15), rgba(175,82,222,0.1));"
-      data-title="look up"
-      data-meta="2026 · practice of design, usc"
-      data-body="designed a chindogu device for scrolling while walking without compromising spatial awareness. explores the tension between convenience and distraction as a critique of smartphone dependency.">
-      <div class="card-name">look up</div>
-      <div class="card-meta">2026 · practice of design, usc</div>
-    </div>
-
-    <div class="project-card" style="background: linear-gradient(135deg, rgba(175,82,222,0.15), rgba(255,45,85,0.08));"
-      data-title="the still storm"
-      data-meta="2026 · practice of design, usc"
-      data-body="co-designed a 3d-printed phone case merging the design philosophies of jony ive (apple) and vincent van gogh — restraint meets emotion. a tactile artefact that challenges the boundary between product design and fine art.">
-      <div class="card-name">the still storm</div>
-      <div class="card-meta">2026 · practice of design, usc</div>
-    </div>
-
-    <div class="project-card" style="background: linear-gradient(135deg, rgba(52,199,89,0.12), rgba(244,239,228,0.06));"
-      data-title="product design intern"
-      data-meta="2025 · lighthouse healthcare, new delhi"
-      data-body="led end-to-end product development for dementia care solutions. designed and manufactured cognitive engagement tools including customised puzzles and family tree visualisations grounded in user-centred design.">
-      <div class="card-name">product design intern</div>
-      <div class="card-meta">2025 · lighthouse healthcare, new delhi</div>
-    </div>
-
-    <div class="project-card" style="background: linear-gradient(135deg, rgba(50,173,230,0.15), rgba(138,115,85,0.08));"
-      data-title="digital archiving"
-      data-meta="2025 · reading caterpillar, new delhi"
-      data-body="designed and executed a digital archiving project for a children's library, cataloguing over a decade of physical materials into a structured, searchable digital system. applied information architecture for long-term accessibility.">
-      <div class="card-name">digital archiving</div>
-      <div class="card-meta">2025 · reading caterpillar, new delhi</div>
-    </div>
-
-  </div>
-</section>
-
-<!-- RESEARCHER SECTION -->
-<section class="section" id="researcher">
-  <div class="section-label">researcher</div>
-
-  <div class="research-subsection">
-    <p class="research-sublabel">university · 2024–2026</p>
-    <div class="research-row"><span class="research-num">01</span><span class="research-title">drafting an ethical ai policy — thematic writing, writ 150</span></div>
-    <div class="research-row"><span class="research-num">02</span><span class="research-title">together, but alone — the paradox of designing interactive museums (grammy museum, la)</span></div>
-    <div class="research-row"><span class="research-num">03</span><span class="research-title">it ain't right, and it ain't natural — technology in hadestown</span></div>
-    <div class="research-row"><span class="research-num">04</span><span class="research-title">women, societal standards, and power from show boat to wicked — broadway musical studies</span></div>
-    <div class="research-row"><span class="research-num">05</span><span class="research-title">conformity and the cinderella arc in musical theatre</span></div>
-    <div class="research-row"><span class="research-num">06</span><span class="research-title">the weight of familiarity — how unresolved attachment shapes stage and self</span></div>
-    <div class="research-row"><span class="research-num">07</span><span class="research-title">christine's choice — agency, voice, and the critique of patriarchy in phantom of the opera</span></div>
+    <div class="hero-eyebrow">selected work &middot; 2024–2026</div>
+    <h1 class="hero-title">making, researching, building.</h1>
+    <p class="hero-sub">three ways i show up in the world.</p>
+    <div class="scroll-cue">→ scroll</div>
   </div>
 
-  <div class="research-subsection">
-    <p class="research-sublabel">high school · extended essays &amp; ias</p>
-    <div class="research-row"><span class="research-num">01</span><span class="research-title">analysing audio recordings using fourier transformation — mathematics</span></div>
-    <div class="research-row"><span class="research-num">02</span><span class="research-title">flow of water and the hydraulic jump — physics</span></div>
-    <div class="research-row"><span class="research-num">03</span><span class="research-title">added impurity and critical solution temperature — chemistry</span></div>
-    <div class="research-row"><span class="research-num">04</span><span class="research-title">tighter regulations on vaping and tobacco in the uk — economics</span></div>
-    <div class="research-row"><span class="research-num">05</span><span class="research-title">soaring inflation rate in nigeria — economics</span></div>
-    <div class="research-row"><span class="research-num">06</span><span class="research-title">eu tariffs on chinese vehicles — economics</span></div>
-    <div class="research-row"><span class="research-num">07</span><span class="research-title">beauty standards and ethnic biases in media — english</span></div>
-  </div>
+  <!-- PANEL 1: DESIGNER -->
+  <div class="panel" id="panel-1">
+    <div class="panel-split">
+      <div class="panel-sidebar">
+        <span class="sidebar-label">designer</span>
+        <div class="sidebar-rule"></div>
+        <div class="sidebar-brief">ux · product · experience</div>
+      </div>
+      <div class="panel-content">
+        <div class="section-heading">selected projects</div>
+        <div class="designer-rows-wrap">
 
-  <div class="research-form-wrap">
-    <span class="research-form-label">request a paper or collaborate</span>
-    <form class="research-form" action="mailto:aanya@usc.edu" method="post" enctype="text/plain">
-      <input type="email" name="email" placeholder="your email">
-      <textarea name="interest" placeholder="what are you looking for?"></textarea>
-      <button type="submit">request research →</button>
-    </form>
-  </div>
-</section>
+          <div class="designer-row"
+            data-title="tomol28"
+            data-meta="practice of design, usc · 2026"
+            data-body="Redesigned the LA 2028 Olympic visitor experience to foreground Los Angeles's Indigenous heritage, centring the Chumash Tomol as a cultural anchor. Developed a journey concept tracing the city's shoreline across key Olympic touchpoints.">
+            <span class="row-title">tomol28</span>
+            <span class="row-meta">practice of design, usc</span>
+            <span class="row-year">2026</span>
+            <span class="row-arrow">→</span>
+          </div>
 
-<!-- FOUNDER SECTION -->
-<section class="section" id="founder">
-  <div class="section-label">founder</div>
-  <div class="founder-grid">
+          <div class="designer-row"
+            data-title="troy eats"
+            data-meta="practice of design, usc · 2026"
+            data-body="Led end-to-end redesign of the USC campus dining system — UX research, service prototyping, visual identity, brand strategy. Developed the Troy Eats brand including naming and a cohesive design system.">
+            <span class="row-title">troy eats</span>
+            <span class="row-meta">practice of design, usc</span>
+            <span class="row-year">2026</span>
+            <span class="row-arrow">→</span>
+          </div>
 
-    <a href="afterhours.html" class="founder-card" style="background: linear-gradient(135deg, #1a0a2e, #2d1b69);">
-      <span class="founder-badge">in beta</span>
-      <div class="founder-name">afterhours</div>
-      <p class="founder-desc">conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.</p>
-    </a>
+          <div class="designer-row"
+            data-title="look up"
+            data-meta="practice of design, usc · 2026"
+            data-body="Designed a Chindogu device for scrolling while walking without compromising spatial awareness. Explores smartphone dependency as a design critique.">
+            <span class="row-title">look up</span>
+            <span class="row-meta">practice of design, usc</span>
+            <span class="row-year">2026</span>
+            <span class="row-arrow">→</span>
+          </div>
 
-    <div class="founder-card" style="background: linear-gradient(135deg, #1a0a14, #3d0020);">
-      <span class="founder-badge">founding</span>
-      <div class="founder-name">design for america @ usc</div>
-      <p class="founder-desc">leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure. soft launch fall 2026.</p>
+          <div class="designer-row"
+            data-title="the still storm"
+            data-meta="practice of design, usc · 2026"
+            data-body="Co-designed a 3D-printed phone case merging Jony Ive and Vincent van Gogh — restraint meets emotion. A tactile artefact at the boundary between product and fine art.">
+            <span class="row-title">the still storm</span>
+            <span class="row-meta">practice of design, usc</span>
+            <span class="row-year">2026</span>
+            <span class="row-arrow">→</span>
+          </div>
+
+          <div class="designer-row"
+            data-title="product design intern"
+            data-meta="lighthouse healthcare · 2025"
+            data-body="Led end-to-end product development for dementia care at Lighthouse Healthcare. Designed cognitive engagement tools including puzzles and family tree visualisations grounded in user research.">
+            <span class="row-title">product design intern</span>
+            <span class="row-meta">lighthouse healthcare</span>
+            <span class="row-year">2025</span>
+            <span class="row-arrow">→</span>
+          </div>
+
+          <div class="designer-row"
+            data-title="digital archiving"
+            data-meta="reading caterpillar · 2025"
+            data-body="Designed a digital archiving system for a children's library, cataloguing over a decade of materials. Applied information architecture for long-term accessibility.">
+            <span class="row-title">digital archiving</span>
+            <span class="row-meta">reading caterpillar</span>
+            <span class="row-year">2025</span>
+            <span class="row-arrow">→</span>
+          </div>
+
+        </div>
+      </div>
     </div>
-
   </div>
-</section>
 
-<!-- OUTRO -->
-<div class="outro">
-  <p class="outro-text">built to keep going.</p>
-  <a href="index.html" class="outro-link">← back to playground</a>
+  <!-- PANEL 2: RESEARCHER -->
+  <div class="panel" id="panel-2">
+    <div class="panel-split">
+      <div class="panel-sidebar">
+        <span class="sidebar-label">researcher</span>
+        <div class="sidebar-rule"></div>
+        <div class="sidebar-brief">economics · stem · humanities</div>
+      </div>
+      <div class="panel-content">
+        <div class="section-heading">research</div>
+
+        <div class="research-cols">
+          <div class="research-col">
+            <div class="research-col-label">university</div>
+            <ul class="research-list">
+              <li data-n="1">drafting an ethical ai policy</li>
+              <li data-n="2">together, but alone</li>
+              <li data-n="3">it ain't right, and it ain't natural</li>
+              <li data-n="4">women, societal standards, and power</li>
+              <li data-n="5">conformity and the cinderella arc</li>
+              <li data-n="6">the weight of familiarity</li>
+              <li data-n="7">christine's choice</li>
+            </ul>
+          </div>
+          <div class="research-col">
+            <div class="research-col-label">high school</div>
+            <ul class="research-list">
+              <li data-n="1">fourier transformation in audio</li>
+              <li data-n="2">hydraulic jump + water flow</li>
+              <li data-n="3">critical solution temperature</li>
+              <li data-n="4">vaping regulation, uk</li>
+              <li data-n="5">inflation in nigeria</li>
+              <li data-n="6">eu tariffs on vehicles</li>
+              <li data-n="7">beauty standards in media</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="research-form-wrap">
+          <div class="research-form-label">interested in collaborating on research? get in touch.</div>
+          <form class="research-form" onsubmit="return false;">
+            <input type="email" placeholder="your email" />
+            <textarea rows="3" placeholder="what are you working on?"></textarea>
+            <button type="submit">send →</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: FOUNDER -->
+  <div class="panel" id="panel-3">
+    <div class="panel-split">
+      <div class="panel-sidebar">
+        <span class="sidebar-label">founder</span>
+        <div class="sidebar-rule"></div>
+        <div class="sidebar-brief">afterhours · dfa</div>
+      </div>
+      <div class="panel-content">
+        <div class="section-heading">ventures</div>
+
+        <div class="founder-blocks">
+          <div class="founder-block">
+            <div class="founder-block-header">
+              <span class="founder-block-title">afterhours</span>
+              <span class="founder-tag">in beta</span>
+            </div>
+            <p class="founder-block-body">conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.</p>
+            <a href="afterhours.html" class="founder-link">explore afterhours →</a>
+          </div>
+
+          <div class="founder-block">
+            <div class="founder-block-header">
+              <span class="founder-block-title">design for america @ usc</span>
+              <span class="founder-tag">founding</span>
+            </div>
+            <p class="founder-block-body">leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 4: OUTRO -->
+  <div class="panel" id="panel-4">
+    <p class="outro-title">built to keep going.</p>
+    <a href="index.html" class="outro-back">← back to playground</a>
+  </div>
+
 </div>
 
-<!-- SHEET OVERLAY -->
-<div class="sheet-overlay" id="sheet-overlay"></div>
-<div class="ios-sheet" id="ios-sheet">
+<!-- PROGRESS BAR -->
+<div id="progress"></div>
+
+<!-- PANEL DOTS -->
+<div id="dots">
+  <div class="dot active" data-panel="0"></div>
+  <div class="dot" data-panel="1"></div>
+  <div class="dot" data-panel="2"></div>
+  <div class="dot" data-panel="3"></div>
+  <div class="dot" data-panel="4"></div>
+</div>
+
+<!-- BOTTOM SHEET -->
+<div id="sheet-overlay"></div>
+<div id="bottom-sheet">
   <div class="sheet-handle"></div>
-  <button class="sheet-close" id="sheet-close" aria-label="close">✕</button>
-  <div class="sheet-inner">
-    <div class="sheet-title" id="sheet-title"></div>
-    <div class="sheet-meta" id="sheet-meta"></div>
-    <div class="sheet-body" id="sheet-body"></div>
-  </div>
+  <button class="sheet-close" id="sheet-close">✕</button>
+  <div class="sheet-title" id="sheet-title"></div>
+  <div class="sheet-meta" id="sheet-meta"></div>
+  <div class="sheet-body" id="sheet-body"></div>
 </div>
 
 <script>
-// Custom cursor
+// CURSOR
 const cursor = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
   cursor.style.left = e.clientX + 'px';
   cursor.style.top = e.clientY + 'px';
 });
 
-// Scroll progress
-const bar = document.getElementById('progress-bar');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  bar.style.width = pct + '%';
+// HORIZONTAL SCROLL
+const hscroll = document.getElementById('hscroll');
+
+// DRAG TO SCROLL
+let isDown = false, startX, startLeft, velX = 0, lastX;
+
+hscroll.addEventListener('mousedown', e => {
+  isDown = true;
+  startX = e.pageX;
+  startLeft = hscroll.scrollLeft;
+  velX = 0;
+  lastX = e.pageX;
+  hscroll.style.scrollSnapType = 'none';
+  cursor.style.transform = 'translate(-50%,-50%) scale(1.5)';
+  e.preventDefault();
 });
 
-// Active nav tab on scroll
-const tabs = document.querySelectorAll('.nav-tab[data-section]');
-const sectionIds = ['designer', 'researcher', 'founder'];
-const sectionEls = sectionIds.map(id => document.getElementById(id));
-
-const sectionObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      tabs.forEach(t => t.classList.toggle('active', t.dataset.section === id));
+window.addEventListener('mouseup', () => {
+  if (!isDown) return;
+  isDown = false;
+  cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+  (function glide() {
+    if (Math.abs(velX) < 1) {
+      hscroll.style.scrollSnapType = 'x mandatory';
+      return;
     }
-  });
-}, { threshold: 0.25 });
-sectionEls.forEach(el => { if (el) sectionObserver.observe(el); });
+    hscroll.scrollLeft += velX;
+    velX *= 0.9;
+    requestAnimationFrame(glide);
+  })();
+  setTimeout(() => { hscroll.style.scrollSnapType = 'x mandatory'; }, 400);
+});
 
-// iOS Sheet
-const overlay = document.getElementById('sheet-overlay');
-const sheet = document.getElementById('ios-sheet');
-const closeBtn = document.getElementById('sheet-close');
+window.addEventListener('mousemove', e => {
+  if (!isDown) return;
+  const dx = e.pageX - startX;
+  hscroll.scrollLeft = startLeft - dx;
+  velX = e.pageX - lastX;
+  lastX = e.pageX;
+});
+
+// SCROLL TRACKING
+hscroll.addEventListener('scroll', () => {
+  const ratio = hscroll.scrollLeft / (hscroll.scrollWidth - hscroll.clientWidth);
+  document.getElementById('progress').style.width = (ratio * 100) + '%';
+
+  const panelIdx = Math.round(hscroll.scrollLeft / window.innerWidth);
+
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === panelIdx);
+  });
+
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.panel) === panelIdx);
+  });
+});
+
+// NAV TAB CLICKS
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    hscroll.style.scrollSnapType = 'x mandatory';
+    hscroll.scrollLeft = parseInt(tab.dataset.panel) * window.innerWidth;
+  });
+});
+
+// DOT CLICKS
+document.querySelectorAll('.dot').forEach(dot => {
+  dot.addEventListener('click', () => {
+    hscroll.style.scrollSnapType = 'x mandatory';
+    hscroll.scrollLeft = parseInt(dot.dataset.panel) * window.innerWidth;
+  });
+});
+
+// HASH SCROLL
+const hashPanels = { designer: 1, researcher: 2, founder: 3 };
+window.addEventListener('load', () => {
+  const hash = location.hash.replace('#', '');
+  if (hashPanels[hash] !== undefined) {
+    setTimeout(() => {
+      hscroll.style.scrollSnapType = 'none';
+      hscroll.scrollLeft = hashPanels[hash] * window.innerWidth;
+      setTimeout(() => { hscroll.style.scrollSnapType = 'x mandatory'; }, 100);
+    }, 200);
+  }
+});
+
+// BOTTOM SHEET
+const sheetOverlay = document.getElementById('sheet-overlay');
+const bottomSheet = document.getElementById('bottom-sheet');
 
 function openSheet(title, meta, body) {
   document.getElementById('sheet-title').textContent = title;
   document.getElementById('sheet-meta').textContent = meta;
   document.getElementById('sheet-body').textContent = body;
-  overlay.classList.add('open');
-  sheet.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  sheetOverlay.classList.add('open');
+  bottomSheet.classList.add('open');
 }
 
 function closeSheet() {
-  overlay.classList.remove('open');
-  sheet.classList.remove('open');
-  document.body.style.overflow = '';
+  sheetOverlay.classList.remove('open');
+  bottomSheet.classList.remove('open');
 }
 
-document.querySelectorAll('.project-card').forEach(card => {
-  card.addEventListener('click', () => {
-    openSheet(card.dataset.title, card.dataset.meta, card.dataset.body);
+document.querySelectorAll('.designer-row').forEach(row => {
+  row.addEventListener('click', () => {
+    openSheet(row.dataset.title, row.dataset.meta, row.dataset.body);
   });
 });
 
-overlay.addEventListener('click', closeSheet);
-closeBtn.addEventListener('click', closeSheet);
+document.getElementById('sheet-close').addEventListener('click', closeSheet);
+sheetOverlay.addEventListener('click', closeSheet);
 
-// Swipe down to close
-let startY = 0;
-sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
-sheet.addEventListener('touchend', e => {
-  if (e.changedTouches[0].clientY - startY > 80) closeSheet();
-});
+// PAGE TRANSITION
+const overlay = document.getElementById('page-transition');
 
-// Hash scroll on load
-window.addEventListener('load', () => {
-  const hash = window.location.hash;
-  if (hash) {
-    setTimeout(() => {
-      const el = document.querySelector(hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 300);
-  }
-});
-
-// Nav tab smooth scroll
-tabs.forEach(tab => {
-  tab.addEventListener('click', e => {
-    e.preventDefault();
-    const id = tab.dataset.section;
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-    history.pushState(null, '', '#' + id);
-  });
-});
-
-// Page transition out
 document.querySelectorAll('a[href]').forEach(link => {
   const href = link.getAttribute('href');
   if (!href || href.startsWith('#') || href.startsWith('mailto')) return;
-  if (link.classList.contains('nav-tab')) return;
   link.addEventListener('click', e => {
     e.preventDefault();
-    const po = document.getElementById('page-overlay');
-    po.style.opacity = '1';
-    po.style.pointerEvents = 'all';
+    overlay.style.opacity = '1';
+    overlay.style.pointerEvents = 'all';
     setTimeout(() => { window.location.href = href; }, 400);
   });
 });
