@@ -2,197 +2,728 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>aanya — sounds</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>aanya's replay</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
-body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --spring: linear(0,.006,.025,.056,.098,.15,.21,.27,.34,.41,.48,.55,.62,.69,.75,.81,.86,.91,.95,.98,1.004,1.015,1.022,1.025,1.024,1.021,1.015,1.008,1.002,.998,.996,.995,.996,.997,.999,1);
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-sf);
+  background: #1a0a00;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+  user-select: none;
+}
 
-.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
-nav,section,.archive-end{position:relative;z-index:1}
+/* ── STORY SHELL ── */
+#story {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+}
 
-/* ── NAV ── */
-nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:.5px solid var(--border);position:sticky;top:0;
-  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
-.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
-.nav-back:hover{color:var(--ink)}
-.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
+/* ── PROGRESS BAR ── */
+#progress-bar {
+  position: absolute; top: 14px; left: 14px; right: 14px;
+  display: flex; gap: 3px; z-index: 20; pointer-events: none;
+}
+.prog-seg {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.32); overflow: hidden;
+}
+.prog-fill {
+  height: 100%; width: 0%; background: #fff;
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+.prog-seg.done .prog-fill { width: 100%; }
+.prog-seg.active .prog-fill { width: 100%; }
 
-/* ── HERO ── */
-.hero{max-width:680px;margin:64px auto 32px;padding:0 24px}
-.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
-.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
-.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:480px}
+/* ── STORY HEADER LABELS ── */
+#story-header {
+  position: absolute; top: 26px; left: 14px; right: 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 20; pointer-events: none;
+}
+.header-label {
+  font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: -0.01em;
+}
+.header-apple {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.7);
+}
+.header-apple svg { width: 14px; height: 14px; fill: currentColor; }
 
-/* ── WAVEFORM ── */
-.waveform-wrap{max-width:680px;margin:0 auto 8px;padding:0 24px;display:flex;align-items:flex-end;gap:4px;opacity:.18}
-.waveform-bar{width:3px;border-radius:2px;background:linear-gradient(to top,var(--gold),rgba(138,115,85,.3));
-  animation:wavePulse var(--dur,1.2s) ease-in-out infinite alternate var(--del,0s)}
-@keyframes wavePulse{0%{height:var(--hmin,6px);opacity:.35}100%{height:var(--hmax,36px);opacity:.9}}
+/* ── TAP ZONES ── */
+#tap-left, #tap-right {
+  position: absolute; top: 0; bottom: 0; z-index: 15;
+  cursor: pointer;
+}
+#tap-left  { left: 0; width: 33%; }
+#tap-right { right: 0; width: 67%; }
 
-/* ── ARCHIVE ── */
-.archive{max-width:680px;margin:0 auto;padding:0 24px 100px}
-.archive-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:36px}
+/* ── SLIDES ── */
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 60px 28px 44px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.12s ease;
+  overflow: hidden;
+}
+.slide.active { opacity: 1; pointer-events: none; }
 
-/* ── PERFORMANCE CARD ── */
-.perf-card{border-top:.5px solid var(--border);
-  opacity:0;animation:cardIn .65s cubic-bezier(.4,0,.2,1) forwards var(--delay,0s)}
-@keyframes cardIn{to{opacity:1;transform:none}}
+/* Gradient per slide */
+.slide-1 { background: linear-gradient(160deg, #C85A00 0%, #7B2D8B 100%); }
+.slide-2 { background: linear-gradient(160deg, #F0900C 0%, #C85A00 60%, #8B3000 100%); }
+.slide-3 { background: linear-gradient(160deg, #F59520 0%, #E07010 50%, #B84000 100%); }
+.slide-4 { background: linear-gradient(160deg, #E87C10 0%, #D06000 60%, #7B3090 100%); }
+.slide-5 { background: linear-gradient(160deg, #F08010 0%, #C05000 55%, #803000 100%); }
+.slide-6 { background: linear-gradient(160deg, #D04090 0%, #8830B0 50%, #4820A0 100%); }
+.slide-7 { background: linear-gradient(160deg, #E08010 0%, #A03060 50%, #602090 100%); }
+.slide-8 { background: linear-gradient(160deg, #4820A0 0%, #2010C0 50%, #100880 100%); }
+.slide-9 { background: linear-gradient(160deg, #F09015 0%, #E07010 40%, #C85A00 100%); }
 
-.perf-header{display:flex;align-items:baseline;gap:16px;padding:22px 0;cursor:pointer;user-select:none}
-.perf-header:hover .perf-title{color:var(--ink)}
+/* ── SLIDE TEXT SYSTEM ── */
+.slide-eyebrow {
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.65); letter-spacing: 0.02em;
+  margin-bottom: 20px; margin-top: auto;
+}
+.slide-huge {
+  font-size: clamp(56px, 17vw, 128px);
+  font-weight: 800; letter-spacing: -0.04em;
+  color: #fff; line-height: 0.9;
+  /* overflow intentional — bleeds off screen like Replay */
+}
+.slide-huge.bleed {
+  font-size: clamp(80px, 24vw, 200px);
+  margin-left: -4px;
+}
+.slide-large {
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 700; letter-spacing: -0.035em;
+  color: #fff; line-height: 1.0;
+}
+.slide-body {
+  font-size: clamp(15px, 2.5vw, 20px);
+  font-weight: 400; color: rgba(255,255,255,0.75);
+  line-height: 1.5; margin-top: 12px;
+  max-width: 340px;
+}
+.slide-sub {
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.5); letter-spacing: 0.02em;
+  margin-top: 16px;
+}
+.text-dim { color: rgba(255,255,255,0.35); }
 
-.perf-title{font-size:21px;font-style:italic;color:rgba(13,13,13,.6);transition:color .22s;flex:1;min-width:0}
-.perf-type{font-size:12px;letter-spacing:2px;color:var(--gold);white-space:nowrap;flex-shrink:0}
-.perf-year{font-size:13px;color:var(--muted);white-space:nowrap;flex-shrink:0}
-.perf-venue{font-size:13px;font-style:italic;color:var(--muted);white-space:nowrap;flex-shrink:0}
-.expand-btn{
-  width:26px;height:26px;border-radius:50%;
-  border:.5px solid var(--border);background:transparent;
-  color:var(--muted);font-size:15px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .22s cubic-bezier(.34,1.56,.64,1);flex-shrink:0}
-.perf-card.open .expand-btn{
-  border-color:rgba(138,115,85,.4);color:var(--gold);
-  transform:rotate(45deg);background:rgba(138,115,85,.06)}
+/* ── ENTRANCE ANIMATION ── */
+.slide-content {
+  display: flex; flex-direction: column;
+  flex: 1; justify-content: flex-end;
+}
+.slide.active .anim-item {
+  animation: slide-up 0.55s var(--spring) both;
+}
+.slide.active .anim-item:nth-child(2) { animation-delay: 0.08s; }
+.slide.active .anim-item:nth-child(3) { animation-delay: 0.16s; }
+.slide.active .anim-item:nth-child(4) { animation-delay: 0.24s; }
+.slide.active .anim-item:nth-child(5) { animation-delay: 0.32s; }
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-/* ── EXPANDABLE BODY ── */
-.perf-body{max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1)}
-.perf-card.open .perf-body{max-height:520px}
+/* ── SLIDE 1: INTRO ── */
+.intro-bg {
+  position: absolute; inset: 0;
+  background: url('') center/cover no-repeat;
+  filter: blur(0px) brightness(0.65) saturate(1.2);
+}
+.intro-bg-grad {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 20%, rgba(100,20,0,0.7) 70%, rgba(80,10,0,0.95) 100%);
+}
+.intro-title-wrap {
+  margin-top: auto;
+}
+.intro-name {
+  font-size: clamp(72px, 22vw, 180px);
+  font-weight: 800; letter-spacing: -0.05em;
+  color: #fff; line-height: 0.88;
+}
+.intro-sub-line {
+  font-size: 16px; font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  margin-top: 12px; letter-spacing: 0.01em;
+}
 
-.embed-zone{
-  background:rgba(138,115,85,.06);border:.5px solid rgba(138,115,85,.2);
-  border-radius:8px;padding:36px;
-  display:flex;flex-direction:column;align-items:center;
-  gap:14px;margin-bottom:20px}
-.embed-pulse{
-  width:52px;height:52px;border-radius:50%;
-  background:rgba(138,115,85,.12);border:1px solid rgba(138,115,85,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;color:rgba(138,115,85,.7);
-  animation:heartbeat 2.2s ease-in-out infinite}
-@keyframes heartbeat{
-  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(138,115,85,.3)}
-  40%{transform:scale(1.06);box-shadow:0 0 0 10px rgba(138,115,85,0)}}
-.embed-caption{font-size:12px;font-style:italic;color:var(--muted);text-align:center;line-height:1.7}
-.perf-note{font-size:15px;font-style:italic;color:var(--muted);line-height:2;padding-bottom:28px}
+/* ── SLIDE 4: ALBUM GRID ── */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin: 0 -28px;
+  flex: 1;
+  overflow: hidden;
+}
+.album-cell {
+  aspect-ratio: 1; overflow: hidden;
+  background: rgba(255,255,255,0.08);
+  position: relative;
+  /* spring lift on hover */
+  transition: transform 0.35s linear(0,.01,.04,.1,.19,.29,.4,.51,.61,.7,.78,.85,.9,.94,.97,.99,1.005,1.008,1.007,1.004,1);
+}
+.album-cell:hover { transform: scale(1.04); z-index: 2; }
+.album-cell img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+.album-cell img.loaded { opacity: 1; }
+.album-cell-placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; opacity: 0.25;
+}
+/* shimmer loading state */
+.album-cell::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+.album-cell img.loaded ~ .album-cell-placeholder { display: none; }
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
-.archive-end{max-width:680px;margin:0 auto;padding:0 24px;
-  border-top:.5px solid var(--border);padding-top:28px;padding-bottom:28px;
-  opacity:0;animation:cardIn .6s ease forwards 1.2s}
-.archive-end-text{font-size:12px;font-style:italic;color:var(--muted);letter-spacing:2px}
+/* ── SLIDE 5: SONG LIST ── */
+.fav-list {
+  display: flex; flex-direction: column; gap: 0;
+  margin-top: 20px;
+}
+.fav-item {
+  padding: 11px 0;
+  border-bottom: 0.5px solid rgba(255,255,255,0.15);
+  display: flex; align-items: baseline; gap: 12px;
+}
+.fav-num {
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.4); width: 18px; flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.fav-name {
+  font-size: clamp(16px, 3vw, 20px); font-weight: 600;
+  color: #fff; letter-spacing: -0.02em; flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fav-show {
+  font-size: 12px; color: rgba(255,255,255,0.45);
+  flex-shrink: 0; letter-spacing: 0.01em;
+}
+
+/* ── SLIDE 7: FUTURE SONGS ── */
+.future-list {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 16px;
+}
+.future-item {
+  font-size: clamp(15px, 2.8vw, 18px); font-weight: 500;
+  color: rgba(255,255,255,0.7); letter-spacing: -0.02em;
+  padding: 4px 0;
+}
+.future-item strong { color: #fff; }
+
+/* ── SLIDE 9: PORTFOLIO ── */
+.portfolio-card {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px; padding: 24px 22px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: transform 0.3s var(--spring), background 0.2s;
+}
+.portfolio-card:active { transform: scale(0.97); }
+.portfolio-card:hover { background: rgba(255,255,255,0.18); }
+.portfolio-card-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+}
+.portfolio-card-title {
+  font-size: 22px; font-weight: 700;
+  letter-spacing: -0.03em; color: #fff;
+  margin-bottom: 4px;
+}
+.portfolio-card-sub {
+  font-size: 14px; color: rgba(255,255,255,0.55);
+}
+.portfolio-arrow {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 16px;
+}
+.portfolio-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: white; color: #1C1C1E;
+  border: none; border-radius: 999px;
+  padding: 10px 20px; font-size: 15px; font-weight: 600;
+  font-family: var(--font-sf); cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s var(--spring), opacity 0.15s;
+}
+.portfolio-btn:hover { opacity: 0.9; }
+.portfolio-btn:active { transform: scale(0.94); }
+
+/* ── SLIDE SKIP / BACK NAV (bottom) ── */
+.nav-dots {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 20;
+}
+.nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s var(--spring);
+}
+.nav-dot.active { background: #fff; transform: scale(1.4); }
+
+/* tap feedback ring */
+.tap-ring {
+  position: fixed; border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  pointer-events: none; z-index: 30;
+  width: 64px; height: 64px;
+  transform: translate(-50%,-50%) scale(0);
+  animation: ring-out 0.5s ease forwards;
+}
+@keyframes ring-out {
+  0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.6; }
+  100% { transform: translate(-50%,-50%) scale(1.5); opacity: 0; }
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
 </style>
 </head>
 <body>
-<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
-<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
 
-<div class="scrapbook">
-  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
-  <img style="width:15%;opacity:0.24;transform:rotate(5deg);top:40%;left:3%;"    src="background scrapbook/8c2b2ba7-a861-4ed8-9037-ee6a7e83735d-1.png">
-  <img style="width:19%;opacity:0.20;transform:rotate(-7deg);top:62%;left:-1%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.50.56_PM-removebg-preview.png">
-  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
-  <img style="width:19%;opacity:0.22;transform:rotate(-4deg);top:28%;right:-2%;" src="background scrapbook/Screenshot_2026-05-08_at_1.55.53_PM-removebg-preview.png">
-  <img style="width:15%;opacity:0.24;transform:rotate(-5deg);top:54%;right:2%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.54.17_PM-removebg-preview.png">
-  <img style="width:15%;opacity:0.26;transform:rotate(3deg);top:74%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
-</div>
+<div id="story">
 
-<nav>
-  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
-  <span class="nav-label">sounds</span>
-</nav>
+  <!-- PROGRESS SEGMENTS -->
+  <div id="progress-bar">
+    <!-- generated by JS -->
+  </div>
 
-<section class="hero">
-  <span class="room-tag">the listening chamber</span>
-  <h1>things i've sung<br>into rooms</h1>
-  <p class="hero-sub">a record of performances, rehearsals, and the kind of music that lives in the body before it ever leaves the throat.</p>
-</section>
+  <!-- STORY HEADER -->
+  <div id="story-header">
+    <span class="header-label">aanya's replay</span>
+    <span class="header-apple">
+      <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-37.3-149.3-81.1c-51.4-51.9-93.7-129.9-93.7-204.7 0-207.7 135.4-317 269.8-317 36.5 0 102.1 10.9 148.1 10.9 44.4 0 109.3-11.5 148.2-11.5 60.4 0 120.6 28.5 159.3 82.1zm-166.5-115.1c-5.1 36.3-27.7 77.9-60.3 103.2-29.7 23.3-63.7 44-120.2 44-6.4 0-12.8-.5-19.2-.5-5.1-34.9 11.8-81.1 40.7-109.5 30.8-30.8 76.1-53.6 119-53.6 6.4 0 12.8.5 39.5 16.4z"/></svg>
+      Music
+    </span>
+  </div>
 
-<div class="waveform-wrap" id="waveform"></div>
+  <!-- TAP ZONES -->
+  <div id="tap-left"></div>
+  <div id="tap-right"></div>
 
-<section class="archive">
-  <p class="archive-label">performance archive</p>
-  <div id="perf-list"></div>
-</section>
+  <!-- NAV DOTS -->
+  <div class="nav-dots" id="nav-dots"></div>
 
-<div class="archive-end"><p class="archive-end-text">more recordings forthcoming</p></div>
+  <!-- ══════════════════════════════════════
+       SLIDE 1 — INTRO
+  ══════════════════════════════════════ -->
+  <div class="slide slide-1" id="s1">
+    <div class="intro-bg-grad" style="background:linear-gradient(to bottom,rgba(100,20,0,0.3) 0%,rgba(80,10,80,0.6) 60%,rgba(40,0,60,0.95) 100%);position:absolute;inset:0;"></div>
+    <div class="slide-content" style="position:relative;z-index:2;">
+      <div class="intro-title-wrap">
+        <div class="anim-item intro-name">aanya<br>recapped.</div>
+        <div class="anim-item intro-sub-line">a lifetime of singing, revisited.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 2 — STATEMENT
+  ══════════════════════════════════════ -->
+  <div class="slide slide-2" id="s2">
+    <div class="slide-content" style="justify-content:center;">
+      <div class="anim-item slide-huge" style="font-size:clamp(44px,13vw,100px);line-height:1.02;">A lot of<br>singing can<br>happen in<br>a lifetime.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 3 — BIG NUMBER
+  ══════════════════════════════════════ -->
+  <div class="slide slide-3" id="s3">
+    <div class="slide-content" style="justify-content:flex-end;">
+      <div class="anim-item slide-eyebrow" style="margin-bottom:12px;">and she's performed</div>
+      <div class="anim-item slide-huge bleed" style="font-size:clamp(120px,38vw,300px);line-height:0.85;margin-left:-6px;color:rgba(255,255,255,0.95);">47</div>
+      <div class="anim-item" style="font-size:clamp(32px,8vw,64px);font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:-0.03em;margin-top:-4px;">songs. to date.</div>
+      <div class="anim-item slide-sub">musical theater · classical · pop · traditional</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 4 — ALBUM MOSAIC
+  ══════════════════════════════════════ -->
+  <div class="slide slide-4" id="s4" style="padding:60px 0 0;">
+    <div style="padding:0 28px;margin-bottom:12px;position:relative;z-index:1;">
+      <div class="anim-item slide-eyebrow" style="margin-bottom:4px;">from the shows you love</div>
+      <div class="anim-item" style="font-size:clamp(28px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1;">your repertoire.</div>
+    </div>
+    <div class="album-grid" id="album-grid" style="position:relative;z-index:1;">
+      <!-- 9 album covers — loaded via iTunes API -->
+      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Wicked" data-search="Wicked Original Cast Recording"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Les Misérables" data-search="Les Misérables Original Cast Recording"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="My Fair Lady" data-search="My Fair Lady Original Cast Recording Broadway"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🎵</div><img alt="The Sound of Music" data-search="The Sound of Music Original Cast Recording"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🎪</div><img alt="The Greatest Showman" data-search="The Greatest Showman Soundtrack"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Evita" data-search="Evita Original Cast Recording"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🥧</div><img alt="Waitress" data-search="Waitress The Musical Original Cast Recording"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🎤</div><img alt="Adele 25" data-search="Adele 25"></div>
+      <div class="album-cell"><div class="album-cell-placeholder">🌹</div><img alt="A Star is Born" data-search="A Star is Born Soundtrack 2018"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 5 — FAVOURITES TO PERFORM
+  ══════════════════════════════════════ -->
+  <div class="slide slide-5" id="s5">
+    <div class="slide-content">
+      <div class="anim-item slide-eyebrow">the ones she keeps coming back to</div>
+      <div class="anim-item" style="font-size:clamp(30px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.05;">her favourites<br>to perform.</div>
+      <div class="fav-list">
+        <div class="fav-item anim-item">
+          <span class="fav-num">01</span>
+          <span class="fav-name">she used to be mine</span>
+          <span class="fav-show">Waitress</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">02</span>
+          <span class="fav-name">when he sees me</span>
+          <span class="fav-show">Waitress</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">03</span>
+          <span class="fav-name">defying gravity</span>
+          <span class="fav-show">Wicked</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">04</span>
+          <span class="fav-name">i'm not that girl</span>
+          <span class="fav-show">Wicked</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">05</span>
+          <span class="fav-name">for good</span>
+          <span class="fav-show">Wicked</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">06</span>
+          <span class="fav-name">don't cry for me argentina</span>
+          <span class="fav-show">Evita</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">07</span>
+          <span class="fav-name">i dreamed a dream</span>
+          <span class="fav-show">Les Mis</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">08</span>
+          <span class="fav-name">the winner takes it all</span>
+          <span class="fav-show">Mamma Mia</span>
+        </div>
+        <div class="fav-item anim-item">
+          <span class="fav-num">09</span>
+          <span class="fav-name">show me!</span>
+          <span class="fav-show">My Fair Lady</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 6 — YOUR SHOWS
+  ══════════════════════════════════════ -->
+  <div class="slide slide-6" id="s6">
+    <div class="slide-content" style="justify-content:center;">
+      <div class="anim-item slide-eyebrow" style="text-align:left;">her favourite musicals to perform from</div>
+      <!-- Album covers row -->
+      <div class="anim-item" style="display:flex;gap:12px;margin-bottom:20px;">
+        <div style="flex:1;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);background:rgba(255,255,255,0.1);">
+          <img id="wicked-cover" alt="Wicked" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s;">
+        </div>
+        <div style="flex:1;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);background:rgba(255,255,255,0.1);">
+          <img id="mfl-cover" alt="My Fair Lady" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s;">
+        </div>
+      </div>
+      <div class="anim-item" style="font-size:clamp(52px,15vw,120px);font-weight:800;letter-spacing:-0.05em;color:#fff;line-height:0.88;margin-left:-3px;">WICKED.</div>
+      <div class="anim-item" style="font-size:clamp(26px,7vw,58px);font-weight:700;letter-spacing:-0.04em;color:rgba(255,255,255,0.55);line-height:1.0;margin-top:6px;">MY FAIR LADY.</div>
+      <div class="anim-item slide-body" style="margin-top:16px;">3 songs from wicked alone.<br>and she's still not done with it.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 7 — HARDEST SONG
+  ══════════════════════════════════════ -->
+  <div class="slide slide-7" id="s7">
+    <div class="slide-content" style="justify-content:center;">
+      <div class="anim-item slide-eyebrow">the one that challenged her most</div>
+      <div class="anim-item slide-huge" style="font-size:clamp(48px,14vw,110px);">SHOW ME!</div>
+      <div class="anim-item slide-body" style="margin-top:16px;font-size:17px;color:rgba(255,255,255,0.7);">My Fair Lady.<br>learning to find her voice<br>wasn't just about the notes.</div>
+      <div class="anim-item" style="margin-top:28px;padding:14px 18px;background:rgba(255,255,255,0.12);border-radius:14px;border:1px solid rgba(255,255,255,0.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">
+        <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase;">currently working on</div>
+        <div style="font-size:17px;font-weight:600;color:#fff;letter-spacing:-0.02em;">Don't Rain on My Parade</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px;">Funny Girl</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 8 — SONGS TO LEARN
+  ══════════════════════════════════════ -->
+  <div class="slide slide-8" id="s8">
+    <div class="slide-content">
+      <div class="anim-item slide-eyebrow">still on the list</div>
+      <div class="anim-item" style="font-size:clamp(30px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.05;margin-bottom:16px;">songs she wants<br>to learn.</div>
+      <div class="future-list">
+        <div class="future-item anim-item"><strong>The Girl in 14G</strong></div>
+        <div class="future-item anim-item"><strong>The Wizard and I</strong> · Wicked</div>
+        <div class="future-item anim-item"><strong>La Vie en Rose</strong></div>
+        <div class="future-item anim-item"><strong>What Is This Feeling?</strong> · Wicked</div>
+        <div class="future-item anim-item"><strong>Popular</strong> · Wicked</div>
+        <div class="future-item anim-item"><strong>Gimme Gimme</strong> · Thoroughly Modern Millie</div>
+        <div class="future-item anim-item"><strong>Almost There</strong> · Princess and the Frog</div>
+        <div class="future-item anim-item"><strong>I'm Here</strong> · The Color Purple</div>
+        <div class="future-item anim-item"><strong>Speechless</strong></div>
+        <div class="future-item anim-item"><strong>Reflection</strong> · Mulan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 9 — PORTFOLIO / OUTRO
+  ══════════════════════════════════════ -->
+  <div class="slide slide-9" id="s9">
+    <div class="slide-content" style="justify-content:center;">
+      <div class="anim-item" style="font-size:clamp(48px,13vw,96px);font-weight:800;letter-spacing:-0.04em;color:#fff;line-height:0.9;">keep<br>performing.</div>
+      <div class="anim-item slide-body" style="margin-top:16px;">47 songs down. so many more to go.</div>
+
+      <div class="anim-item portfolio-card" onclick="window.location.href='music.html'">
+        <div class="portfolio-card-label">vocal portfolio</div>
+        <div class="portfolio-card-title">my full repertoire</div>
+        <div class="portfolio-card-sub">scores, recordings &amp; performance notes</div>
+        <div class="portfolio-arrow">
+          <a href="music.html" class="portfolio-btn">
+            explore →
+          </a>
+          <span style="font-size:13px;color:rgba(255,255,255,0.4);">47 songs</span>
+        </div>
+      </div>
+
+      <!-- Overview button — shows full data summary page -->
+      <div class="anim-item" style="margin-top:14px;">
+        <a href="sounds-overview.html" class="portfolio-btn" style="width:100%;justify-content:center;background:rgba(255,255,255,0.15);color:#fff;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);box-shadow:none;">
+          overview
+        </a>
+      </div>
+
+      <div class="anim-item" style="margin-top:12px;text-align:center;">
+        <a href="aanya-portfolio-v14.html" style="font-size:14px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:-0.01em;">← back to portfolio</a>
+      </div>
+
+      <div class="anim-item" style="margin-top:24px;text-align:center;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:0.04em;">aanya's replay · every performance, counted</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#story -->
 
 <script>
-const wf = document.getElementById('waveform');
-const HEIGHTS = [10,18,32,24,44,16,36,54,28,20,48,33,22,46,14,52,40,24,42,16,38,28,50,18,34,12,48,30,20,42,26,36,14,44,30];
-HEIGHTS.forEach((h, i) => {
-  const b = document.createElement('div');
-  b.className = 'waveform-bar';
-  b.style.cssText = `--hmin:${Math.round(h*.35)}px;--hmax:${h}px;--dur:${(.75+Math.random()*.95).toFixed(2)}s;--del:${(i*.055).toFixed(2)}s`;
-  wf.appendChild(b);
+// ── STORY ENGINE ──
+const TOTAL = 9;
+let current = 0;
+let animating = false;
+
+const slides   = document.querySelectorAll('.slide');
+const progBar  = document.getElementById('progress-bar');
+const navDots  = document.getElementById('nav-dots');
+
+// Build progress segments + nav dots
+for (let i = 0; i < TOTAL; i++) {
+  const seg = document.createElement('div');
+  seg.className = 'prog-seg';
+  seg.innerHTML = '<div class="prog-fill"></div>';
+  progBar.appendChild(seg);
+
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  dot.dataset.i = i;
+  dot.addEventListener('click', e => { e.stopPropagation(); goTo(parseInt(dot.dataset.i)); });
+  navDots.appendChild(dot);
+}
+
+function goTo(idx, dir = 1) {
+  if (animating || idx === current || idx < 0 || idx >= TOTAL) return;
+  animating = true;
+
+  const prev = slides[current];
+  const next = slides[idx];
+
+  // Remove active from old
+  prev.classList.remove('active');
+  // Clear animations so they re-fire
+  next.querySelectorAll('.anim-item').forEach(el => {
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = '';
+  });
+  next.classList.add('active');
+
+  current = idx;
+  updateUI();
+
+  setTimeout(() => { animating = false; }, 300);
+}
+
+function advance() { goTo(current + 1); }
+function back()    { goTo(current - 1); }
+
+function updateUI() {
+  // Progress segments
+  document.querySelectorAll('.prog-seg').forEach((seg, i) => {
+    seg.classList.toggle('done',   i < current);
+    seg.classList.toggle('active', i === current);
+  });
+  // Nav dots
+  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === current);
+  });
+}
+
+// ── TAP ZONES ──
+document.getElementById('tap-right').addEventListener('click', e => {
+  // Don't advance if clicking a link/button inside
+  if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) return;
+  ripple(e.clientX, e.clientY);
+  advance();
+});
+document.getElementById('tap-left').addEventListener('click', e => {
+  ripple(e.clientX, e.clientY);
+  back();
 });
 
-const PERFS = [
-  {
-    title: 'spring arts showcase',
-    type: 'vocal solo',
-    venue: 'bovard auditorium',
-    year: '2025',
-    note: 'a single prepared piece. there is something about singing in a room that big — the sound travels out and you have no idea where it lands. you just hope it lands somewhere soft.'
-  },
-  {
-    title: 'open mic night',
-    type: 'acoustic set',
-    venue: 'ground zero coffee house',
-    year: '2025',
-    note: 'three songs, borrowed guitar, a lot of nerves. the kind of night that reminds you why you started — not for the applause, but for the three seconds right before it begins.'
-  },
-  {
-    title: 'winter formal',
-    type: 'featured vocalist',
-    venue: 'royce hall ballroom',
-    year: '2024',
-    note: 'performed with the house band for the first time. the acoustics were impossibly good — every note came back to you just a half-second later, like an echo you hadn\'t earned yet.'
-  },
-  {
-    title: 'fall choir concert',
-    type: 'ensemble, soprano',
-    venue: 'newman recital hall',
-    year: '2024',
-    note: 'fifteen voices, one hall. there\'s a specific feeling of locking into a chord with fourteen other people — it vibrates differently in the chest. you become briefly, a frequency.'
-  },
-  {
-    title: 'culture night',
-    type: 'guest performance',
-    venue: 'dfa courtyard, usc',
-    year: '2024',
-    note: 'impromptu — someone brought a speaker and it became a circle. the best performances are the ones nobody planned. i sang two songs and forgot the words to one of them. it didn\'t matter.'
-  },
-];
+// ── RIPPLE FEEDBACK ──
+function ripple(x, y) {
+  const r = document.createElement('div');
+  r.className = 'tap-ring';
+  r.style.left = x + 'px';
+  r.style.top  = y + 'px';
+  document.body.appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+}
 
-const list = document.getElementById('perf-list');
-PERFS.forEach((p, i) => {
-  const card = document.createElement('div');
-  card.className = 'perf-card';
-  card.style.setProperty('--delay', `${.08 + i * .13}s`);
-  card.innerHTML = `
-    <div class="perf-header">
-      <span class="perf-title">${p.title}</span>
-      <span class="perf-type">${p.type}</span>
-      <span class="perf-venue">${p.venue}</span>
-      <span class="perf-year">${p.year}</span>
-      <button class="expand-btn" aria-label="expand">+</button>
-    </div>
-    <div class="perf-body">
-      <div class="embed-zone">
-        <div class="embed-pulse">▷</div>
-        <p class="embed-caption">recording / video<br><span style="opacity:.5">coming soon</span></p>
-      </div>
-      <p class="perf-note">${p.note}</p>
-    </div>`;
-  card.querySelector('.perf-header').addEventListener('click', () => card.classList.toggle('open'));
-  list.appendChild(card);
+// ── KEYBOARD NAV ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ')  advance();
+  if (e.key === 'ArrowLeft')                    back();
 });
+
+// ── TOUCH SWIPE ──
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    dx < 0 ? advance() : back();
+  }
+}, { passive: true });
+
+// ── INIT ──
+slides[0].classList.add('active');
+updateUI();
+
+// ── ALBUM ARTWORK (iTunes Search API) ──
+async function loadAlbumArt() {
+  const cells = document.querySelectorAll('#album-grid .album-cell img');
+  const searches = [
+    'Wicked Original Broadway Cast',
+    'Les Miserables Original Cast',
+    'My Fair Lady Original Broadway',
+    'Sound of Music Original Cast',
+    'The Greatest Showman Soundtrack',
+    'Evita Original Cast Broadway',
+    'Waitress Musical Original Cast',
+    'Adele 25',
+    'A Star is Born 2018 Soundtrack'
+  ];
+
+  for (let i = 0; i < cells.length; i++) {
+    const img = cells[i];
+    const term = encodeURIComponent(img.dataset.search || searches[i] || searches[i % searches.length]);
+    try {
+      const res  = await fetch(`https://itunes.apple.com/search?term=${term}&entity=album&limit=3&country=us`);
+      const data = await res.json();
+      // Prefer results that look like cast recordings
+      const result = data.results.find(r =>
+        r.artworkUrl100 && (r.primaryGenreName === 'Soundtrack' || r.primaryGenreName === 'Musical' || data.results[0])
+      ) || data.results[0];
+      if (result?.artworkUrl100) {
+        const url = result.artworkUrl100.replace('100x100bb', '600x600bb');
+        img.src = url;
+        img.addEventListener('load',  () => img.classList.add('loaded'), { once: true });
+        img.addEventListener('error', () => {}, { once: true });
+      }
+    } catch (_) {}
+    await new Promise(r => setTimeout(r, 80)); // stagger requests
+  }
+}
+
+loadAlbumArt();
+
+// ── LOAD WICKED + MY FAIR LADY COVERS FOR SLIDE 6 ──
+async function loadShowCovers() {
+  const shows = [
+    { id: 'wicked-cover',  search: 'Wicked Original Broadway Cast Recording' },
+    { id: 'mfl-cover',     search: 'My Fair Lady Original Broadway Cast' }
+  ];
+  for (const show of shows) {
+    try {
+      const res  = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(show.search)}&entity=album&limit=3&country=us`);
+      const data = await res.json();
+      const hit  = data.results.find(r => r.artworkUrl100) || data.results[0];
+      if (hit?.artworkUrl100) {
+        const img = document.getElementById(show.id);
+        if (img) {
+          img.src = hit.artworkUrl100.replace('100x100bb','600x600bb');
+          img.onload = () => { img.style.opacity = '1'; };
+        }
+      }
+    } catch (_) {}
+    await new Promise(r => setTimeout(r, 120));
+  }
+}
+loadShowCovers();
 </script>
 </body>
 </html>

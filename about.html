@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya — about</title>
+<meta name="description" content="aanya lall — designer, researcher, builder. based in los angeles.">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream:      #f4efe4;
+  --cream-dark: #ede5d6;
+  --ink:        #0d0d0d;
+  --ink-mid:    #3d3530;
+  --ink-soft:   #8a7355;
+  --gold:       #8a7355;
+  --border:     rgba(13,13,13,0.08);
+  --glass:      rgba(244,239,228,0.82);
+  --usc-red:    #8b0000;
+  --ease-expo:  cubic-bezier(0.16,1,0.3,1);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'EB Garamond', serif;
+  text-transform: lowercase;
+  background: var(--cream);
+  color: var(--ink);
+  cursor: none;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── CURSOR ── */
+#cursor {
+  width: 9px; height: 9px; background: white; border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  mix-blend-mode: difference; transform: translate(-50%,-50%);
+  transition: width 0.2s var(--ease-expo), height 0.2s var(--ease-expo);
+}
+body:has(a:hover,.id-card-wrap:hover) #cursor { width: 26px; height: 26px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 16px clamp(1.5rem,5vw,4rem);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: var(--glass);
+  border-bottom: 1px solid var(--border);
+}
+.nav-left { display: flex; align-items: center; }
+.nav-center { display: flex; justify-content: center; }
+.nav-right { display: flex; align-items: center; justify-content: flex-end; gap: 28px; }
+.nav-logo { font-size: 22px; font-weight: 500; letter-spacing: 3px; color: var(--ink-soft); text-decoration: none; }
+.nav-link { font-size: 14px; font-style: italic; color: var(--ink-soft); text-decoration: none; transition: color 0.2s; position: relative; }
+.nav-link:hover { color: var(--ink); }
+.nav-link.active { color: var(--ink); }
+/* draw-underline on hover for all nav links */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: currentColor;
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-link:hover::after { width: 100%; }
+
+main { padding-top: 72px; }
+
+/* ══════════════════════════════════════════
+   ABOUT HERO — side-by-side
+══════════════════════════════════════════ */
+.about-hero {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(1rem,2.5vw,2rem) clamp(1.5rem,5vw,4rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem,5vw,5rem);
+  align-items: center;
+  height: calc(100vh - 72px);
+  box-sizing: border-box;
+}
+
+/* ── LANYARD GROUP ── */
+.lanyard-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: end;          /* push toward the grid gap / page centre */
+  padding-right: clamp(1rem, 4vw, 3rem); /* breathing room from gap edge */
+  opacity: 0;
+  animation: sceneIn 0.4s ease 0.2s forwards;
+}
+@keyframes sceneIn { to { opacity: 1; } }
+
+/* Wall attachment bracket */
+.lanyard-bracket {
+  width: 30px; height: 11px;
+  background: linear-gradient(180deg, #cfc0a0 0%, #9a855a 45%, #d4c090 70%, #8a7050 100%);
+  border-radius: 4px 4px 2px 2px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.25);
+  position: relative; z-index: 2;
+}
+/* Screw details */
+.lanyard-bracket::before,
+.lanyard-bracket::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #6a5030;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(255,255,255,0.2);
+}
+.lanyard-bracket::before { left: 5px; }
+.lanyard-bracket::after  { right: 5px; }
+
+/* Pendulum pivot — everything below swings from here */
+.lanyard-pivot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center;
+  will-change: transform;
+}
+
+/* ── USC LANYARD RIBBON ── */
+.lanyard-ribbon {
+  width: 26px;
+  height: 88px;
+  background: var(--usc-red);
+  overflow: hidden;
+  position: relative;
+  /* Gold edge piping — like real USC lanyard */
+  box-shadow:
+    inset 2px 0 0 rgba(255,195,0,0.28),
+    inset -2px 0 0 rgba(255,195,0,0.28),
+    0 0 0 1px rgba(139,0,0,0.3);
+}
+/* Subtle weave texture */
+.lanyard-ribbon::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 5px,
+    rgba(0,0,0,0.05) 5px,
+    rgba(0,0,0,0.05) 6px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lanyard-ribbon-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 24 items total (12 + 12 duplicate for seamless loop) */
+  animation: lanyardFlow 7s linear infinite;
+  position: relative; z-index: 1;
+}
+
+/* USC text on lanyard — override body lowercase */
+.l-usc {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 3.5px 0;
+  display: block;
+  white-space: nowrap;
+  text-transform: none !important; /* show USC not usc */
+}
+.l-dot {
+  color: rgba(255,195,0,0.55);
+  font-size: 4px;
+  line-height: 1;
+  padding: 1px 0;
+  display: block;
+}
+
+@keyframes lanyardFlow {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* ── METAL CLIP / HOOK ── */
+.lanyard-clip {
+  width: 20px; height: 22px;
+  background: linear-gradient(
+    180deg,
+    #d4c090 0%,
+    #9a8050 25%,
+    #c8b080 50%,
+    #7a6030 75%,
+    #b8a070 100%
+  );
+  border-radius: 2px 2px 5px 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+  position: relative;
+  z-index: 3; /* sits on top of the card */
+}
+/* Clip ring at bottom */
+.lanyard-clip::after {
+  content: '';
+  position: absolute;
+  bottom: -9px; left: 50%;
+  transform: translateX(-50%);
+  width: 14px; height: 9px;
+  border: 2.5px solid #9a8050;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  background: transparent;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+/* Clip latch line */
+.lanyard-clip::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 12px; height: 1.5px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 1px;
+}
+
+/* ── ID CARD — clipart float, slides under the clip ── */
+.id-card-wrap {
+  margin-top: -10px; /* pull card up so clip overlaps the hole area */
+  cursor: none;
+  position: relative;
+  transition: transform 0.08s ease;
+  will-change: transform;
+}
+
+.id-img {
+  width: min(290px, 80vw);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+  /* Clipart cutout: clean drop shadow, no box */
+  filter:
+    drop-shadow(0 2px 0 rgba(0,0,0,0.1))
+    drop-shadow(3px 10px 28px rgba(0,0,0,0.26));
+}
+
+/* ── ABOUT TEXT ── */
+.about-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.8s var(--ease-expo) 0.55s forwards;
+}
+
+.about-name {
+  font-size: clamp(2.2rem,4vw,3.6rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.about-name em { font-style: italic; color: var(--ink-soft); }
+
+.about-bio {
+  font-size: clamp(0.95rem,1.5vw,1.1rem);
+  color: var(--ink-mid);
+  line-height: 1.62;
+  margin-bottom: 18px;
+  max-width: 400px;
+}
+.about-bio strong { font-weight: 500; color: var(--ink); }
+
+/* Portrait — centered below bio */
+.portrait-wrap {
+  margin-bottom: 18px;
+  transform: rotate(-1.5deg);
+  transition: transform 0.4s var(--ease-expo);
+  display: inline-block;
+  align-self: center;
+}
+.portrait-wrap:hover { transform: rotate(0deg) scale(1.06); }
+.portrait-wrap img {
+  width: 80px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border: 3px solid #fff;
+  border-bottom-width: 6px;
+  border-radius: 1px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.16);
+  filter: sepia(0.06) contrast(1.04);
+}
+
+/* Links — vertical stack, left-aligned */
+.about-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.about-link {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+  position: relative;
+}
+.about-link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 0; height: 1px;
+  background: var(--ink-soft);
+  transition: width 0.3s var(--ease-expo);
+}
+.about-link:hover { color: var(--ink); }
+.about-link:hover::after { width: 100%; }
+.about-link .arr { opacity: 0.4; font-style: normal; }
+.about-links-sep {
+  color: var(--border);
+  font-size: 12px;
+  opacity: 0.4;
+  user-select: none;
+}
+
+/* ── DIVIDER ── */
+.section-divider {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 clamp(1.5rem,5vw,4rem);
+  border-top: 1px solid var(--border);
+}
+
+/* ── BELIEFS ── */
+.beliefs {
+  max-width: 1280px; margin: 0 auto;
+  padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+  display: grid; grid-template-columns: 1fr 2fr;
+  gap: clamp(2rem,6vw,6rem); align-items: start;
+}
+.beliefs-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  color: var(--ink-soft); text-transform: uppercase; padding-top: 8px; position: sticky; top: 90px;
+}
+.beliefs-label .num {
+  display: block; font-family: 'EB Garamond', serif; font-size: 2.5rem; font-style: italic;
+  color: var(--ink-soft); opacity: 0.18; line-height: 1; margin-bottom: 8px; letter-spacing: -0.03em;
+}
+.belief-list { display: flex; flex-direction: column; }
+.belief-item {
+  padding: 28px 0; border-bottom: 1px solid var(--border);
+  display: flex; gap: 20px; align-items: flex-start;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.6s var(--ease-expo), transform 0.6s var(--ease-expo);
+}
+.belief-item.visible { opacity: 1; transform: translateY(0); }
+.belief-arrow { font-size: 18px; color: var(--gold); opacity: 0.5; flex-shrink: 0; margin-top: 2px; }
+.belief-text { font-size: clamp(1.1rem,2vw,1.35rem); line-height: 1.6; color: var(--ink-mid); }
+.belief-text strong { font-weight: 500; color: var(--ink); font-style: normal; }
+
+/* ── CURRENTLY ── */
+.currently {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 clamp(1.5rem,5vw,4rem) clamp(4rem,8vw,7rem);
+  display: grid; grid-template-columns: 1fr 2fr;
+  gap: clamp(2rem,6vw,6rem); align-items: start;
+}
+.currently-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  color: var(--ink-soft); text-transform: uppercase; padding-top: 6px; position: sticky; top: 90px;
+}
+.currently-label .num {
+  display: block; font-family: 'EB Garamond', serif; font-size: 2.5rem; font-style: italic;
+  color: var(--ink-soft); opacity: 0.18; line-height: 1; margin-bottom: 8px; letter-spacing: -0.03em;
+}
+.currently-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.currently-item {
+  background: var(--cream); padding: 22px 24px;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.5s var(--ease-expo), transform 0.5s var(--ease-expo), background 0.2s;
+}
+.currently-item.visible { opacity: 1; transform: translateY(0); }
+.currently-item:hover { background: var(--cream-dark); }
+.currently-item-label {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; opacity: 0.7;
+}
+.currently-item-text { font-size: 1rem; line-height: 1.55; color: var(--ink-mid); }
+
+/* ── CONTACT ── */
+.contact {
+  max-width: 1280px; margin: 0 auto;
+  padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; flex-wrap: wrap;
+}
+.contact-headline {
+  font-size: clamp(2rem,4vw,3rem); font-style: italic;
+  color: var(--ink); font-weight: 400; line-height: 1.15; max-width: 520px;
+}
+.contact-links { display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+.contact-link {
+  font-size: 15px; font-style: italic; color: var(--ink-soft); text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+  transition: color 0.2s, transform 0.25s var(--ease-expo);
+}
+.contact-link:hover { color: var(--ink); transform: translateX(-4px); }
+.contact-link .arrow { opacity: 0.5; font-style: normal; }
+.avail-badge {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-soft); opacity: 0.6;
+  display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+}
+.avail-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #6b9e6b; opacity: 0.8;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px clamp(1.5rem,5vw,4rem);
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+}
+.footer-note { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--ink-soft); opacity: 0.45; letter-spacing: 0.04em; text-transform: uppercase; }
+.footer-copy { font-family: 'Space Mono', monospace; font-size: 8px; color: var(--ink-soft); opacity: 0.35; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+@keyframes pendulumSettle {
+  0%   { transform: rotate(-28deg); }
+  20%  { transform: rotate(17deg); }
+  38%  { transform: rotate(-10deg); }
+  54%  { transform: rotate(5.5deg); }
+  67%  { transform: rotate(-2.8deg); }
+  78%  { transform: rotate(1.3deg); }
+  87%  { transform: rotate(-0.6deg); }
+  94%  { transform: rotate(0.2deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes gentleSway {
+  0%   { transform: rotate(0deg); }
+  28%  { transform: rotate(1.3deg); }
+  72%  { transform: rotate(-1.3deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 0.4; } }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .about-hero { grid-template-columns: 1fr; gap: 3rem; min-height: auto; padding-top: 2rem; }
+  .about-text { align-items: center; text-align: center; }
+  .about-bio { max-width: 100%; }
+  .about-links { align-items: center; }
+  .lanyard-group { margin: 0 auto; }
+  .beliefs { grid-template-columns: 1fr; gap: 24px; }
+  .beliefs-label { position: static; }
+  .currently { grid-template-columns: 1fr; gap: 24px; }
+  .currently-label { position: static; }
+  .currently-grid { grid-template-columns: 1fr; }
+  .contact { flex-direction: column; align-items: flex-start; }
+  .contact-links { align-items: flex-start; }
+  .moments-section { grid-template-columns: 1fr; gap: 24px; }
+  .moments-label { position: static; }
+  footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── POLAROID STACK ── */
+.moments-section {
+  max-width: 1280px; margin: 0 auto;
+  padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: clamp(2rem,6vw,6rem);
+  align-items: start;
+}
+.moments-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  color: var(--ink-soft); text-transform: uppercase; padding-top: 6px; position: sticky; top: 90px;
+}
+.moments-label .num {
+  display: block; font-family: 'EB Garamond', serif; font-size: 2.5rem; font-style: italic;
+  color: var(--ink-soft); opacity: 0.18; line-height: 1; margin-bottom: 8px; letter-spacing: -0.03em;
+}
+.polaroid-stack-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.polaroid-stack {
+  position: relative;
+  width: 180px;
+  height: 260px;
+  cursor: none;
+  transition: width 0.65s cubic-bezier(0.34,1.2,0.64,1);
+}
+.pstack-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: 180px;
+  background: #fff;
+  padding: 10px 10px 42px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+  transform-origin: center 85%;
+  transition: transform 0.6s cubic-bezier(0.34,1.2,0.64,1),
+              left 0.6s cubic-bezier(0.34,1.2,0.64,1),
+              box-shadow 0.3s,
+              z-index 0s;
+  will-change: transform, left;
+}
+.pstack-card img {
+  width: 100%; aspect-ratio: 3/4;
+  object-fit: cover; object-position: center top;
+  display: block;
+  user-select: none; pointer-events: none;
+  filter: sepia(0.06) contrast(1.03);
+}
+.pstack-card figcaption {
+  position: absolute;
+  bottom: 10px; left: 0; right: 0;
+  text-align: center;
+  font-style: italic; font-size: 11px;
+  color: rgba(0,0,0,0.38);
+  letter-spacing: 0.04em;
+}
+/* hover only when expanded */
+.polaroid-stack.expanded .pstack-card:hover {
+  box-shadow: 0 18px 48px rgba(0,0,0,0.22) !important;
+  z-index: 20 !important;
+}
+.pstack-hint {
+  margin-top: 18px;
+  font-style: italic; font-size: 11px;
+  color: var(--ink-soft); opacity: 0.55;
+  letter-spacing: 0.06em;
+  transition: opacity 0.4s;
+  user-select: none;
+}
+.polaroid-stack.expanded ~ .pstack-hint,
+.pstack-hint.hidden { opacity: 0; pointer-events: none; }
+
+/* Lightbox */
+.pstack-lightbox {
+  position: fixed; inset: 0;
+  background: rgba(13,13,13,0.85);
+  z-index: 9000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.pstack-lightbox.open { opacity: 1; pointer-events: all; }
+.pstack-lb-card {
+  background: #fff;
+  padding: 14px 14px 56px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  max-width: min(340px, 82vw);
+  width: 100%;
+  transform: scale(0.9) translateY(16px);
+  transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1);
+}
+.pstack-lightbox.open .pstack-lb-card { transform: scale(1) translateY(0); }
+.pstack-lb-card img {
+  width: 100%; aspect-ratio: 3/4;
+  object-fit: cover; object-position: center top;
+  display: block;
+  filter: sepia(0.06) contrast(1.03);
+}
+.pstack-lb-caption {
+  margin-top: 0;
+  position: absolute;
+  bottom: 18px; left: 0; right: 0;
+  text-align: center;
+  font-style: italic; font-size: 13px;
+  color: rgba(0,0,0,0.42);
+  letter-spacing: 0.04em;
+}
+.pstack-lb-card { position: relative; }
+.pstack-close {
+  position: absolute; top: 22px; right: 26px;
+  background: none; border: none;
+  color: rgba(255,255,255,0.4);
+  font-style: italic; font-size: 12px;
+  letter-spacing: 0.1em; cursor: none;
+  transition: color 0.2s; padding: 8px;
+}
+.pstack-close:hover { color: rgba(255,255,255,0.85); }
+
+/* see my work button */
+.see-work-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 4rem 0 0;
+}
+.see-work-btn {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.55;
+  transition: opacity 0.2s, gap 0.35s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+}
+.see-work-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.see-work-btn:hover { opacity: 1; gap: 16px; }
+.see-work-btn:hover::after { width: 100%; }
+.see-work-arrow { font-style: normal; }
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+
+<nav>
+  <div class="nav-left"><a href="aanya-portfolio-v14.html" class="nav-link">← home</a></div>
+  <div class="nav-center"><a href="aanya-portfolio-v14.html" class="nav-logo">aanya</a></div>
+  <div class="nav-right">
+    <a href="designer.html" class="nav-link">work</a>
+    <a href="about.html" class="nav-link active">about</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══ HERO ══ -->
+  <section class="about-hero">
+
+    <!-- ── LANYARD + CARD ── -->
+    <div class="lanyard-group">
+
+      <!-- Wall bracket at top -->
+      <div class="lanyard-bracket"></div>
+
+      <!-- Pendulum pivot — all of this swings -->
+      <div class="lanyard-pivot" id="lanyardPivot">
+
+        <!-- USC Ribbon — cardinal red + gold text scrolling -->
+        <div class="lanyard-ribbon">
+          <div class="lanyard-ribbon-track">
+            <!-- 12 segments × 2 for seamless loop -->
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <!-- duplicate for seamless -->
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+            <span class="l-usc">USC</span><span class="l-dot">·</span>
+          </div>
+        </div>
+
+        <!-- Metal clip connecting ribbon to card -->
+        <div class="lanyard-clip"></div>
+
+        <!-- The ID card — clipart float, 3D tilt on hover -->
+        <div class="id-card-wrap" id="idCardShell">
+          <img
+            class="id-img"
+            src="aanya id.jpg"
+            alt="Aanya Lall — USC Student ID"
+          >
+        </div>
+
+      </div><!-- /lanyard-pivot -->
+    </div><!-- /lanyard-group -->
+
+    <!-- ── TEXT BELOW ── -->
+    <div class="about-text">
+      <h1 class="about-name"><em>aanya</em><br>lall.</h1>
+      <p class="about-bio">
+        i study <strong>economics &amp; data science</strong> at usc,
+        with a minor in <strong>disruptive innovation</strong>.
+        i design things that feel like they were made by a human —
+        and build systems to back them up.
+        feel free to reach out — <em>let's build together.</em>
+      </p>
+
+      <!-- Portrait — centered below bio -->
+      <div class="portrait-wrap">
+        <img src="aanya.jpg" alt="aanya lall">
+      </div>
+
+      <!-- Links — vertical -->
+      <div class="about-links">
+        <a href="mailto:aanya@usc.edu" class="about-link"><span class="arr">↗</span> send a message</a>
+        <a href="https://www.linkedin.com/in/aanya-lall-561587320/" class="about-link" target="_blank"><span class="arr">↗</span> linkedin</a>
+        <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2r2OgdUPci76jVkl9HlgUDNBDcWTUmwMvXxCL6EQyVbQ7ABq2Mmnm3Vb5XIYM6ir1c2hQpR6jv" class="about-link" target="_blank"><span class="arr">↗</span> let's chat</a>
+        <a href="aanya-lall-cv.pdf" class="about-link" target="_blank"><span class="arr">↓</span> download cv</a>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- BELIEFS -->
+  <section class="beliefs">
+    <div class="beliefs-label">
+      <span class="num">01</span>
+      three things<br>i believe
+    </div>
+    <div class="belief-list">
+      <div class="belief-item">
+        <span class="belief-arrow">→</span>
+        <p class="belief-text"><strong>software should feel like it was made by a human.</strong> the texture matters. the pause before something loads. the word they chose for the button.</p>
+      </div>
+      <div class="belief-item">
+        <span class="belief-arrow">→</span>
+        <p class="belief-text"><strong>the best design is the one that makes you forget there's a designer.</strong> when everything works, nothing calls attention to itself. that's the goal.</p>
+      </div>
+      <div class="belief-item">
+        <span class="belief-arrow">→</span>
+        <p class="belief-text"><strong>spend more time in the problem than the solution.</strong> the right answer usually feels obvious once you actually understand what you're solving.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CURRENTLY -->
+  <section class="currently">
+    <div class="currently-label">
+      <span class="num">02</span>
+      what i'm<br>doing now
+    </div>
+    <div class="currently-grid">
+      <div class="currently-item">
+        <p class="currently-item-label">studying</p>
+        <p class="currently-item-text">economics + data science @ usc, with a minor in disruptive innovation. the intersection of markets, systems, and human behavior.</p>
+      </div>
+      <div class="currently-item">
+        <p class="currently-item-label">building</p>
+        <p class="currently-item-text">la side — a discovery feed for the city without an algorithm. and this site, which is always in progress.</p>
+      </div>
+      <div class="currently-item">
+        <p class="currently-item-label">leading</p>
+        <p class="currently-item-text">design for america @ usc. running the project hub, mentoring first-time project leads.</p>
+      </div>
+      <div class="currently-item">
+        <p class="currently-item-label">reading</p>
+        <p class="currently-item-text">the design of everyday things. thinking, fast and slow. anything that argues careful attention beats intuition.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOMENTS — polaroid fan -->
+  <section class="moments-section">
+    <div class="moments-label">
+      <span class="num">03</span>
+      on film
+    </div>
+    <div class="polaroid-stack-area">
+      <div class="polaroid-stack" id="polaroidStack">
+        <figure class="pstack-card" data-caption="march, los angeles" style="--i:0">
+          <img src="photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.14.jpeg" alt="on film">
+          <figcaption>march, los angeles</figcaption>
+        </figure>
+        <figure class="pstack-card" data-caption="roll 01" style="--i:1">
+          <img src="photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.15.jpeg" alt="on film">
+          <figcaption>roll 01</figcaption>
+        </figure>
+        <figure class="pstack-card" data-caption="shot on fuji" style="--i:2">
+          <img src="photography/rolls/roll-01/WhatsApp%20Image%202026-03-20%20at%2008.33.16.jpeg" alt="on film">
+          <figcaption>shot on fuji</figcaption>
+        </figure>
+        <figure class="pstack-card" data-caption="always carrying a camera" style="--i:3">
+          <img src="photography/rolls/roll-01/WhatsApp%20Image%202026-03-21%20at%2023.16.13.jpeg" alt="on film">
+          <figcaption>always carrying a camera</figcaption>
+        </figure>
+      </div>
+      <p class="pstack-hint" id="pstackHint">click to explore →</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- Polaroid lightbox -->
+<div class="pstack-lightbox" id="pstackLightbox" aria-modal="true" role="dialog">
+  <button class="pstack-close" id="pstackClose">close ×</button>
+  <div class="pstack-lb-card">
+    <img id="pstackLbImg" src="" alt="">
+    <p class="pstack-lb-caption" id="pstackLbCaption"></p>
+  </div>
+</div>
+
+<footer>
+  <p class="footer-note">built with claude + too many late nights</p>
+  <p class="footer-copy">© aanya lall 2026</p>
+</footer>
+
+<!-- ── CURSOR ── -->
+<script>
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+if ('ontouchstart' in window) { cursor.style.display = 'none'; document.body.style.cursor = 'auto'; }
+</script>
+
+<!-- ── LANYARD PENDULUM + CURSOR-REACTIVE SWAY + CARD TILT ── -->
+<script>
+(function() {
+  const pivot = document.getElementById('lanyardPivot');
+  const shell = document.getElementById('idCardShell');
+  if (!pivot || !shell) return;
+
+  let hovering    = false;
+  let lerpRunning = false;
+  let targetRot   = 0;   // cursor-driven target
+  let currentRot  = 0;   // smoothed current
+
+  /* 1 — Pendulum settle on load */
+  pivot.style.animation = 'pendulumSettle 2.5s cubic-bezier(0.22,1,0.36,1) forwards';
+
+  pivot.addEventListener('animationend', () => {
+    pivot.style.animation = 'none';
+    pivot.style.transform = 'rotate(0deg)';
+    lerpRunning = true;
+
+    /* Cursor-reactive lerp loop — replaces CSS sway.
+       The lanyard slowly drifts toward wherever the cursor is,
+       like a real pendulum following a gravity source. */
+    function loop() {
+      currentRot += (targetRot - currentRot) * 0.04; // very lazy spring
+      pivot.style.transform = `rotate(${currentRot}deg)`;
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }, { once: true });
+
+  /* 2 — Track cursor position, map to lanyard lean */
+  document.addEventListener('mousemove', e => {
+    if (!lerpRunning) return;
+    const pivotR   = pivot.getBoundingClientRect();
+    const pivotCX  = pivotR.left + pivotR.width / 2;
+    // Offset from center of lanyard → max ±10deg lean
+    const offset   = (e.clientX - pivotCX) / (window.innerWidth * 0.5);
+    targetRot = Math.max(-10, Math.min(10, offset * 10));
+  });
+
+  /* When cursor leaves the window — drift back to center */
+  document.addEventListener('mouseleave', () => { targetRot = 0; });
+
+  /* 3 — 3D card tilt on hover */
+  shell.addEventListener('mouseenter', () => { hovering = true; });
+
+  shell.addEventListener('mouseleave', () => {
+    hovering = false;
+    shell.style.transition = 'transform 0.65s cubic-bezier(0.16,1,0.3,1)';
+    shell.style.transform  = 'perspective(800px) rotateX(0) rotateY(0)';
+    setTimeout(() => { shell.style.transition = ''; }, 650);
+  });
+
+  shell.addEventListener('mousemove', e => {
+    if (!hovering) return;
+    const r = shell.getBoundingClientRect();
+    const x = (e.clientX - r.left)  / r.width  - 0.5;
+    const y = (e.clientY - r.top)   / r.height - 0.5;
+    shell.style.transition = 'transform 0.08s ease';
+    shell.style.transform  = `perspective(800px) rotateX(${-y * 10}deg) rotateY(${x * 11}deg)`;
+  });
+})();
+</script>
+
+<!-- ── POLAROID STACK ── -->
+<script>
+(function() {
+  const stack  = document.getElementById('polaroidStack');
+  const hint   = document.getElementById('pstackHint');
+  const lb     = document.getElementById('pstackLightbox');
+  const lbImg  = document.getElementById('pstackLbImg');
+  const lbCap  = document.getElementById('pstackLbCaption');
+  const lbClose= document.getElementById('pstackClose');
+  if (!stack) return;
+
+  const cards = Array.from(stack.querySelectorAll('.pstack-card'));
+  const CARD_W = 180, GAP = 22;
+
+  // Stacked rotations (bottom card first, top card last in DOM)
+  const stackRots = [-11, 5, -4, 9];
+
+  function initStack() {
+    cards.forEach((c, i) => {
+      c.style.left = '0px';
+      c.style.transform = `rotate(${stackRots[i]}deg)`;
+      c.style.zIndex = cards.length - i;
+      c.style.pointerEvents = 'none';
+    });
+    stack.style.width = CARD_W + 'px';
+  }
+
+  let expanded = false;
+
+  function expand() {
+    expanded = true;
+    stack.classList.add('expanded');
+    hint.classList.add('hidden');
+    const tinyRots = [-2.5, 1.5, -1, 2];
+    const totalW = cards.length * CARD_W + (cards.length - 1) * GAP;
+    cards.forEach((c, i) => {
+      c.style.left  = (i * (CARD_W + GAP)) + 'px';
+      c.style.transform = `rotate(${tinyRots[i]}deg)`;
+      c.style.zIndex = i + 1;
+      c.style.pointerEvents = 'all';
+    });
+    stack.style.width = totalW + 'px';
+  }
+
+  function collapse() {
+    expanded = false;
+    stack.classList.remove('expanded');
+    hint.classList.remove('hidden');
+    initStack();
+  }
+
+  // Click on stack (unexpanded) → expand
+  // Click on individual card (expanded) → lightbox
+  stack.addEventListener('click', function(e) {
+    const card = e.target.closest('.pstack-card');
+    if (card && expanded) {
+      lbImg.src = card.querySelector('img').src;
+      lbCap.textContent = card.dataset.caption;
+      lb.classList.add('open');
+      return;
+    }
+    if (!expanded) { expand(); return; }
+    // click on empty stack area when expanded → collapse
+    if (!card) collapse();
+  });
+
+  // "click to explore" hint also triggers expand
+  hint.addEventListener('click', expand);
+
+  // Close lightbox
+  lb.addEventListener('click', function(e) {
+    if (!e.target.closest('.pstack-lb-card') || e.target === lbClose) {
+      lb.classList.remove('open');
+    }
+  });
+  lbClose.addEventListener('click', () => lb.classList.remove('open'));
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (lb.classList.contains('open')) { lb.classList.remove('open'); return; }
+      if (expanded) collapse();
+    }
+  });
+
+  initStack();
+})();
+</script>
+
+<!-- ── SCROLL REVEALS ── -->
+<script>
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = [...e.target.parentElement.children].indexOf(e.target);
+      setTimeout(() => e.target.classList.add('visible'), idx * 80);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.belief-item, .currently-item').forEach(el => io.observe(el));
+</script>
+
+<!-- ── PAGE TRANSITION ── -->
+<div id="pov" style="position:fixed;inset:0;background:#0a0905;opacity:0;pointer-events:none;z-index:99999;transition:opacity .52s ease"></div>
+<script>
+(function(){
+  var ov = document.getElementById('pov');
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var h = a.getAttribute('href');
+    if (!h || h.startsWith('#') || h.startsWith('javascript') || h.startsWith('http') || h.startsWith('//') || a.target) return;
+    e.preventDefault();
+    ov.style.pointerEvents = 'all'; ov.style.opacity = '1';
+    setTimeout(function(){ window.location.href = h; }, 540);
+  });
+})();
+</script>
+
+</body>
+</html>
