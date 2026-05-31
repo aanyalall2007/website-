@@ -86,8 +86,8 @@ nav {
 .zine-foot { padding: 7px 10px; border-top: 0.5px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: baseline; background: #0d0d0d; }
 .zine-title { font-family: 'EB Garamond', serif; font-size: 11px; font-style: italic; color: rgba(255,255,255,0.4); }
 .zine-num   { font-family: 'EB Garamond', serif; font-size: 10px; color: rgba(255,255,255,0.18); }
-.oval-wrap { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 100; transition: opacity 0.3s; }
-.oval-btn { background: #f7f3eb; border: 1.5px solid var(--gold); border-radius: 50%; padding: 24px 52px; cursor: none; text-decoration: none; display: block; box-shadow: 0 8px 40px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s; animation: ovalPulse 4s ease-in-out infinite; }
+.oval-wrap { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 100; transition: opacity 0.3s; width: fit-content; }
+.oval-btn { background: #f7f3eb; border: 1.5px solid var(--gold); border-radius: 50%; padding: 24px 52px; cursor: none; text-decoration: none; display: inline-block; position: relative; box-shadow: 0 8px 40px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s; animation: ovalPulse 4s ease-in-out infinite; }
 .oval-btn:hover { transform: scale(1.07); box-shadow: 0 14px 52px rgba(0,0,0,0.4); animation: none; }
 @keyframes ovalPulse { 0%,100% { transform:scale(1) } 50% { transform:scale(1.02) } }
 .oval-text { font-family: 'EB Garamond', serif; font-size: 16px; font-style: italic; color: var(--gold); letter-spacing: 1.5px; white-space: nowrap; text-align: center; }
@@ -252,7 +252,7 @@ body.cursor-on-link #cursor-trail { width: 44px; height: 44px; border-color: rgb
   transform: translate(-50%,-50%);
   width: 112%; pointer-events: none; overflow: visible;
 }
-#main-oval-wrap { position: relative; }
+/* #main-oval-wrap position:relative removed — conflicts with oval-wrap fixed */
 
 /* ══ OVAL LEARN MORE ══ */
 .oval-learn-tag {
@@ -488,11 +488,13 @@ body.intro-active .oval-wrap { opacity: 0 !important; pointer-events: none !impo
   </div>
 </div>
 <div class="oval-wrap" id="main-oval-wrap">
-  <svg class="oval-sketch" viewBox="0 0 260 108" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M28,54 C27,22 72,7 130,7 C188,7 232,23 232,54 C232,85 188,101 130,101 C72,101 29,86 28,54" stroke="#8a7355" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.7"/>
-    <path d="M25,54 C24,19 73,4 130,4 C187,4 235,20 235,54 C235,88 187,104 130,104 C73,104 26,89 25,54" stroke="#8a7355" stroke-width="0.65" stroke-linecap="round" fill="none" opacity="0.32" stroke-dasharray="3 6"/>
-  </svg>
-  <a href="about.html" class="oval-btn" id="main-oval-btn"><p class="oval-text">where worlds meet</p></a>
+  <a href="about.html" class="oval-btn" id="main-oval-btn">
+    <svg class="oval-sketch" viewBox="0 0 260 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M28,54 C27,22 72,7 130,7 C188,7 232,23 232,54 C232,85 188,101 130,101 C72,101 29,86 28,54" stroke="#8a7355" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.7"/>
+      <path d="M25,54 C24,19 73,4 130,4 C187,4 235,20 235,54 C235,88 187,104 130,104 C73,104 26,89 25,54" stroke="#8a7355" stroke-width="0.65" stroke-linecap="round" fill="none" opacity="0.32" stroke-dasharray="3 6"/>
+    </svg>
+    <p class="oval-text">where worlds meet</p>
+  </a>
   <a href="about.html" class="oval-learn-tag">learn more ↗</a>
 </div>
 <script>
