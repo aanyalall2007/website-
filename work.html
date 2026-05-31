@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya · work</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0c0c0c;
+  --cream: rgba(244,239,228,0.9);
+  --cream-muted: rgba(244,239,228,0.4);
+  --gold: #8a7355;
+  --font: 'EB Garamond', serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  text-transform: lowercase;
+  background: var(--bg);
+  color: var(--cream);
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* SCROLL PROGRESS */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: var(--gold);
+  width: 0%;
+  z-index: 1000;
+  transition: width 0.1s linear;
+}
+
+/* GRAIN */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 500;
+  opacity: 0.045;
+}
+
+/* BOKEH ORBS */
+.bokeh-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  animation: drift linear infinite;
+  opacity: 0.18;
+}
+.orb-pink {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #d4507a, transparent 70%);
+  top: 10%; left: -10%;
+  animation-duration: 40s;
+  animation-delay: 0s;
+}
+.orb-purple {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #7c3aed, transparent 70%);
+  top: 50%; right: -5%;
+  animation-duration: 55s;
+  animation-delay: -18s;
+}
+.orb-amber {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, #c8923a, transparent 70%);
+  bottom: 15%; left: 30%;
+  animation-duration: 45s;
+  animation-delay: -30s;
+}
+@keyframes drift {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  25%  { transform: translate(60px, -40px) scale(1.05); }
+  50%  { transform: translate(30px, 80px) scale(0.95); }
+  75%  { transform: translate(-40px, 30px) scale(1.03); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  background: rgba(12,12,12,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.nav-back {
+  font-family: var(--font);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--cream-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+}
+.nav-back:hover { color: var(--cream); }
+.nav-tabs { display: flex; gap: 32px; }
+.nav-tab {
+  font-family: var(--font);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--cream-muted);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.25s;
+  position: relative;
+}
+.nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+.nav-tab.active,
+.nav-tab:hover { color: var(--gold); }
+.nav-tab.active::after { transform: scaleX(1); }
+
+/* HERO */
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 10vw;
+  z-index: 2;
+}
+.hero-eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 28px;
+  font-style: normal;
+}
+.hero-title {
+  font-size: clamp(48px, 7vw, 96px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--cream);
+  margin-bottom: 24px;
+  max-width: 820px;
+}
+.hero-sub {
+  font-size: 20px;
+  color: var(--cream-muted);
+  font-style: italic;
+  margin-bottom: 80px;
+}
+.scroll-cue {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cream-muted);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+}
+.scroll-line { width: 48px; height: 1px; background: var(--cream-muted); }
+
+/* SECTIONS */
+.section {
+  position: relative;
+  z-index: 2;
+  padding: 100px 10vw;
+  min-height: 100vh;
+}
+.section-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  margin-bottom: 60px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.section-label::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+/* DESIGNER CARDS */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.project-card {
+  border-radius: 16px;
+  padding: 36px 32px;
+  cursor: none;
+  transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.2s;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.25s;
+}
+.project-card:hover { transform: translateY(-4px); }
+.project-card:hover::before { background: rgba(255,255,255,0.03); }
+.card-name {
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+.card-meta {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  position: relative;
+  z-index: 1;
+}
+
+/* RESEARCHER LISTS */
+.research-subsection { margin-bottom: 60px; }
+.research-sublabel {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--cream-muted);
+  margin-bottom: 24px;
+  font-style: normal;
+}
+.research-row {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 14px 8px;
+  border-bottom: 1px solid rgba(244,239,228,0.06);
+  cursor: default;
+  transition: background 0.2s;
+  border-radius: 4px;
+  margin-left: -8px;
+}
+.research-row:hover { background: rgba(138,115,85,0.07); }
+.research-num {
+  font-size: 12px;
+  color: var(--gold);
+  opacity: 0.6;
+  min-width: 24px;
+  font-style: normal;
+  letter-spacing: 0.06em;
+}
+.research-title {
+  font-size: 17px;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1.4;
+}
+
+/* RESEARCH FORM */
+.research-form-wrap {
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(244,239,228,0.08);
+  max-width: 480px;
+}
+.research-form-label {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  margin-bottom: 24px;
+  display: block;
+}
+.research-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.research-form input,
+.research-form textarea {
+  font-family: var(--font);
+  font-size: 16px;
+  font-style: italic;
+  background: rgba(244,239,228,0.04);
+  border: 1px solid rgba(244,239,228,0.1);
+  border-radius: 10px;
+  padding: 14px 18px;
+  color: var(--cream);
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+  resize: none;
+  text-transform: lowercase;
+}
+.research-form input::placeholder,
+.research-form textarea::placeholder { color: var(--cream-muted); }
+.research-form input:focus,
+.research-form textarea:focus {
+  border-color: var(--gold);
+  background: rgba(138,115,85,0.06);
+}
+.research-form textarea { min-height: 100px; }
+.research-form button {
+  font-family: var(--font);
+  font-size: 16px;
+  font-style: italic;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 13px 24px;
+  color: var(--gold);
+  cursor: none;
+  text-transform: lowercase;
+  transition: background 0.25s, color 0.25s;
+  align-self: flex-start;
+}
+.research-form button:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* FOUNDER CARDS */
+.founder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.founder-card {
+  border-radius: 20px;
+  padding: 60px 56px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 220px;
+  text-decoration: none;
+  cursor: none;
+  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.founder-card:hover { transform: translateY(-3px) scale(1.005); }
+.founder-badge {
+  position: absolute;
+  top: 28px; right: 28px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  border: 1px solid rgba(244,239,228,0.3);
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: var(--cream-muted);
+}
+.founder-name {
+  font-size: 36px;
+  font-style: italic;
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+.founder-desc {
+  font-size: 17px;
+  color: var(--cream-muted);
+  font-style: italic;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* OUTRO */
+.outro {
+  position: relative;
+  z-index: 2;
+  padding: 100px 10vw;
+  text-align: center;
+}
+.outro-text {
+  font-size: clamp(28px, 4vw, 52px);
+  font-style: italic;
+  color: var(--cream-muted);
+  margin-bottom: 32px;
+}
+.outro-link {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: opacity 0.2s;
+}
+.outro-link:hover { opacity: 0.6; }
+
+/* iOS SHEET */
+.sheet-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s;
+  z-index: 800;
+}
+.sheet-overlay.open { opacity: 1; pointer-events: all; }
+.ios-sheet {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(18,18,18,0.97);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: 24px 24px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.45s linear(0,0.01,0.04,0.1,0.18,0.27,0.37,0.47,0.57,0.66,0.74,0.81,0.87,0.92,0.96,0.99,1.01,1.02,1.02,1.01,1);
+  z-index: 801;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 0 0 48px;
+}
+.ios-sheet.open { transform: translateY(0); }
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: rgba(244,239,228,0.2);
+  border-radius: 2px;
+  margin: 16px auto 0;
+}
+.sheet-inner { padding: 32px 40px 0; }
+.sheet-title {
+  font-size: 32px;
+  font-style: italic;
+  color: var(--cream);
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+.sheet-meta {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 28px;
+}
+.sheet-body {
+  font-size: 18px;
+  color: var(--cream-muted);
+  font-style: italic;
+  line-height: 1.75;
+}
+.sheet-close {
+  position: absolute;
+  top: 20px; right: 24px;
+  background: rgba(244,239,228,0.08);
+  border: none;
+  border-radius: 50%;
+  width: 32px; height: 32px;
+  color: var(--cream-muted);
+  font-size: 18px;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  font-family: var(--font);
+}
+.sheet-close:hover { background: rgba(244,239,228,0.15); }
+
+/* PAGE TRANSITION */
+#page-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#cursor {
+  width: 9px; height: 9px;
+  background: white;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transform: translate(-50%,-50%);
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="page-overlay"></div>
+<div id="progress-bar"></div>
+
+<!-- GRAIN -->
+<svg class="grain" xmlns="http://www.w3.org/2000/svg">
+  <filter id="grain-filter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#grain-filter)"/>
+</svg>
+
+<!-- BOKEH -->
+<div class="bokeh-wrap">
+  <div class="orb orb-pink"></div>
+  <div class="orb orb-purple"></div>
+  <div class="orb orb-amber"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-back">← playground</a>
+  <div class="nav-tabs">
+    <a href="#designer" class="nav-tab" data-section="designer">designer</a>
+    <a href="#researcher" class="nav-tab" data-section="researcher">researcher</a>
+    <a href="#founder" class="nav-tab" data-section="founder">founder</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">selected work · 2024–2026</p>
+  <h1 class="hero-title">making, researching, building.</h1>
+  <p class="hero-sub">three ways i show up in the world.</p>
+  <div class="scroll-cue">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- DESIGNER SECTION -->
+<section class="section" id="designer">
+  <div class="section-label">designer</div>
+  <div class="cards-grid">
+
+    <div class="project-card" style="background: linear-gradient(135deg, rgba(244,239,228,0.08), rgba(138,115,85,0.15));"
+      data-title="tomol28"
+      data-meta="2026 · practice of design, usc"
+      data-body="redesigned the la 2028 olympic visitor experience to foreground los angeles's indigenous heritage, centring the chumash tomol (ocean-going canoe) as a cultural anchor. developed a journey concept tracing the city's shoreline — integrating wayfinding, cultural storytelling, and site-specific design across key olympic touchpoints.">
+      <div class="card-name">tomol28</div>
+      <div class="card-meta">2026 · practice of design, usc</div>
+    </div>
+
+    <div class="project-card" style="background: linear-gradient(135deg, rgba(255,149,0,0.12), rgba(244,239,228,0.06));"
+      data-title="troy eats"
+      data-meta="2026 · practice of design, usc"
+      data-body="led end-to-end redesign of the usc campus dining system — ux research, service prototyping, visual identity, brand strategy. developed the troy eats brand including naming, marketing direction, and cohesive design system.">
+      <div class="card-name">troy eats</div>
+      <div class="card-meta">2026 · practice of design, usc</div>
+    </div>
+
+    <div class="project-card" style="background: linear-gradient(135deg, rgba(0,122,255,0.15), rgba(175,82,222,0.1));"
+      data-title="look up"
+      data-meta="2026 · practice of design, usc"
+      data-body="designed a chindogu device for scrolling while walking without compromising spatial awareness. explores the tension between convenience and distraction as a critique of smartphone dependency.">
+      <div class="card-name">look up</div>
+      <div class="card-meta">2026 · practice of design, usc</div>
+    </div>
+
+    <div class="project-card" style="background: linear-gradient(135deg, rgba(175,82,222,0.15), rgba(255,45,85,0.08));"
+      data-title="the still storm"
+      data-meta="2026 · practice of design, usc"
+      data-body="co-designed a 3d-printed phone case merging the design philosophies of jony ive (apple) and vincent van gogh — restraint meets emotion. a tactile artefact that challenges the boundary between product design and fine art.">
+      <div class="card-name">the still storm</div>
+      <div class="card-meta">2026 · practice of design, usc</div>
+    </div>
+
+    <div class="project-card" style="background: linear-gradient(135deg, rgba(52,199,89,0.12), rgba(244,239,228,0.06));"
+      data-title="product design intern"
+      data-meta="2025 · lighthouse healthcare, new delhi"
+      data-body="led end-to-end product development for dementia care solutions. designed and manufactured cognitive engagement tools including customised puzzles and family tree visualisations grounded in user-centred design.">
+      <div class="card-name">product design intern</div>
+      <div class="card-meta">2025 · lighthouse healthcare, new delhi</div>
+    </div>
+
+    <div class="project-card" style="background: linear-gradient(135deg, rgba(50,173,230,0.15), rgba(138,115,85,0.08));"
+      data-title="digital archiving"
+      data-meta="2025 · reading caterpillar, new delhi"
+      data-body="designed and executed a digital archiving project for a children's library, cataloguing over a decade of physical materials into a structured, searchable digital system. applied information architecture for long-term accessibility.">
+      <div class="card-name">digital archiving</div>
+      <div class="card-meta">2025 · reading caterpillar, new delhi</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RESEARCHER SECTION -->
+<section class="section" id="researcher">
+  <div class="section-label">researcher</div>
+
+  <div class="research-subsection">
+    <p class="research-sublabel">university · 2024–2026</p>
+    <div class="research-row"><span class="research-num">01</span><span class="research-title">drafting an ethical ai policy — thematic writing, writ 150</span></div>
+    <div class="research-row"><span class="research-num">02</span><span class="research-title">together, but alone — the paradox of designing interactive museums (grammy museum, la)</span></div>
+    <div class="research-row"><span class="research-num">03</span><span class="research-title">it ain't right, and it ain't natural — technology in hadestown</span></div>
+    <div class="research-row"><span class="research-num">04</span><span class="research-title">women, societal standards, and power from show boat to wicked — broadway musical studies</span></div>
+    <div class="research-row"><span class="research-num">05</span><span class="research-title">conformity and the cinderella arc in musical theatre</span></div>
+    <div class="research-row"><span class="research-num">06</span><span class="research-title">the weight of familiarity — how unresolved attachment shapes stage and self</span></div>
+    <div class="research-row"><span class="research-num">07</span><span class="research-title">christine's choice — agency, voice, and the critique of patriarchy in phantom of the opera</span></div>
+  </div>
+
+  <div class="research-subsection">
+    <p class="research-sublabel">high school · extended essays &amp; ias</p>
+    <div class="research-row"><span class="research-num">01</span><span class="research-title">analysing audio recordings using fourier transformation — mathematics</span></div>
+    <div class="research-row"><span class="research-num">02</span><span class="research-title">flow of water and the hydraulic jump — physics</span></div>
+    <div class="research-row"><span class="research-num">03</span><span class="research-title">added impurity and critical solution temperature — chemistry</span></div>
+    <div class="research-row"><span class="research-num">04</span><span class="research-title">tighter regulations on vaping and tobacco in the uk — economics</span></div>
+    <div class="research-row"><span class="research-num">05</span><span class="research-title">soaring inflation rate in nigeria — economics</span></div>
+    <div class="research-row"><span class="research-num">06</span><span class="research-title">eu tariffs on chinese vehicles — economics</span></div>
+    <div class="research-row"><span class="research-num">07</span><span class="research-title">beauty standards and ethnic biases in media — english</span></div>
+  </div>
+
+  <div class="research-form-wrap">
+    <span class="research-form-label">request a paper or collaborate</span>
+    <form class="research-form" action="mailto:aanya@usc.edu" method="post" enctype="text/plain">
+      <input type="email" name="email" placeholder="your email">
+      <textarea name="interest" placeholder="what are you looking for?"></textarea>
+      <button type="submit">request research →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOUNDER SECTION -->
+<section class="section" id="founder">
+  <div class="section-label">founder</div>
+  <div class="founder-grid">
+
+    <a href="afterhours.html" class="founder-card" style="background: linear-gradient(135deg, #1a0a2e, #2d1b69);">
+      <span class="founder-badge">in beta</span>
+      <div class="founder-name">afterhours</div>
+      <p class="founder-desc">conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.</p>
+    </a>
+
+    <div class="founder-card" style="background: linear-gradient(135deg, #1a0a14, #3d0020);">
+      <span class="founder-badge">founding</span>
+      <div class="founder-name">design for america @ usc</div>
+      <p class="founder-desc">leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure. soft launch fall 2026.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- OUTRO -->
+<div class="outro">
+  <p class="outro-text">built to keep going.</p>
+  <a href="index.html" class="outro-link">← back to playground</a>
+</div>
+
+<!-- SHEET OVERLAY -->
+<div class="sheet-overlay" id="sheet-overlay"></div>
+<div class="ios-sheet" id="ios-sheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="sheet-close" aria-label="close">✕</button>
+  <div class="sheet-inner">
+    <div class="sheet-title" id="sheet-title"></div>
+    <div class="sheet-meta" id="sheet-meta"></div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+// Scroll progress
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = pct + '%';
+});
+
+// Active nav tab on scroll
+const tabs = document.querySelectorAll('.nav-tab[data-section]');
+const sectionIds = ['designer', 'researcher', 'founder'];
+const sectionEls = sectionIds.map(id => document.getElementById(id));
+
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.section === id));
+    }
+  });
+}, { threshold: 0.25 });
+sectionEls.forEach(el => { if (el) sectionObserver.observe(el); });
+
+// iOS Sheet
+const overlay = document.getElementById('sheet-overlay');
+const sheet = document.getElementById('ios-sheet');
+const closeBtn = document.getElementById('sheet-close');
+
+function openSheet(title, meta, body) {
+  document.getElementById('sheet-title').textContent = title;
+  document.getElementById('sheet-meta').textContent = meta;
+  document.getElementById('sheet-body').textContent = body;
+  overlay.classList.add('open');
+  sheet.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSheet() {
+  overlay.classList.remove('open');
+  sheet.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('click', () => {
+    openSheet(card.dataset.title, card.dataset.meta, card.dataset.body);
+  });
+});
+
+overlay.addEventListener('click', closeSheet);
+closeBtn.addEventListener('click', closeSheet);
+
+// Swipe down to close
+let startY = 0;
+sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
+sheet.addEventListener('touchend', e => {
+  if (e.changedTouches[0].clientY - startY > 80) closeSheet();
+});
+
+// Hash scroll on load
+window.addEventListener('load', () => {
+  const hash = window.location.hash;
+  if (hash) {
+    setTimeout(() => {
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  }
+});
+
+// Nav tab smooth scroll
+tabs.forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    const id = tab.dataset.section;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    history.pushState(null, '', '#' + id);
+  });
+});
+
+// Page transition out
+document.querySelectorAll('a[href]').forEach(link => {
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('mailto')) return;
+  if (link.classList.contains('nav-tab')) return;
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const po = document.getElementById('page-overlay');
+    po.style.opacity = '1';
+    po.style.pointerEvents = 'all';
+    setTimeout(() => { window.location.href = href; }, 400);
+  });
+});
+</script>
+</body>
+</html>
