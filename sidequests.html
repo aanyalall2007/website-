@@ -55,7 +55,13 @@ html,body{height:100%;overflow:hidden;background:#0a0905;font-family:'EB Garamon
 #v-desk.show{opacity:1}
 /* subtle warm vignette on desk */
 #v-desk::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;
-  background:radial-gradient(ellipse at 50% 40%,transparent 30%,rgba(0,0,0,.55) 100%)}
+  background:radial-gradient(ellipse at 50% 40%,transparent 30%,rgba(0,0,0,.32) 100%)}
+
+/* ── TORCH CURSOR ── */
+#torch{position:fixed;width:520px;height:520px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,200,100,.28) 0%,rgba(255,160,60,.10) 45%,transparent 70%);
+  transform:translate(-50%,-50%);mix-blend-mode:screen;z-index:50;
+  transition:opacity .5s ease;opacity:0}
 
 /* ── NIGHT MODE ── */
 .night-veil{position:fixed;inset:0;pointer-events:none;z-index:300;
@@ -69,11 +75,7 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
 .fairy-bulb{position:absolute;top:-3px;width:6px;height:6px;border-radius:50%;
   pointer-events:none;background:rgba(255,215,80,.95);
   box-shadow:0 0 6px 3px rgba(255,200,60,.6),0 0 14px 6px rgba(255,180,30,.25);
-  animation:fairyTwinkle var(--dur,2s) ease-in-out infinite var(--dl,0s);opacity:0}
-@keyframes fairyTwinkle{
-  0%,100%{opacity:.2;box-shadow:0 0 3px 2px rgba(255,200,60,.25)}
-  50%{opacity:1;box-shadow:0 0 8px 4px rgba(255,200,60,.9),0 0 20px 8px rgba(255,180,30,.35)}
-}
+  opacity:.7}
 
 /* ── HOTSPOT SYSTEM ── */
 /* Invisible — no hover glow. Only the tip label reveals clickability. */
@@ -178,15 +180,67 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
 .place-card:hover{border-color:rgba(138,115,85,.3);background:rgba(138,115,85,.04)}
 .place-n{font-size:16px;font-style:italic;color:rgba(13,13,13,.75);display:block;margin-bottom:3px}
 .place-note{font-size:12px;font-style:italic;color:rgba(13,13,13,.45);line-height:1.55}
+
+/* ── PHOTOBOOTH POPUP ── */
+.pb-wrap{display:flex;gap:20px;align-items:flex-start}
+.pb-left{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
+.pb-cam{width:240px;height:180px;background:#0a0a0a;border-radius:6px;overflow:hidden;
+  position:relative;border:.5px solid rgba(13,13,13,.12)}
+.pb-cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.pb-cam-vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse,transparent 50%,rgba(0,0,0,.35) 100%)}
+.pb-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;z-index:5}
+.pb-count-num{font-size:64px;font-style:italic;color:rgba(255,255,255,.9);
+  opacity:0;animation:pbCountPop .7s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes pbCountPop{0%{transform:scale(.4);opacity:0}40%{transform:scale(1.15);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(1.1);opacity:0}}
+.pb-perm{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;background:#0a0a0a;border-radius:6px;z-index:10;padding:16px;text-align:center}
+.pb-perm-txt{font-size:13px;font-style:italic;color:rgba(255,255,255,.4);line-height:1.7}
+.pb-perm-btn{background:transparent;border:.5px solid rgba(138,115,85,.5);border-radius:20px;
+  padding:6px 16px;font-family:'EB Garamond',serif;font-size:13px;font-style:italic;
+  color:rgba(138,115,85,.8);cursor:none;transition:all .2s}
+.pb-perm-btn:hover{border-color:rgba(138,115,85,.9);color:rgba(138,115,85,1)}
+.pb-filters{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.pb-filter{background:rgba(13,13,13,.04);border:.5px solid rgba(13,13,13,.1);border-radius:20px;
+  padding:4px 10px;font-family:'EB Garamond',serif;font-size:11px;font-style:italic;
+  color:rgba(13,13,13,.45);cursor:none;transition:all .18s}
+.pb-filter:hover,.pb-filter.active{border-color:rgba(138,115,85,.5);color:rgba(138,115,85,.9);background:rgba(138,115,85,.06)}
+.pb-shutter{width:46px;height:46px;border-radius:50%;background:rgba(13,13,13,.06);
+  border:1.5px solid rgba(13,13,13,.2);cursor:none;transition:all .22s cubic-bezier(.34,1.56,.64,1)}
+.pb-shutter:hover{background:rgba(13,13,13,.12);transform:scale(1.08);border-color:rgba(13,13,13,.4)}
+.pb-shutter:active{transform:scale(.94)}
+.pb-shutter.disabled{opacity:.3;pointer-events:none}
+.pb-shutter-lbl{font-size:11px;font-style:italic;color:rgba(13,13,13,.35);letter-spacing:1.5px;text-align:center}
+
+/* strip */
+.pb-strip-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.pb-strip{width:96px;background:#111;border:.5px solid rgba(255,255,255,.08);
+  border-radius:3px;overflow:hidden;padding:6px 6px 3px}
+.pb-strip-top{text-align:center;font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.25);padding-bottom:5px}
+.pb-frame{width:84px;height:63px;background:#1a1a1a;border-radius:1px;margin-bottom:5px;overflow:hidden}
+.pb-frame:last-of-type{margin-bottom:0}
+.pb-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.pb-frame.empty{display:flex;align-items:center;justify-content:center}
+.pb-frame.empty span{font-size:8px;color:rgba(255,255,255,.18);letter-spacing:1px}
+.pb-strip-bot{text-align:center;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.18);padding-top:3px}
+.pb-save{background:transparent;border:.5px solid rgba(138,115,85,.3);border-radius:20px;
+  padding:6px 14px;font-family:'EB Garamond',serif;font-size:12px;font-style:italic;
+  color:rgba(138,115,85,.5);cursor:none;transition:all .2s;opacity:.4;pointer-events:none}
+.pb-save.ready{opacity:1;pointer-events:auto}
+.pb-save.ready:hover{border-color:rgba(138,115,85,.8);color:rgba(138,115,85,1)}
+.pb-flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5000;transition:opacity .06s}
+.pb-flash.pop{opacity:1}
 </style>
 </head>
 <body>
 <div class="grain"></div>
 <div id="cursor"></div>
+<div id="torch"></div>
 <div class="night-veil"></div>
 
 <nav class="top-nav" id="top-nav">
-  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <a href="index.html" class="nav-back">← back</a>
   <span class="nav-label">sidequests · my desk</span>
 </nav>
 
@@ -248,7 +302,7 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
   </div>
 
   <!-- Photo strip hotspot (open state — hidden until drawer is opened) -->
-  <div class="hs tip-above" id="hs-strip" onclick="location.href='photobooth.html'">
+  <div class="hs tip-above" id="hs-strip" onclick="openPop('photobooth')">
     <span class="hs-tip">photobooth strip</span>
   </div>
 
@@ -261,6 +315,7 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
 <!-- ══════════════════════════════════
      POPUP SYSTEM
 ══════════════════════════════════ -->
+<div class="pb-flash" id="pb-flash"></div>
 <div class="pop-veil" id="pop-veil" onclick="handleVeilClick(event)">
   <div class="pop-box" id="pop-box">
     <button class="pop-x" onclick="closePop()">×</button>
@@ -272,6 +327,15 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
 /* ── cursor ── */
 const cur = document.getElementById('cursor');
 document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+/* ── torch cursor ── */
+const torch = document.getElementById('torch');
+document.addEventListener('mousemove', e => {
+  torch.style.left = e.clientX + 'px';
+  torch.style.top  = e.clientY + 'px';
+});
+function torchOn()  { torch.style.opacity = '1'; }
+function torchOff() { torch.style.opacity = '0'; }
 
 /* ── hotspot positioning — JS-based to handle object-fit:cover correctly ──
    Coordinates are % of the source image (1536×1024).
@@ -329,8 +393,6 @@ function spawnFairyLights() {
       const b = document.createElement('div');
       b.className = 'fairy-bulb';
       b.style.left = (3 + i * (92 / count) + (Math.random() * 2 - 1)) + '%';
-      b.style.setProperty('--dur', (1.4 + Math.random() * 2.5).toFixed(2) + 's');
-      b.style.setProperty('--dl',  (Math.random() * 4).toFixed(2) + 's');
       wire.appendChild(b);
     }
   });
@@ -354,8 +416,22 @@ function enterDesk() {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       dsk.classList.add('show');
       nav.classList.add('show');
+      torchOn();
+      revealTips();
     }));
   }, 750);
+}
+
+/* ── brief tip reveal: all labels pulse in then fade, teaching discoverability ── */
+function revealTips() {
+  const tips = document.querySelectorAll('.hs-tip');
+  tips.forEach(t => {
+    t.style.transition = 'opacity .5s ease';
+    t.style.opacity = '1';
+  });
+  setTimeout(() => {
+    tips.forEach(t => { t.style.opacity = ''; t.style.transition = 'opacity .18s ease'; });
+  }, 1800);
 }
 
 /* ── drawer: clean dissolve between the two photographs ── */
@@ -540,6 +616,195 @@ const CONTENT = {
     <div class="places-grid">
       ${PLACES.map(p=>`<div class="place-card"><span class="place-n">${p.city}</span><span class="place-note">${p.note}</span></div>`).join('')}
     </div>`,
+
+  photobooth: () => `
+    <span class="pop-tag" style="--tc:rgba(138,115,85,.7)">photobooth · instant strip</span>
+    <div class="pb-wrap">
+      <div class="pb-left">
+        <div class="pb-cam" id="pb-cam">
+          <div class="pb-perm" id="pb-perm">
+            <p class="pb-perm-txt">need camera access<br>to take your photos</p>
+            <button class="pb-perm-btn" onclick="pbStartCamera()">allow camera</button>
+          </div>
+          <video id="pb-video" autoplay playsinline muted style="display:none"></video>
+          <div class="pb-cam-vignette"></div>
+          <div class="pb-countdown" id="pb-countdown"></div>
+        </div>
+        <div class="pb-filters" id="pb-filters">
+          <button class="pb-filter active" onclick="pbSetFilter(this,'none')">natural</button>
+          <button class="pb-filter" onclick="pbSetFilter(this,'grayscale(100%)')">b&w</button>
+          <button class="pb-filter" onclick="pbSetFilter(this,'sepia(80%) contrast(1.1)')">warm</button>
+          <button class="pb-filter" onclick="pbSetFilter(this,'contrast(1.2) brightness(1.05) saturate(.8)')">crisp</button>
+        </div>
+        <button class="pb-shutter disabled" id="pb-shutter" onclick="pbStartSequence()"></button>
+        <span class="pb-shutter-lbl" id="pb-lbl">4 photos · 3s apart</span>
+      </div>
+      <div class="pb-strip-col">
+        <div class="pb-strip">
+          <div class="pb-strip-top">photobooth</div>
+          <div class="pb-frame empty" id="pb-f0"><span>01</span></div>
+          <div class="pb-frame empty" id="pb-f1"><span>02</span></div>
+          <div class="pb-frame empty" id="pb-f2"><span>03</span></div>
+          <div class="pb-frame empty" id="pb-f3"><span>04</span></div>
+          <div class="pb-strip-bot">aanya · <span id="pb-date"></span></div>
+        </div>
+        <button class="pb-save" id="pb-save" onclick="pbSave()">download strip ↓</button>
+      </div>
+    </div>`,
+};
+
+/* ── PHOTOBOOTH ENGINE ── */
+let pbStream = null, pbFilter = 'none', pbCount = 0, pbRunning = false;
+
+function pbInit() {
+  const d = document.getElementById('pb-date');
+  if (d) d.textContent = new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'}).toLowerCase();
+}
+
+async function pbStartCamera() {
+  try {
+    pbStream = await navigator.mediaDevices.getUserMedia({video:{width:480,height:360,facingMode:'user'},audio:false});
+    const v = document.getElementById('pb-video');
+    v.srcObject = pbStream;
+    v.style.display = 'block';
+    document.getElementById('pb-perm').style.display = 'none';
+    document.getElementById('pb-shutter').classList.remove('disabled');
+  } catch(e) {
+    const t = document.querySelector('.pb-perm-txt');
+    if (t) t.textContent = 'camera not available.\ntry a different browser.';
+  }
+}
+
+function pbSetFilter(btn, f) {
+  document.querySelectorAll('.pb-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  pbFilter = f;
+  const v = document.getElementById('pb-video');
+  if (v) v.style.filter = f === 'none' ? '' : f;
+}
+
+function pbStartSequence() {
+  if (pbRunning || !pbStream) return;
+  pbRunning = true; pbCount = 0;
+  document.getElementById('pb-shutter').classList.add('disabled');
+  document.getElementById('pb-save').classList.remove('ready');
+  [0,1,2,3].forEach(i => {
+    const f = document.getElementById('pb-f'+i);
+    if (f) { f.innerHTML = `<span>0${i+1}</span>`; f.classList.add('empty'); }
+  });
+  pbNext();
+}
+
+function pbNext() {
+  if (pbCount >= 4) {
+    pbRunning = false;
+    const s = document.getElementById('pb-shutter');
+    const l = document.getElementById('pb-lbl');
+    if (s) s.classList.remove('disabled');
+    if (l) l.textContent = 'take another set';
+    const sv = document.getElementById('pb-save');
+    if (sv) sv.classList.add('ready');
+    return;
+  }
+  let n = 3;
+  const overlay = document.getElementById('pb-countdown');
+  const tick = () => {
+    if (!overlay) return;
+    overlay.innerHTML = `<span class="pb-count-num">${n}</span>`;
+    if (n === 0) { setTimeout(() => { overlay.innerHTML=''; pbSnap(); }, 400); }
+    else { n--; setTimeout(tick, 900); }
+  };
+  tick();
+}
+
+function pbSnap() {
+  const fl = document.getElementById('pb-flash');
+  if (fl) { fl.classList.add('pop'); setTimeout(() => fl.classList.remove('pop'), 120); }
+
+  const v = document.getElementById('pb-video');
+  if (!v) return;
+  const c = document.createElement('canvas');
+  c.width = 84; c.height = 63;
+  const ctx = c.getContext('2d');
+  if (pbFilter !== 'none') ctx.filter = pbFilter;
+  ctx.save(); ctx.translate(84,0); ctx.scale(-1,1);
+  ctx.drawImage(v, 0, 0, 84, 63);
+  ctx.restore();
+
+  const frame = document.getElementById('pb-f'+pbCount);
+  if (frame) {
+    frame.classList.remove('empty');
+    frame.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = c.toDataURL('image/jpeg', .9);
+    img.style.transform = 'none';
+    frame.appendChild(img);
+  }
+
+  const lbl = document.getElementById('pb-lbl');
+  if (lbl) lbl.textContent = `photo ${pbCount+1}/4`;
+  pbCount++;
+  setTimeout(pbNext, 1200);
+}
+
+function pbSave() {
+  if (pbCount < 4) return;
+  const sc = 3;
+  const W = 96 * sc;
+  const padX = 6 * sc, padT = 6 * sc, padB = 4 * sc;
+  const innerW = 84 * sc, frameH = 63 * sc, gap = 5 * sc;
+  const headerH = 16 * sc, footerH = 14 * sc;
+  const H = padT + headerH + gap + (frameH + gap) * 3 + frameH + gap + footerH + padB;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#111111';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = `${7 * sc}px Georgia, serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('photobooth', W/2, padT + headerH * .8);
+
+  const startY = padT + headerH + gap;
+  [0,1,2,3].forEach((i) => {
+    const img = document.querySelector(`#pb-f${i} img`);
+    const y = startY + i * (frameH + gap);
+    if (img && img.src.startsWith('data:')) {
+      ctx.drawImage(img, padX, y, innerW, frameH);
+    } else {
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(padX, y, innerW, frameH);
+    }
+  });
+
+  const dateEl = document.getElementById('pb-date');
+  const dateStr = dateEl ? dateEl.textContent : '';
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.font = `${7 * sc}px Georgia, serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`aanya · ${dateStr}`, W/2, H - padB - 2*sc);
+
+  const link = document.createElement('a');
+  link.download = `photobooth-aanya-${new Date().toISOString().slice(0,10)}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+/* initialise date when photobooth popup opens */
+const _origOpenPop = openPop;
+openPop = function(id) {
+  _origOpenPop(id);
+  if (id === 'photobooth') { setTimeout(pbInit, 50); setTimeout(pbStartCamera, 80); }
+};
+
+/* stop camera when popup closes */
+const _origClosePop = closePop;
+closePop = function() {
+  _origClosePop();
+  if (pbStream) { pbStream.getTracks().forEach(t => t.stop()); pbStream = null; }
+  pbRunning = false; pbCount = 0;
 };
 </script>
 </body>

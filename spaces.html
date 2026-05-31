@@ -66,8 +66,8 @@ nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:bas
   color:var(--color,var(--gold));background:rgba(138,115,85,.06)}
 
 /* ── EVENT EXPANDED ── */
-.event-body{max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1)}
-.event-entry.open .event-body{max-height:480px}
+.event-body{max-height:0;overflow:hidden;transition:max-height .65s cubic-bezier(.4,0,.2,1)}
+.event-entry.open .event-body{max-height:600px}
 .event-content{padding:4px 0 36px 23px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
 @media(max-width:640px){.event-content{grid-template-columns:1fr}}
 
@@ -77,12 +77,39 @@ nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:bas
 .detail-key{font-size:10px;letter-spacing:3px;color:rgba(13,13,13,.3)}
 .detail-val{font-size:14px;font-style:italic;color:rgba(13,13,13,.55)}
 
-.event-photo-row{display:flex;gap:10px;margin-top:20px;grid-column:1/-1}
-.event-photo{
-  height:100px;flex:1;border-radius:4px;
-  background:rgba(13,13,13,.04);border:.5px solid var(--border);
-  display:flex;align-items:center;justify-content:center}
-.event-photo-icon{font-size:18px;opacity:.25}
+/* photo strip */
+.event-photo-strip {
+  grid-column: 1/-1;
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+.event-photo-strip::-webkit-scrollbar { display: none; }
+.event-photo-strip.dragging { cursor: grabbing; }
+.event-photo {
+  height: 160px;
+  min-width: 220px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(13,13,13,.06);
+  border: .5px solid var(--border);
+}
+.event-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.9);
+  transition: filter 0.3s;
+}
+.event-photo:hover img { filter: saturate(1.1); }
 
 /* ── DIVIDER ── */
 .divider{max-width:840px;margin:60px auto 40px;padding:0 24px;display:flex;align-items:center;gap:24px}
@@ -138,7 +165,7 @@ nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:bas
 </div>
 
 <nav>
-  <a href="aanya-portfolio-v14.html" class="nav-back">← back</a>
+  <a href="index.html" class="nav-back">← back</a>
   <span class="nav-label">spaces i created</span>
 </nav>
 
@@ -174,30 +201,48 @@ nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:bas
 </section>
 
 <script>
+const BASE = 'spaces i created/';
 const EVENTS = [
   {
     name:'khel khel mein',type:'community event',year:'2024',color:'#c06a4f',
-    desc:'a south asian play night — board games, desi snacks, and the specific joy of games that require you to argue with your cousins. the name means "in play" — and it was.',
-    details:{venue:'usc campus',format:'in-person, 80+ attendees',role:'lead organizer'},
-    photos:3,delay:'.08s'
+    desc:'a school-wide sporting initiative designed to break cohort segmentation. structured, activity-based programming that built real cross-group friendships — not just tolerance.',
+    details:{school:'the shri ram school, moulsari',location:'new delhi, india',role:'designer + lead organizer'},
+    photos:[
+      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.11 PM.png',
+      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.15 PM.png',
+      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.20 PM.png',
+      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.24 PM.png',
+      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.34 PM.png',
+      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.39 PM.png',
+      BASE+'khel photos/WhatsApp Image 2026-05-31 at 15.06.36.jpeg',
+    ],delay:'.08s'
   },
   {
     name:'nigeria day',type:'cultural celebration',year:'2024',color:'#3d8a60',
-    desc:'a celebration of nigerian culture, food, and community at usc. coordinated across student orgs to build something that felt real — not performative, but genuinely joyful.',
-    details:{venue:'usc campus',format:'in-person, cross-org collab',role:'co-organizer'},
-    photos:3,delay:'.18s'
+    desc:'conceptualised and executed a culture-focused exhibition tied to the ib text purple hibiscus, for 58 students. established a scalable framework now embedded as a recurring fixture in the school calendar.',
+    details:{school:'the shri ram school, moulsari',location:'new delhi, india',role:'co-creator + visual design'},
+    photos:[
+      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.17 PM.png',
+      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.35 PM.png',
+      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.39 PM.png',
+      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.43 PM.png',
+      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.48 PM.png',
+    ],delay:'.18s'
   },
   {
     name:'intragrade matches',type:'sports + community',year:'2024',color:'#4a7aaa',
-    desc:'inter-class sports matches designed to actually get people off their laptops. not just a game — a reason to show up for each other in the middle of midterms.',
-    details:{venue:'usc recreation park',format:'tournament-style',role:'event lead'},
-    photos:2,delay:'.28s'
-  },
-  {
-    name:'sandbox makeathon',type:'design sprint',year:'2024',color:'#c48a3a',
-    desc:'a one-day makeathon with sandbox — usc\'s innovation hub. teams built things, pitched things, and mostly just proved that good work happens when you give people a deadline and a problem they care about.',
-    details:{venue:'usc sandbox',format:'12-hour sprint, 10+ teams',role:'organizer + mentor'},
-    photos:3,delay:'.36s'
+    desc:'organised inter-class matches for 12th-grade students — a recreational outlet that actually got people off their laptops and building camaraderie across different academic boards.',
+    details:{school:'the shri ram school, moulsari',location:'new delhi, india',role:'event lead'},
+    photos:[
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.15 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.21 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.25 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.30 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.40 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.47 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.15.08 PM.png',
+      BASE+'matches photos/Screenshot 2026-05-31 at 3.15.13 PM.png',
+    ],delay:'.28s'
   },
 ];
 
@@ -206,7 +251,7 @@ EVENTS.forEach(ev => {
   const entry = document.createElement('div');
   entry.className = 'event-entry';
   entry.style.cssText = `--delay:${ev.delay};--color:${ev.color}`;
-  const photos = Array.from({length:ev.photos},()=>`<div class="event-photo"><span class="event-photo-icon">□</span></div>`).join('');
+  const photos = ev.photos.map(p=>`<div class="event-photo"><img src="${p}" alt="" loading="lazy"></div>`).join('');
   entry.innerHTML = `
     <div class="event-bar">
       <div class="event-stripe"></div>
@@ -225,7 +270,7 @@ EVENTS.forEach(ev => {
               <span class="detail-val">${v}</span>
             </div>`).join('')}
         </div>
-        <div class="event-photo-row">${photos}</div>
+        <div class="event-photo-strip">${photos}</div>
       </div>
     </div>`;
   entry.querySelector('.event-bar').addEventListener('click', () => entry.classList.toggle('open'));
@@ -267,6 +312,33 @@ document.getElementById('gb-form').addEventListener('submit',ev=>{
   renderEntries();
 });
 renderEntries();
+
+// drag-scroll on photo strips
+document.addEventListener('click', () => {}, true); // ensure strips exist
+setTimeout(() => {
+  document.querySelectorAll('.event-photo-strip').forEach(strip => {
+    let isDown = false, startX, startScroll, velX = 0, lastX, rafId;
+    strip.addEventListener('mousedown', e => {
+      isDown = true; strip.classList.add('dragging');
+      startX = e.pageX; startScroll = strip.scrollLeft; velX = 0;
+      cancelAnimationFrame(rafId);
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false; strip.classList.remove('dragging');
+      (function glide() {
+        if (Math.abs(velX) < 0.5) return;
+        strip.scrollLeft += velX; velX *= 0.92;
+        rafId = requestAnimationFrame(glide);
+      })();
+    });
+    window.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      strip.scrollLeft = startScroll - (e.pageX - startX);
+      velX = e.pageX - (lastX || e.pageX); lastX = e.pageX;
+    });
+  });
+}, 200);
 </script>
 </body>
 </html>
