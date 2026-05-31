@@ -23,9 +23,9 @@ nav {
 .nav-left  { display: flex; gap: 26px; align-items: center; }
 .nav-center { display: flex; justify-content: center; }
 .nav-right { display: flex; gap: 26px; align-items: center; justify-content: flex-end; }
-.nav-logo { font-family: 'EB Garamond', serif; font-size: 22px; font-weight: 500; letter-spacing: 3px; color: #666; text-decoration: none; font-style: normal; }
-.nav-link { font-family: 'EB Garamond', serif; font-size: 16px; font-style: italic; text-decoration: none; transition: opacity 0.2s; }
-.nav-resume { font-family: 'EB Garamond', serif; font-size: 16px; font-style: italic; text-decoration: none; transition: opacity 0.2s; }
+.nav-logo { font-family: 'EB Garamond', serif; font-size: 22px; font-weight: 500; font-style: italic; letter-spacing: 3px; color: #666; text-decoration: none; font-style: normal; }
+.nav-link { font-family: 'EB Garamond', serif; font-size: 16px; font-style: normal; text-decoration: none; transition: opacity 0.2s; }
+.nav-resume { font-family: 'EB Garamond', serif; font-size: 16px; font-style: normal; text-decoration: none; transition: opacity 0.2s; }
 .nav-left .nav-link { color: var(--ink); opacity: 0.45; }
 .nav-left .nav-link:hover { opacity: 1; }
 .nav-right .nav-link { color: rgba(255,255,255,0.55); }
@@ -47,7 +47,7 @@ nav {
 .connect-icon-btn img { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 3px 10px rgba(0,0,0,0.3)); }
 .split { display: flex; height: 100vh; width: 100vw; }
 .split-line { position: fixed; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(0,0,0,0.07); z-index: 10; pointer-events: none; }
-.side-label { position: absolute; bottom: 26px; left: 26px; font-family: 'EB Garamond', serif; font-size: 11px; letter-spacing: 3px; font-style: italic; z-index: 5; }
+.side-label { position: absolute; bottom: 26px; left: 26px; font-family: 'EB Garamond', serif; font-size: 11px; letter-spacing: 3px; font-style: normal; z-index: 5; }
 .craft-side {
   flex: 1; position: relative; overflow: hidden;
   background-color: #f7f3eb;
@@ -64,7 +64,7 @@ nav {
 .icon-pin a { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .icon-pin img { object-fit: contain; display: block; opacity: 1; filter: saturate(1.08) contrast(1.08) drop-shadow(0 4px 12px rgba(0,0,0,0.26)); transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), filter 0.25s; }
 .icon-pin:hover img { transform: scale(1.13); filter: saturate(1.14) contrast(1.12) drop-shadow(0 6px 20px rgba(0,0,0,0.36)); }
-.icon-label { font-family: 'EB Garamond', serif; font-size: 13px; font-style: italic; color: rgba(0,0,0,0.6); white-space: nowrap; opacity: 0; transform: translateY(5px); transition: opacity 0.22s, transform 0.22s; pointer-events: none; background: rgba(247,243,235,0.85); padding: 1px 6px; border-radius: 3px; }
+.icon-label { font-family: 'EB Garamond', serif; font-size: 13px; font-style: normal; color: rgba(0,0,0,0.6); white-space: nowrap; opacity: 0; transform: translateY(5px); transition: opacity 0.22s, transform 0.22s; pointer-events: none; background: rgba(247,243,235,0.85); padding: 1px 6px; border-radius: 3px; }
 .icon-pin:hover .icon-label { opacity: 1; transform: translateY(0); }
 .icon-pin.label-above a { flex-direction: column-reverse; }
 .icon-pin.label-above .icon-label { transform: translateY(-5px); }

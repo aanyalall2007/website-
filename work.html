@@ -650,7 +650,7 @@ nav {
       style="width:88px;top:60%;left:15%;transform:rotate(-3deg)" alt="design for america">
 
     <div class="hero-eyebrow">selected work &middot; 2024–2026</div>
-    <h1 class="hero-title">making, researching, building.</h1>
+    <h1 class="hero-title" data-scramble="designing, researching, building.">designing, researching, building.</h1>
     <p class="hero-sub">three ways i show up in the world.</p>
     <div class="scroll-cue">→ scroll</div>
   </div>
@@ -1017,6 +1017,29 @@ document.querySelectorAll('a[href]').forEach(link => {
     setTimeout(() => { window.location.href = href; }, 400);
   });
 });
+
+// ── TEXT SCRAMBLE on hero title hover ──
+(function(){
+  const CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$&*';
+  function scramble(el) {
+    const original = el.dataset.scramble || el.textContent;
+    let iteration = 0;
+    clearInterval(el._scrambleInterval);
+    el._scrambleInterval = setInterval(() => {
+      el.textContent = original.split('').map((char, i) => {
+        if (char === ' ' || char === ',' || char === '.') return char;
+        if (i < iteration) return original[i];
+        return CHARS[Math.floor(Math.random() * CHARS.length)];
+      }).join('');
+      if (iteration >= original.length) clearInterval(el._scrambleInterval);
+      iteration += 0.5;
+    }, 28);
+  }
+  document.querySelectorAll('[data-scramble]').forEach(el => {
+    el.addEventListener('mouseenter', () => scramble(el));
+  });
+})();
+
 </script>
 </body>
 </html>
