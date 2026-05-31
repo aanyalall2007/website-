@@ -119,12 +119,8 @@ nav {
   transform-origin: left;
   transition: transform 0.25s ease;
 }
-.nav-tab.active {
-  color: var(--ink);
-}
-.nav-tab.active::after {
-  transform: scaleX(1);
-}
+.nav-tab.active { color: var(--ink); }
+.nav-tab.active::after { transform: scaleX(1); }
 .nav-tab:hover { color: var(--ink); }
 
 /* PROGRESS BAR */
@@ -187,62 +183,56 @@ nav {
   padding-top: 52px;
 }
 
-/* PANEL INNER LAYOUT */
-.panel-split {
-  display: flex;
+/* PANEL INNER */
+.panel-inner {
   height: 100%;
-}
-.panel-sidebar {
-  width: 30%;
-  border-right: 0.5px solid var(--sep);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 48px 40px;
-  gap: 20px;
-  position: relative;
+  overflow: hidden;
 }
-.panel-content {
-  width: 70%;
-  padding: 48px 56px;
+.panel-scroll-y {
   overflow-y: auto;
+  flex: 1;
   scrollbar-width: none;
 }
-.panel-content::-webkit-scrollbar { display: none; }
+.panel-scroll-y::-webkit-scrollbar { display: none; }
 
-/* SIDEBAR LABEL */
-.sidebar-label {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
+/* SECTION LABELS */
+.section-eyebrow {
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.3em;
   color: var(--gold);
+  padding: 20px 60px 0;
+  display: block;
   font-weight: 500;
-  text-transform: lowercase;
-  align-self: flex-start;
 }
-.sidebar-rule {
-  width: 1px;
-  height: 60px;
-  background: var(--gold);
-  opacity: 0.5;
-}
-.sidebar-brief {
-  font-size: 13px;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  line-height: 1.8;
+.section-title {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-style: italic;
+  font-weight: 400;
+  padding: 4px 60px 16px;
+  border-bottom: 0.5px solid var(--sep);
 }
 
-/* PANEL 0 HERO */
+/* GLASS CARD */
+.glass-card {
+  background: rgba(255,255,255,0.62);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 20px;
+  box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 8px 32px rgba(0,0,0,0.08);
+}
+
+/* =============================
+   PANEL 0: HERO
+   ============================= */
 #panel-0 {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 0;
 }
 
 .hero-eyebrow {
@@ -250,8 +240,9 @@ nav {
   letter-spacing: 0.22em;
   color: var(--gold);
   margin-bottom: 28px;
+  position: relative;
+  z-index: 2;
 }
-
 .hero-title {
   font-size: clamp(38px, 5.5vw, 72px);
   font-style: italic;
@@ -259,161 +250,192 @@ nav {
   line-height: 1.12;
   color: var(--ink);
   margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
 }
-
 .hero-sub {
   font-size: 18px;
   color: var(--muted);
   font-style: normal;
   letter-spacing: 0.02em;
+  position: relative;
+  z-index: 2;
 }
-
 .scroll-cue {
   margin-top: 52px;
   font-size: 13px;
   letter-spacing: 0.14em;
   color: var(--muted);
   animation: fadePulse 2.2s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
 }
 @keyframes fadePulse {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
 
-/* POLAROID FRAMES */
-.polaroid {
+/* HERO ICONS — magazine-cutout floating */
+.hero-icon {
   position: absolute;
-  background: white;
-  box-shadow: 0 2px 12px rgba(13,13,13,0.08);
-  pointer-events: none;
-  padding: 7px 7px 20px;
-}
-.polaroid-inner {
-  width: 100%;
-  height: 100%;
-  background: rgba(13,13,13,0.04);
-}
-.p1 { width: 90px; height: 105px; top: 12%; left: 6%; transform: rotate(-6deg); }
-.p2 { width: 70px; height: 85px; top: 18%; right: 8%; transform: rotate(4deg); }
-.p3 { width: 80px; height: 96px; bottom: 15%; left: 9%; transform: rotate(3deg); }
-.p4 { width: 65px; height: 78px; bottom: 18%; right: 7%; transform: rotate(-5deg); }
-.p5 { width: 55px; height: 68px; top: 60%; left: 4%; transform: rotate(7deg); opacity: 0.6; }
-.p6 { width: 60px; height: 74px; top: 55%; right: 4%; transform: rotate(-3deg); opacity: 0.6; }
-
-/* DESIGNER ROWS */
-.designer-rows-wrap {
-  margin-top: 8px;
-}
-.designer-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 0;
-  border-bottom: 0.5px solid var(--sep);
+  object-fit: contain;
+  pointer-events: all;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.15));
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), filter 0.35s;
   cursor: none;
-  position: relative;
-  overflow: hidden;
-  gap: 16px;
+  z-index: 1;
 }
-.designer-row::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gold);
-  opacity: 0.08;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-.designer-row:hover::before { transform: scaleX(1); }
-.designer-row:hover .row-arrow { transform: translateX(4px); color: var(--gold); }
-
-.row-title {
-  font-size: 17px;
-  font-weight: 400;
-  color: var(--ink);
-  min-width: 160px;
-  flex: 0 0 auto;
-  position: relative;
-}
-.row-meta {
-  font-size: 13px;
-  color: var(--muted);
-  flex: 1;
-  text-align: center;
-  letter-spacing: 0.03em;
-  position: relative;
-}
-.row-year {
-  font-size: 13px;
-  color: var(--muted);
-  flex: 0 0 50px;
-  text-align: right;
-  position: relative;
-}
-.row-arrow {
-  font-size: 14px;
-  color: var(--muted);
-  flex: 0 0 20px;
-  text-align: right;
-  transition: transform 0.2s ease, color 0.2s ease;
-  position: relative;
+.hero-icon:hover {
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,0.25));
+  transform: translateY(-4px) !important;
 }
 
-/* RESEARCHER */
-.research-cols {
+/* =============================
+   PANEL 1: DESIGNER
+   ============================= */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 24px 60px 40px;
+  overflow: visible;
+  align-content: start;
+}
+
+.project-card {
+  position: relative;
+  padding: 24px;
+  cursor: none;
+  overflow: visible;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s;
+}
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 20px 48px rgba(0,0,0,0.14);
+}
+
+.card-icon-wrap {
+  width: 100%;
+  aspect-ratio: 1;
   display: flex;
-  gap: 48px;
-  margin-top: 28px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
 }
-.research-col {
-  flex: 1;
+.card-icon {
+  width: 70%;
+  object-fit: contain;
 }
-.research-col-label {
-  font-size: 11px;
-  letter-spacing: 0.18em;
+.card-title {
+  font-size: 16px;
+  font-style: italic;
+  display: block;
+  color: var(--ink);
+}
+.card-meta {
+  font-size: 12px;
+  color: rgba(13,13,13,0.45);
+  display: block;
+  margin-top: 3px;
+}
+
+/* ALTERNATING HOVER POPUPS */
+.card-hover-popup {
+  position: absolute;
+  left: 0; right: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.16,1,0.3,1);
+  z-index: 50;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(13,13,13,0.75);
+  font-style: normal;
+}
+/* Up popup: appears above the card */
+[data-popup="up"] .card-hover-popup {
+  bottom: calc(100% + 10px);
+  top: auto;
+  transform: translateY(8px);
+}
+[data-popup="up"]:hover .card-hover-popup {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Down popup: appears below the card */
+[data-popup="down"] .card-hover-popup {
+  top: calc(100% + 10px);
+  bottom: auto;
+  transform: translateY(-8px);
+}
+[data-popup="down"]:hover .card-hover-popup {
+  opacity: 1;
+  transform: translateY(0);
+}
+.popup-title {
+  font-style: italic;
+  margin-bottom: 6px;
+  color: rgba(13,13,13,0.85);
+  font-size: 14px;
+}
+
+/* =============================
+   PANEL 2: RESEARCHER
+   ============================= */
+.research-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr;
+  gap: 16px;
+  padding: 24px 60px;
+}
+.research-card { padding: 20px 24px; }
+.research-category {
+  font-size: 10px;
+  letter-spacing: 0.25em;
   color: var(--gold);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   font-weight: 500;
 }
-.research-list {
-  list-style: none;
-}
-.research-list li {
-  font-size: 15px;
-  color: var(--ink);
-  padding: 10px 0;
+.research-item {
+  padding: 8px 0;
   border-bottom: 0.5px solid var(--sep);
+  font-size: 14px;
   line-height: 1.4;
-  display: flex;
-  gap: 12px;
+  color: var(--ink);
 }
-.research-list li::before {
-  content: attr(data-n);
+.research-item:last-child { border-bottom: none; }
+.research-sub {
+  font-size: 11px;
   color: var(--muted);
-  font-size: 12px;
-  flex-shrink: 0;
+  display: block;
   margin-top: 2px;
-  font-style: italic;
 }
 
 /* RESEARCH FORM */
 .research-form-wrap {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 0.5px solid var(--sep);
-}
-.research-form-label {
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-bottom: 20px;
+  padding: 20px 60px 32px;
 }
 .research-form {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.65);
+  border-radius: 16px;
+  box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 4px 16px rgba(0,0,0,0.06);
+  padding: 20px 24px;
+  max-width: 600px;
+}
+.form-row {
   display: flex;
-  flex-direction: column;
-  gap: 0;
-  max-width: 480px;
+  gap: 12px;
+  align-items: flex-start;
 }
 .research-form input,
 .research-form textarea {
@@ -422,73 +444,80 @@ nav {
   color: var(--ink);
   background: transparent;
   border: none;
-  border-bottom: 0.5px solid var(--gold);
-  padding: 10px 0;
+  border-bottom: 0.5px solid rgba(138,115,85,0.4);
+  padding: 8px 0;
   outline: none;
   resize: none;
-  margin-bottom: 20px;
   text-transform: lowercase;
+  flex: 1;
+  transition: border-color 0.2s;
 }
+.research-form input:focus,
+.research-form textarea:focus { border-bottom-color: var(--gold); }
 .research-form input::placeholder,
-.research-form textarea::placeholder {
-  color: var(--muted);
-}
-.research-form button {
+.research-form textarea::placeholder { color: var(--muted); }
+.form-btn {
   font-family: 'EB Garamond', serif;
   font-size: 14px;
   letter-spacing: 0.1em;
   color: var(--gold);
   background: none;
   border: 0.5px solid var(--gold);
-  padding: 10px 24px;
+  border-radius: 8px;
+  padding: 8px 20px;
   cursor: none;
-  align-self: flex-start;
+  align-self: flex-end;
   transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.research-form button:hover {
-  background: var(--gold);
-  color: var(--cream);
-}
+.form-btn:hover { background: var(--gold); color: var(--cream); }
 
-/* FOUNDER */
-.founder-blocks {
+/* =============================
+   PANEL 3: FOUNDER
+   ============================= */
+.founder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px 60px;
+  align-items: start;
+}
+.founder-card {
+  padding: 32px;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin-top: 8px;
+  gap: 12px;
 }
-.founder-block {
-  padding: 36px 0;
-  border-bottom: 0.5px solid var(--sep);
+.founder-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 8px;
 }
-.founder-block:first-child {
-  border-top: 0.5px solid var(--sep);
-}
-.founder-block-header {
+.founder-icon-placeholder {
+  width: 64px;
+  height: 64px;
   display: flex;
-  align-items: baseline;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.founder-block-title {
-  font-size: 26px;
-  font-style: italic;
-  font-weight: 400;
-}
-.founder-tag {
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 8px;
   color: var(--gold);
-  border: 0.5px solid var(--gold);
-  padding: 3px 10px;
-  border-radius: 20px;
 }
-.founder-block-body {
-  font-size: 15px;
-  color: var(--muted);
-  line-height: 1.75;
-  max-width: 500px;
-  margin-bottom: 20px;
+.founder-title { font-size: 22px; font-style: italic; color: var(--ink); }
+.founder-sub { font-size: 13px; color: var(--muted); }
+.founder-body { font-size: 15px; line-height: 1.7; color: var(--muted); flex: 1; }
+.tag-pill {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  background: rgba(138,115,85,0.12);
+  color: var(--gold);
+  align-self: flex-start;
 }
 .founder-link {
   font-size: 13px;
@@ -498,10 +527,13 @@ nav {
   border-bottom: 0.5px solid var(--gold);
   padding-bottom: 2px;
   transition: opacity 0.2s;
+  align-self: flex-start;
 }
 .founder-link:hover { opacity: 0.7; }
 
-/* PANEL 4 OUTRO */
+/* =============================
+   PANEL 4: OUTRO
+   ============================= */
 #panel-4 {
   display: flex;
   flex-direction: column;
@@ -525,7 +557,9 @@ nav {
 }
 .outro-back:hover { color: var(--gold); }
 
-/* BOTTOM SHEET */
+/* =============================
+   BOTTOM SHEET
+   ============================= */
 #sheet-overlay {
   position: fixed;
   inset: 0;
@@ -538,7 +572,6 @@ nav {
   background: rgba(13,13,13,0.35);
   pointer-events: all;
 }
-
 #bottom-sheet {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -548,16 +581,13 @@ nav {
   padding: 32px 40px 48px;
   z-index: 900;
   transform: translateY(100%);
-  transition: transform 0.4s cubic-bezier(0.34,1.3,0.64,1);
+  transition: transform 0.42s cubic-bezier(0.34,1.3,0.64,1);
   max-height: 60vh;
   overflow-y: auto;
   scrollbar-width: none;
 }
 #bottom-sheet::-webkit-scrollbar { display: none; }
-#bottom-sheet.open {
-  transform: translateY(0);
-}
-
+#bottom-sheet.open { transform: translateY(0); }
 .sheet-handle {
   width: 36px;
   height: 4px;
@@ -565,22 +595,9 @@ nav {
   border-radius: 2px;
   margin: 0 auto 28px;
 }
-.sheet-title {
-  font-size: 26px;
-  font-style: italic;
-  margin-bottom: 8px;
-}
-.sheet-meta {
-  font-size: 13px;
-  color: var(--gold);
-  letter-spacing: 0.1em;
-  margin-bottom: 20px;
-}
-.sheet-body {
-  font-size: 16px;
-  color: var(--muted);
-  line-height: 1.8;
-}
+.sheet-title { font-size: 26px; font-style: italic; margin-bottom: 8px; }
+.sheet-meta { font-size: 13px; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 20px; }
+.sheet-body { font-size: 16px; color: var(--muted); line-height: 1.8; }
 .sheet-close {
   position: absolute;
   top: 28px; right: 32px;
@@ -592,14 +609,6 @@ nav {
   transition: color 0.2s;
 }
 .sheet-close:hover { color: var(--ink); }
-
-.section-heading {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  color: var(--gold);
-  margin-bottom: 20px;
-  font-weight: 500;
-}
 </style>
 </head>
 <body>
@@ -623,12 +632,22 @@ nav {
 
   <!-- PANEL 0: HERO -->
   <div class="panel" id="panel-0">
-    <div class="polaroid p1"><div class="polaroid-inner"></div></div>
-    <div class="polaroid p2"><div class="polaroid-inner"></div></div>
-    <div class="polaroid p3"><div class="polaroid-inner"></div></div>
-    <div class="polaroid p4"><div class="polaroid-inner"></div></div>
-    <div class="polaroid p5"><div class="polaroid-inner"></div></div>
-    <div class="polaroid p6"><div class="polaroid-inner"></div></div>
+    <!-- Magazine-cutout floating icons -->
+    <img class="hero-icon" src="design-icons/afterhours.png" style="width:78px;top:45%;right:5%;transform:rotate(9deg)" alt="afterhours">
+<img class="hero-icon" src="design-icons/tomol.png"
+      style="width:100px;top:12%;left:8%;transform:rotate(-8deg)" alt="tomol28">
+    <img class="hero-icon" src="design-icons/troy-eats.png"
+      style="width:90px;top:18%;left:22%;transform:rotate(5deg)" alt="troy eats">
+    <img class="hero-icon" src="design-icons/lookup.png"
+      style="width:80px;bottom:20%;left:5%;transform:rotate(-5deg)" alt="look up">
+    <img class="hero-icon" src="design-icons/still-storm.png"
+      style="width:110px;top:10%;right:10%;transform:rotate(7deg)" alt="the still storm">
+    <img class="hero-icon" src="design-icons/lighthouse.png"
+      style="width:85px;bottom:15%;right:12%;transform:rotate(-6deg)" alt="lighthouse">
+    <img class="hero-icon" src="design-icons/reading-caterpillar.png"
+      style="width:95px;bottom:25%;right:25%;transform:rotate(4deg)" alt="reading caterpillar">
+    <img class="hero-icon" src="design-icons/dfa.png"
+      style="width:88px;top:60%;left:15%;transform:rotate(-3deg)" alt="design for america">
 
     <div class="hero-eyebrow">selected work &middot; 2024–2026</div>
     <h1 class="hero-title">making, researching, building.</h1>
@@ -638,162 +657,202 @@ nav {
 
   <!-- PANEL 1: DESIGNER -->
   <div class="panel" id="panel-1">
-    <div class="panel-split">
-      <div class="panel-sidebar">
-        <span class="sidebar-label">designer</span>
-        <div class="sidebar-rule"></div>
-        <div class="sidebar-brief">ux · product · experience</div>
-      </div>
-      <div class="panel-content">
-        <div class="section-heading">selected projects</div>
-        <div class="designer-rows-wrap">
+    <div class="panel-inner">
+      <span class="section-eyebrow">selected projects</span>
+      <div class="section-title">designer</div>
+      <div class="panel-scroll-y">
+        <div class="cards-grid">
 
-          <div class="designer-row"
+          <!-- tomol28 — popup up -->
+          <div class="project-card glass-card"
+            data-popup="up"
             data-title="tomol28"
-            data-meta="practice of design, usc · 2026"
-            data-body="Redesigned the LA 2028 Olympic visitor experience to foreground Los Angeles's Indigenous heritage, centring the Chumash Tomol as a cultural anchor. Developed a journey concept tracing the city's shoreline across key Olympic touchpoints.">
-            <span class="row-title">tomol28</span>
-            <span class="row-meta">practice of design, usc</span>
-            <span class="row-year">2026</span>
-            <span class="row-arrow">→</span>
+            data-meta="2026 · practice of design, usc"
+            data-body="Redesigned the LA 2028 Olympic visitor experience to foreground los angeles's indigenous heritage, centring the Chumash Tomol as a cultural anchor. Developed a journey concept tracing the city's shoreline across key Olympic touchpoints.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/tomol.png" alt="tomol28" class="card-icon">
+            </div>
+            <span class="card-title">tomol28</span>
+            <span class="card-meta">2026 · usc</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">tomol28</p>
+              <p>reimagining the la28 olympic journey through indigenous heritage + coastal identity</p>
+            </div>
           </div>
 
-          <div class="designer-row"
+          <!-- troy eats — popup down -->
+          <div class="project-card glass-card"
+            data-popup="down"
             data-title="troy eats"
-            data-meta="practice of design, usc · 2026"
+            data-meta="2026 · practice of design, usc"
             data-body="Led end-to-end redesign of the USC campus dining system — UX research, service prototyping, visual identity, brand strategy. Developed the Troy Eats brand including naming and a cohesive design system.">
-            <span class="row-title">troy eats</span>
-            <span class="row-meta">practice of design, usc</span>
-            <span class="row-year">2026</span>
-            <span class="row-arrow">→</span>
+            <div class="card-icon-wrap">
+              <img src="design-icons/troy-eats.png" alt="troy eats" class="card-icon">
+            </div>
+            <span class="card-title">troy eats</span>
+            <span class="card-meta">2026 · usc</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">troy eats</p>
+              <p>end-to-end redesign of the usc dining experience — brand, ux, service</p>
+            </div>
           </div>
 
-          <div class="designer-row"
+          <!-- look up — popup up -->
+          <div class="project-card glass-card"
+            data-popup="up"
             data-title="look up"
-            data-meta="practice of design, usc · 2026"
-            data-body="Designed a Chindogu device for scrolling while walking without compromising spatial awareness. Explores smartphone dependency as a design critique.">
-            <span class="row-title">look up</span>
-            <span class="row-meta">practice of design, usc</span>
-            <span class="row-year">2026</span>
-            <span class="row-arrow">→</span>
+            data-meta="2026 · practice of design, usc"
+            data-body="Designed a deliberately absurd yet functional invention: scroll your phone while walking without compromising spatial awareness. Critiques smartphone dependency in urban environments.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/lookup.png" alt="look up" class="card-icon">
+            </div>
+            <span class="card-title">look up</span>
+            <span class="card-meta">2026 · usc</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">look up</p>
+              <p>a chindogu device for scrolling while walking — absurdist design critique</p>
+            </div>
           </div>
 
-          <div class="designer-row"
+          <!-- the still storm — popup down -->
+          <div class="project-card glass-card"
+            data-popup="down"
             data-title="the still storm"
-            data-meta="practice of design, usc · 2026"
-            data-body="Co-designed a 3D-printed phone case merging Jony Ive and Vincent van Gogh — restraint meets emotion. A tactile artefact at the boundary between product and fine art.">
-            <span class="row-title">the still storm</span>
-            <span class="row-meta">practice of design, usc</span>
-            <span class="row-year">2026</span>
-            <span class="row-arrow">→</span>
+            data-meta="2026 · practice of design, usc"
+            data-body="Co-designed a phone case merging Jony Ive's minimalist precision with Van Gogh's expressive brushwork. A tactile artefact at the boundary between product design and fine art.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/still-storm.png" alt="the still storm" class="card-icon">
+            </div>
+            <span class="card-title">the still storm</span>
+            <span class="card-meta">2026 · usc</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">the still storm</p>
+              <p>3d-printed phone case merging jony ive + van gogh — restraint meets emotion</p>
+            </div>
           </div>
 
-          <div class="designer-row"
-            data-title="product design intern"
-            data-meta="lighthouse healthcare · 2025"
-            data-body="Led end-to-end product development for dementia care at Lighthouse Healthcare. Designed cognitive engagement tools including puzzles and family tree visualisations grounded in user research.">
-            <span class="row-title">product design intern</span>
-            <span class="row-meta">lighthouse healthcare</span>
-            <span class="row-year">2025</span>
-            <span class="row-arrow">→</span>
+          <!-- lighthouse intern — popup up -->
+          <div class="project-card glass-card"
+            data-popup="up"
+            data-title="lighthouse intern"
+            data-meta="2025 · lighthouse healthcare"
+            data-body="Led end-to-end product development for dementia care at Lighthouse Healthcare. Designed cognitive engagement tools including customised puzzles and family tree visualisations grounded in user-centred design.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/lighthouse.png" alt="lighthouse" class="card-icon">
+            </div>
+            <span class="card-title">lighthouse intern</span>
+            <span class="card-meta">2025 · healthcare</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">lighthouse intern</p>
+              <p>product design for dementia care — puzzles, family trees, user research</p>
+            </div>
           </div>
 
-          <div class="designer-row"
-            data-title="digital archiving"
-            data-meta="reading caterpillar · 2025"
-            data-body="Designed a digital archiving system for a children's library, cataloguing over a decade of materials. Applied information architecture for long-term accessibility.">
-            <span class="row-title">digital archiving</span>
-            <span class="row-meta">reading caterpillar</span>
-            <span class="row-year">2025</span>
-            <span class="row-arrow">→</span>
+          <!-- reading caterpillar — popup down -->
+          <div class="project-card glass-card"
+            data-popup="down"
+            data-title="reading caterpillar"
+            data-meta="2025 · reading caterpillar"
+            data-body="Designed a digital archiving project for a children's library, cataloguing over a decade of physical materials. Applied information architecture for long-term accessibility.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/reading-caterpillar.png" alt="reading caterpillar" class="card-icon">
+            </div>
+            <span class="card-title">reading caterpillar</span>
+            <span class="card-meta">2025 · children's library</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">reading caterpillar</p>
+              <p>digital archiving system for a children's library — a decade of materials</p>
+            </div>
           </div>
 
-        </div>
-      </div>
-    </div>
+        </div><!-- /cards-grid -->
+      </div><!-- /panel-scroll-y -->
+    </div><!-- /panel-inner -->
   </div>
 
   <!-- PANEL 2: RESEARCHER -->
   <div class="panel" id="panel-2">
-    <div class="panel-split">
-      <div class="panel-sidebar">
-        <span class="sidebar-label">researcher</span>
-        <div class="sidebar-rule"></div>
-        <div class="sidebar-brief">economics · stem · humanities</div>
-      </div>
-      <div class="panel-content">
-        <div class="section-heading">research</div>
+    <div class="panel-inner">
+      <span class="section-eyebrow">papers + essays</span>
+      <div class="section-title">researcher</div>
+      <div class="panel-scroll-y">
+        <div class="research-grid">
 
-        <div class="research-cols">
-          <div class="research-col">
-            <div class="research-col-label">university</div>
-            <ul class="research-list">
-              <li data-n="1">drafting an ethical ai policy</li>
-              <li data-n="2">together, but alone</li>
-              <li data-n="3">it ain't right, and it ain't natural</li>
-              <li data-n="4">women, societal standards, and power</li>
-              <li data-n="5">conformity and the cinderella arc</li>
-              <li data-n="6">the weight of familiarity</li>
-              <li data-n="7">christine's choice</li>
-            </ul>
+          <!-- STEM -->
+          <div class="research-card glass-card">
+            <div class="research-category">[stem]</div>
+            <div class="research-item">fourier transformation in audio<span class="research-sub">mathematics</span></div>
+            <div class="research-item">hydraulic jump + water flow<span class="research-sub">physics</span></div>
+            <div class="research-item">critical solution temperature<span class="research-sub">chemistry</span></div>
           </div>
-          <div class="research-col">
-            <div class="research-col-label">high school</div>
-            <ul class="research-list">
-              <li data-n="1">fourier transformation in audio</li>
-              <li data-n="2">hydraulic jump + water flow</li>
-              <li data-n="3">critical solution temperature</li>
-              <li data-n="4">vaping regulation, uk</li>
-              <li data-n="5">inflation in nigeria</li>
-              <li data-n="6">eu tariffs on vehicles</li>
-              <li data-n="7">beauty standards in media</li>
-            </ul>
+
+          <!-- ECONOMICS -->
+          <div class="research-card glass-card">
+            <div class="research-category">[economics]</div>
+            <div class="research-item">vaping regulation, uk</div>
+            <div class="research-item">inflation in nigeria</div>
+            <div class="research-item">eu tariffs on vehicles</div>
           </div>
-        </div>
+
+          <!-- HUMANITIES -->
+          <div class="research-card glass-card">
+            <div class="research-category">[humanities]</div>
+            <div class="research-item">beauty standards in media<span class="research-sub">english</span></div>
+            <div class="research-item">drafting an ethical ai policy</div>
+            <div class="research-item">together, but alone<span class="research-sub">interactive museums</span></div>
+            <div class="research-item">technology in hadestown</div>
+            <div class="research-item">women, societal standards, and power<span class="research-sub">show boat to wicked</span></div>
+            <div class="research-item">conformity and the cinderella arc<span class="research-sub">musical theatre</span></div>
+            <div class="research-item">the weight of familiarity</div>
+            <div class="research-item">christine's choice<span class="research-sub">phantom of the opera</span></div>
+          </div>
+
+        </div><!-- /research-grid -->
 
         <div class="research-form-wrap">
-          <div class="research-form-label">interested in collaborating on research? get in touch.</div>
-          <form class="research-form" onsubmit="return false;">
-            <input type="email" placeholder="your email" />
-            <textarea rows="3" placeholder="what are you working on?"></textarea>
-            <button type="submit">send →</button>
+          <form class="research-form" action="mailto:aanya@usc.edu" method="post" enctype="text/plain">
+            <div class="form-row">
+              <input type="email" name="email" placeholder="your email" required>
+              <textarea name="message" placeholder="which paper are you looking for?" rows="2"></textarea>
+              <button type="submit" class="form-btn">request →</button>
+            </div>
           </form>
         </div>
-      </div>
-    </div>
+
+      </div><!-- /panel-scroll-y -->
+    </div><!-- /panel-inner -->
   </div>
 
   <!-- PANEL 3: FOUNDER -->
   <div class="panel" id="panel-3">
-    <div class="panel-split">
-      <div class="panel-sidebar">
-        <span class="sidebar-label">founder</span>
-        <div class="sidebar-rule"></div>
-        <div class="sidebar-brief">afterhours · dfa</div>
-      </div>
-      <div class="panel-content">
-        <div class="section-heading">ventures</div>
+    <div class="panel-inner">
+      <span class="section-eyebrow">ventures</span>
+      <div class="section-title">founder</div>
+      <div class="panel-scroll-y">
+        <div class="founder-grid">
 
-        <div class="founder-blocks">
-          <div class="founder-block">
-            <div class="founder-block-header">
-              <span class="founder-block-title">afterhours</span>
-              <span class="founder-tag">in beta</span>
-            </div>
-            <p class="founder-block-body">conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.</p>
+          <!-- afterhours -->
+          <div class="founder-card glass-card">
+            <div class="founder-icon-placeholder">✦</div>
+            <div class="founder-title">afterhours</div>
+            <div class="founder-sub">social experiences @ usc</div>
+            <p class="founder-body">conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.</p>
+            <span class="tag-pill">in beta</span>
             <a href="afterhours.html" class="founder-link">explore afterhours →</a>
           </div>
 
-          <div class="founder-block">
-            <div class="founder-block-header">
-              <span class="founder-block-title">design for america @ usc</span>
-              <span class="founder-tag">founding</span>
-            </div>
-            <p class="founder-block-body">leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure.</p>
+          <!-- design for america -->
+          <div class="founder-card glass-card">
+            <img src="design-icons/dfa.png" alt="design for america" class="founder-icon">
+            <div class="founder-title">design for america @ usc</div>
+            <div class="founder-sub">founding studio lead</div>
+            <p class="founder-body">leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure. soft launch fall 2026.</p>
+            <span class="tag-pill">founding</span>
           </div>
+
         </div>
-      </div>
-    </div>
+      </div><!-- /panel-scroll-y -->
+    </div><!-- /panel-inner -->
   </div>
 
   <!-- PANEL 4: OUTRO -->
@@ -802,7 +861,7 @@ nav {
     <a href="index.html" class="outro-back">← back to playground</a>
   </div>
 
-</div>
+</div><!-- /h-scroll -->
 
 <!-- PROGRESS BAR -->
 <div id="progress"></div>
@@ -841,6 +900,7 @@ const hscroll = document.getElementById('hscroll');
 let isDown = false, startX, startLeft, velX = 0, lastX;
 
 hscroll.addEventListener('mousedown', e => {
+  if (e.target.closest('.project-card') || e.target.closest('.hero-icon')) return;
   isDown = true;
   startX = e.pageX;
   startLeft = hscroll.scrollLeft;
@@ -885,7 +945,6 @@ hscroll.addEventListener('scroll', () => {
   document.querySelectorAll('.dot').forEach((d, i) => {
     d.classList.toggle('active', i === panelIdx);
   });
-
   document.querySelectorAll('.nav-tab').forEach(t => {
     t.classList.toggle('active', parseInt(t.dataset.panel) === panelIdx);
   });
@@ -907,7 +966,7 @@ document.querySelectorAll('.dot').forEach(dot => {
   });
 });
 
-// HASH SCROLL
+// HASH DEEP-LINK ON LOAD
 const hashPanels = { designer: 1, researcher: 2, founder: 3 };
 window.addEventListener('load', () => {
   const hash = location.hash.replace('#', '');
@@ -937,9 +996,9 @@ function closeSheet() {
   bottomSheet.classList.remove('open');
 }
 
-document.querySelectorAll('.designer-row').forEach(row => {
-  row.addEventListener('click', () => {
-    openSheet(row.dataset.title, row.dataset.meta, row.dataset.body);
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('click', () => {
+    openSheet(card.dataset.title, card.dataset.meta, card.dataset.body);
   });
 });
 
@@ -948,7 +1007,6 @@ sheetOverlay.addEventListener('click', closeSheet);
 
 // PAGE TRANSITION
 const overlay = document.getElementById('page-transition');
-
 document.querySelectorAll('a[href]').forEach(link => {
   const href = link.getAttribute('href');
   if (!href || href.startsWith('#') || href.startsWith('mailto')) return;
