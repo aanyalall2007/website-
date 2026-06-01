@@ -294,20 +294,28 @@ nav {
    PANEL 1: DESIGNER
    ============================= */
 .cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: row;
   gap: 20px;
-  padding: 24px 60px 40px;
+  padding: 0 60px;
   overflow: visible;
-  align-content: start;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  height: 100%;
 }
 
 .project-card {
   position: relative;
-  padding: 24px;
+  padding: 20px;
   cursor: none;
   overflow: visible;
   transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s;
+  width: 190px;
+  height: 200px;
+  flex-shrink: 0;
+  margin: 0;
+  align-self: center;
 }
 .project-card:hover {
   transform: translateY(-6px);
@@ -316,11 +324,11 @@ nav {
 
 .card-icon-wrap {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .card-icon {
   width: 70%;
@@ -390,12 +398,23 @@ nav {
    PANEL 2: RESEARCHER
    ============================= */
 .research-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr;
-  gap: 16px;
-  padding: 24px 60px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 0 60px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  height: 100%;
 }
-.research-card { padding: 20px 24px; }
+.research-card {
+  padding: 20px 24px;
+  width: 190px;
+  height: 200px;
+  flex-shrink: 0;
+  margin: 0;
+  align-self: center;
+}
 .research-category {
   font-size: 10px;
   letter-spacing: 0.25em;
@@ -477,15 +496,21 @@ nav {
    PANEL 3: FOUNDER
    ============================= */
 .founder-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  padding: 24px 60px;
-  align-items: start;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 0 60px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  height: 100%;
 }
 .founder-card {
-  padding: 32px;
-  min-height: 280px;
+  padding: 20px 24px;
+  width: 200px;
+  flex-shrink: 0;
+  margin: 80px 0;
+  min-height: unset;
   display: flex;
   flex-direction: column;
   gap: 12px;
