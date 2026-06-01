@@ -3,342 +3,662 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>aanya — spaces i created</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<title>spaces i created — aanya lall</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-:root{--cream:#f7f3eb;--ink:#0d0d0d;--ink-soft:#2a2a2a;--gold:#8a7355;--muted:rgba(13,13,13,.4);--border:rgba(13,13,13,.1)}
-body{font-family:'EB Garamond',serif;text-transform:lowercase;background:var(--cream);color:var(--ink);min-height:100vh;cursor:default;overflow-x:hidden}
-
-.scrapbook{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.scrapbook img{position:absolute;display:block;object-fit:contain;filter:saturate(1.4) drop-shadow(0 6px 14px rgba(0,0,0,.13));user-select:none}
-nav,section,.divider,.guestbook{position:relative;z-index:1}
-
-/* ── NAV ── */
-nav{padding:20px 48px;display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:.5px solid var(--border);position:sticky;top:0;
-  background:rgba(247,243,235,.92);backdrop-filter:blur(8px);z-index:100}
-.nav-back{font-size:15px;font-style:italic;color:var(--muted);text-decoration:none;transition:color .2s}
-.nav-back:hover{color:var(--ink)}
-.nav-label{font-size:11px;font-style:italic;color:var(--muted);letter-spacing:3px}
-
-/* ── HERO ── */
-.hero{max-width:680px;margin:64px auto 48px;padding:0 24px}
-.room-tag{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:block}
-.hero h1{font-size:clamp(36px,5vw,60px);font-style:italic;font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:12px}
-.hero-sub{font-size:16px;font-style:italic;color:var(--muted);line-height:1.9;max-width:500px}
-
-/* ── EVENTS ── */
-.events{max-width:840px;margin:0 auto;padding:0 24px}
-.events-label{font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:36px}
-
-.event-entry{
-  position:relative;padding:0;margin-bottom:2px;
-  opacity:0;transform:translateY(16px);
-  animation:entIn .65s cubic-bezier(.4,0,.2,1) forwards var(--delay,0s)}
-@keyframes entIn{to{opacity:1;transform:none}}
-
-.event-bar{
-  display:flex;align-items:center;gap:20px;
-  padding:26px 0;border-top:.5px solid var(--border);
-  cursor:pointer;user-select:none;transition:border-color .2s}
-.event-entry:hover .event-bar{border-top-color:rgba(13,13,13,.25)}
-
-.event-stripe{width:3px;height:36px;border-radius:2px;flex-shrink:0;
-  background:var(--color,var(--gold));opacity:.6;
-  transition:height .3s cubic-bezier(.34,1.56,.64,1),opacity .2s}
-.event-entry:hover .event-stripe,.event-entry.open .event-stripe{height:52px;opacity:1}
-
-.event-name{font-size:24px;font-style:italic;color:rgba(13,13,13,.65);flex:1;transition:color .2s}
-.event-entry:hover .event-name,.event-entry.open .event-name{color:var(--ink)}
-.event-type{font-size:12px;letter-spacing:2px;color:var(--color,var(--gold));opacity:.85}
-.event-year{font-size:13px;color:var(--muted)}
-.event-toggle{
-  width:28px;height:28px;border-radius:50%;
-  border:.5px solid var(--border);background:transparent;
-  color:var(--muted);font-size:15px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .25s cubic-bezier(.34,1.56,.64,1)}
-.event-entry.open .event-toggle{
-  transform:rotate(45deg);
-  border-color:var(--color,var(--gold));
-  color:var(--color,var(--gold));background:rgba(138,115,85,.06)}
-
-/* ── EVENT EXPANDED ── */
-.event-body{max-height:0;overflow:hidden;transition:max-height .65s cubic-bezier(.4,0,.2,1)}
-.event-entry.open .event-body{max-height:600px}
-.event-content{padding:4px 0 36px 23px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
-@media(max-width:640px){.event-content{grid-template-columns:1fr}}
-
-.event-desc{font-size:16px;font-style:italic;color:var(--muted);line-height:1.95}
-.event-details{display:flex;flex-direction:column;gap:12px}
-.event-detail-item{display:flex;flex-direction:column;gap:3px}
-.detail-key{font-size:10px;letter-spacing:3px;color:rgba(13,13,13,.3)}
-.detail-val{font-size:14px;font-style:italic;color:rgba(13,13,13,.55)}
-
-/* photo strip */
-.event-photo-strip {
-  grid-column: 1/-1;
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  cursor: grab;
-  user-select: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #f4efe4;
+  --ink: #0d0d0d;
+  --gold: #8a7355;
+  --muted: rgba(13,13,13,0.4);
 }
-.event-photo-strip::-webkit-scrollbar { display: none; }
-.event-photo-strip.dragging { cursor: grabbing; }
-.event-photo {
-  height: 160px;
-  min-width: 220px;
-  border-radius: 6px;
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'EB Garamond', serif;
+  text-transform: lowercase;
+  background: var(--cream);
+  color: var(--ink);
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* ─── CUSTOM CURSOR ─── */
+#cursor {
+  width: 9px; height: 9px;
+  background: white; border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+  top: 0; left: 0;
+}
+
+/* ─── PAGE TRANSITION ─── */
+#page-overlay {
+  position: fixed; inset: 0; background: var(--ink);
+  z-index: 8888; pointer-events: none;
+  opacity: 1; transition: opacity 0.6s ease;
+}
+#page-overlay.hidden { opacity: 0; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 40px;
+  background: rgba(244, 239, 228, 0.82);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(138, 115, 85, 0.12);
+}
+.nav-back {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px; color: var(--muted);
+  text-decoration: none; letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--ink); }
+.nav-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px; font-style: italic;
+  color: var(--gold); letter-spacing: 0.04em;
+}
+
+/* ─── AMBIENT GLOW ─── */
+.glow-follow {
+  position: absolute; width: 700px; height: 700px;
+  border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, rgba(180,140,80,0.07) 0%, transparent 65%);
+  transform: translate(-50%,-50%);
+  transition: left 0.5s ease, top 0.5s ease;
+  left: 50%; top: 50%;
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 40px 100px;
   overflow: hidden;
-  flex-shrink: 0;
-  background: rgba(13,13,13,.06);
-  border: .5px solid var(--border);
 }
-.event-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: saturate(0.9);
-  transition: filter 0.3s;
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(180,140,80,0.07) 0%, transparent 70%),
+    var(--cream);
 }
-.event-photo:hover img { filter: saturate(1.1); }
+.hero::after {
+  content: '';
+  position: absolute; inset: -200%; width: 400%; height: 400%;
+  pointer-events: none; z-index: 2; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.5s steps(1) infinite;
+}
+@keyframes grain-shift {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(-3%,-4%); }
+  20%  { transform: translate(5%,2%); }
+  30%  { transform: translate(-2%,6%); }
+  40%  { transform: translate(4%,-1%); }
+  50%  { transform: translate(-4%,3%); }
+  60%  { transform: translate(3%,-5%); }
+  70%  { transform: translate(-1%,4%); }
+  80%  { transform: translate(5%,-3%); }
+  90%  { transform: translate(-3%,1%); }
+  100% { transform: translate(0,0); }
+}
+.hero-content { position: relative; z-index: 3; }
+.hero-label {
+  font-size: 12px; letter-spacing: 0.22em; color: var(--gold);
+  margin-bottom: 36px; opacity: 0.85;
+}
+.hero-title {
+  font-size: clamp(72px, 11vw, 148px);
+  font-style: italic; font-weight: 400;
+  line-height: 0.88; margin-bottom: 44px;
+  color: var(--ink); letter-spacing: -0.02em;
+}
+.hero-sub {
+  font-size: clamp(18px, 2.5vw, 28px);
+  color: var(--muted); font-style: normal;
+  margin-bottom: 14px; font-weight: 400;
+}
+.hero-year {
+  font-size: 13px; letter-spacing: 0.28em; color: var(--gold); margin-bottom: 52px;
+}
+.hero-locations {
+  font-size: 13px; letter-spacing: 0.1em; color: var(--muted); font-style: italic;
+}
+.hero-scroll-cue {
+  position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 0.16em; color: var(--muted);
+  animation: scroll-bob 2.2s ease-in-out infinite;
+}
+@keyframes scroll-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(7px); }
+}
 
-/* ── DIVIDER ── */
-.divider{max-width:840px;margin:60px auto 40px;padding:0 24px;display:flex;align-items:center;gap:24px}
-.divider-line{flex:1;height:.5px;background:var(--border)}
-.divider-text{font-size:11px;letter-spacing:3px;color:var(--muted);font-style:italic}
+/* ─── STAGGER REVEAL ─── */
+.reveal {
+  opacity: 0; transform: translateY(36px);
+  transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
+              transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ── GUESTBOOK ── */
-.guestbook{max-width:680px;margin:0 auto;padding:0 24px 100px}
-.gb-title{font-size:32px;font-style:italic;color:var(--ink);margin-bottom:8px}
-.gb-sub{font-size:15px;font-style:italic;color:var(--muted);margin-bottom:36px;line-height:1.8}
+/* ─── SECTIONS ─── */
+.event-section {
+  position: relative; overflow: hidden;
+  padding: 110px 0 90px;
+}
+.section-inner { max-width: 1400px; margin: 0 auto; padding: 0 64px; }
+.section-divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(138,115,85,0.22), transparent);
+}
+.event-number {
+  font-size: 140px; font-weight: 500; font-style: italic;
+  color: var(--gold); opacity: 0.1; line-height: 1;
+  position: absolute; top: 50px;
+  pointer-events: none; user-select: none; letter-spacing: -0.04em;
+}
+.event-tag {
+  font-size: 11px; letter-spacing: 0.22em; color: var(--gold);
+  margin-bottom: 18px; opacity: 0.85;
+}
+.event-title {
+  font-size: clamp(40px, 5.5vw, 72px);
+  font-style: italic; font-weight: 400;
+  line-height: 1.0; margin-bottom: 14px; color: var(--ink);
+}
+.event-meta {
+  font-size: 13px; color: var(--muted); letter-spacing: 0.06em;
+  margin-bottom: 36px;
+}
+.event-desc {
+  font-size: 17.5px; line-height: 1.8;
+  color: rgba(13,13,13,0.7); max-width: 420px;
+}
 
-.gb-form{display:flex;flex-direction:column;gap:14px;margin-bottom:48px}
-.gb-row{display:flex;gap:12px}
-.gb-row input,.gb-form textarea{
-  font-family:'EB Garamond',serif;font-size:15px;font-style:italic;
-  background:rgba(13,13,13,.03);border:.5px solid var(--border);
-  color:var(--ink);padding:12px 16px;border-radius:4px;
-  outline:none;transition:border-color .2s,background .2s;cursor:text;
-  text-transform:lowercase}
-.gb-row input{flex:1}
-.gb-row input:focus,.gb-form textarea:focus{
-  border-color:rgba(138,115,85,.4);background:rgba(13,13,13,.02)}
-.gb-form textarea{resize:none;height:90px;width:100%}
-.gb-submit{
-  align-self:flex-start;font-family:'EB Garamond',serif;font-size:14px;
-  font-style:italic;background:transparent;border:.5px solid rgba(138,115,85,.4);
-  color:var(--gold);padding:10px 24px;border-radius:20px;cursor:pointer;
-  transition:all .22s cubic-bezier(.34,1.56,.64,1);text-transform:lowercase}
-.gb-submit:hover{border-color:var(--gold);color:var(--ink);transform:scale(1.03)}
+/* ─── SECTION 01: NIGERIA DAY ─── */
+#nigeria { background: rgba(180, 100, 40, 0.04); }
+.nigeria-layout {
+  display: grid; grid-template-columns: 2fr 3fr;
+  gap: 90px; align-items: start; position: relative; z-index: 1;
+}
+.nigeria-layout .event-number { left: -16px; }
+.nigeria-layout .event-info { padding-top: 36px; }
 
-.gb-entries{display:flex;flex-direction:column;gap:0}
-.gb-entry{border-top:.5px solid var(--border);padding:20px 0;opacity:0;animation:entIn .5s ease forwards}
-.gb-entry-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.gb-name{font-size:14px;font-style:italic;color:rgba(13,13,13,.6)}
-.gb-date{font-size:12px;color:var(--muted)}
-.gb-text{font-size:16px;font-style:italic;color:var(--muted);line-height:1.85}
-.gb-empty{font-size:15px;font-style:italic;color:var(--muted);padding:24px 0}
+.hero-photo { position: relative; display: block; }
+.hero-photo img {
+  width: 100%; height: 560px; object-fit: cover;
+  display: block; border-radius: 3px;
+  box-shadow: 0 28px 90px rgba(0,0,0,0.14);
+  transform: rotate(-1deg);
+  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.45s ease;
+}
+.hero-photo:hover img {
+  transform: rotate(0deg) scale(1.01);
+  box-shadow: 0 36px 110px rgba(0,0,0,0.18);
+}
+
+/* ─── POLAROID STRIP ─── */
+.strip-wrapper { margin-top: 80px; position: relative; z-index: 1; }
+.strip-label {
+  font-size: 11px; letter-spacing: 0.18em; color: var(--muted);
+  margin-bottom: 22px; padding: 0 64px;
+}
+.strip-scroll {
+  display: flex; gap: 32px;
+  padding: 24px 64px 48px;
+  overflow-x: auto; overflow-y: visible;
+  cursor: grab; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.strip-scroll::-webkit-scrollbar { display: none; }
+.strip-scroll.grabbing { cursor: grabbing; }
+.polaroid {
+  flex: 0 0 auto; background: #fff;
+  padding: 10px 10px 40px; position: relative;
+  box-shadow: 0 8px 36px rgba(0,0,0,0.1);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.35s ease;
+  user-select: none;
+}
+.polaroid img {
+  display: block; width: 250px; height: 210px; object-fit: cover;
+  pointer-events: none;
+}
+.polaroid:hover {
+  transform: translateY(-12px) rotate(0deg) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+  z-index: 10;
+}
+.polaroid .caption {
+  position: absolute; bottom: 10px; left: 0; right: 0;
+  text-align: center; font-size: 12px;
+  color: rgba(13,13,13,0.38); font-style: italic; letter-spacing: 0.04em;
+}
+
+/* ─── SECTION 02: KHEL KHEL MEIN ─── */
+#khel { background: rgba(60, 100, 60, 0.04); }
+.khel-layout {
+  display: grid; grid-template-columns: 3fr 2fr;
+  gap: 90px; align-items: start; position: relative; z-index: 1;
+}
+.khel-layout .event-info { padding-top: 36px; }
+.khel-mosaic { position: relative; height: 620px; }
+.photo-block {
+  position: absolute;
+  box-shadow: 0 18px 65px rgba(0,0,0,0.13);
+  border-radius: 3px; overflow: hidden;
+}
+.photo-block img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.photo-block:hover img { transform: scale(1.04); }
+.khel-mosaic .pb1 { width: 56%; height: 380px; top: 0; left: 0; transform: rotate(1.5deg); z-index: 2; }
+.khel-mosaic .pb2 { width: 52%; height: 315px; bottom: 0; left: 6%; transform: rotate(-2deg); z-index: 3; }
+.khel-mosaic .pb3 { width: 46%; height: 290px; top: 65px; right: 0; transform: rotate(0.8deg); z-index: 1; }
+
+/* ─── SECTION 03: INTRAGRADE MATCHES ─── */
+#matches { background: rgba(60, 60, 80, 0.03); }
+.matches-layout { position: relative; z-index: 1; }
+.matches-header { text-align: center; margin-bottom: 72px; }
+.matches-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 22px; margin-bottom: 30px;
+}
+.photo-card {
+  overflow: hidden; border-radius: 3px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.09); aspect-ratio: 4/3;
+}
+.photo-card img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.photo-card:hover img { transform: scale(1.05); }
+.matches-inline {
+  display: flex; gap: 28px; justify-content: center; margin-bottom: 64px;
+}
+.float-photo {
+  width: 300px; height: 220px; border-radius: 3px; overflow: hidden;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.1);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.float-photo:first-child { transform: rotate(-1.5deg); }
+.float-photo:last-child  { transform: rotate(1.2deg); }
+.float-photo:hover { transform: rotate(0deg) scale(1.02) !important; }
+.float-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.matches-desc {
+  text-align: center; max-width: 580px; margin: 0 auto;
+  font-size: 18px; line-height: 1.82; color: rgba(13,13,13,0.68);
+}
+.matches-layout .event-number { left: -12px; top: -16px; }
+
+/* ─── OUTRO ─── */
+.outro {
+  background: var(--ink); color: white;
+  padding: 180px 40px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.outro::before {
+  content: '';
+  position: absolute; inset: -200%; width: 400%; height: 400%;
+  pointer-events: none; z-index: 0; opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.5s steps(1) infinite;
+}
+.outro-content { position: relative; z-index: 1; }
+.outro-quote {
+  font-size: clamp(40px, 6.5vw, 88px);
+  font-style: italic; font-weight: 400;
+  line-height: 1.1; max-width: 860px; margin: 0 auto 64px;
+  color: rgba(255,255,255,0.88);
+}
+.outro-back {
+  font-size: 15px; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.38); text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.14); padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.outro-back:hover {
+  color: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.5);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 960px) {
+  .nigeria-layout, .khel-layout { grid-template-columns: 1fr; gap: 52px; }
+  .khel-mosaic { height: 400px; }
+  .khel-mosaic .pb3 { display: none; }
+  .khel-mosaic .pb1 { width: 65%; }
+  .khel-mosaic .pb2 { width: 62%; }
+  .matches-grid { grid-template-columns: repeat(2, 1fr); }
+  .matches-inline { flex-wrap: wrap; }
+  .section-inner { padding: 0 28px; }
+  nav { padding: 16px 24px; }
+  .strip-scroll { padding: 20px 28px 40px; }
+  .strip-label { padding: 0 28px; }
+  .event-number { font-size: 90px; }
+}
 </style>
 </head>
 <body>
-<div id="pg-veil" style="position:fixed;inset:0;background:#f7f3eb;z-index:99998;pointer-events:none;transition:opacity .55s ease"></div>
-<script>requestAnimationFrame(()=>requestAnimationFrame(()=>{var v=document.getElementById('pg-veil');if(v){v.style.opacity='0';setTimeout(()=>v.remove(),620);}}));</script>
 
-<div class="scrapbook">
-  <img style="width:18%;opacity:0.26;transform:rotate(-5deg);top:5%;left:-1%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.51.21_PM-removebg-preview.png">
-  <img style="width:21%;opacity:0.20;transform:rotate(8deg);top:22%;left:1%;"    src="background scrapbook/ChatGPT_Image_May_8__2026__01_58_51_PM-removebg-preview.png">
-  <img style="width:15%;opacity:0.24;transform:rotate(4deg);top:52%;left:3%;"    src="background scrapbook/31a1ae57-af37-4164-8146-ca160390fb23.png">
-  <img style="width:19%;opacity:0.20;transform:rotate(-7deg);top:68%;left:-1%;"  src="background scrapbook/Screenshot_2026-05-08_at_1.50.56_PM-removebg-preview.png">
-  <img style="width:16%;opacity:0.26;transform:rotate(6deg);top:7%;right:1%;"    src="background scrapbook/Screenshot_2026-05-08_at_1.56.28_PM-removebg-preview.png">
-  <img style="width:19%;opacity:0.22;transform:rotate(7deg);top:38%;right:-1%;"  src="background scrapbook/febc243b-5f4c-4ee8-b520-b1813e77146b.png">
-  <img style="width:13%;opacity:0.24;transform:rotate(4deg);top:62%;right:1%;"   src="background scrapbook/74c6d361-28fc-48ee-be7d-ac880a32ec1b.png">
-  <img style="width:15%;opacity:0.26;transform:rotate(3deg);top:80%;right:2%;"   src="background scrapbook/Screenshot_2026-05-08_at_1.50.51_PM-removebg-preview.png">
-</div>
+<!-- CURSOR -->
+<div id="cursor"></div>
 
+<!-- PAGE TRANSITION -->
+<div id="page-overlay"></div>
+
+<!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-back">← back</a>
-  <span class="nav-label">spaces i created</span>
+  <a href="index.html" class="nav-back" data-transition>← playground</a>
+  <span class="nav-title">spaces i created</span>
 </nav>
 
+<!-- ══════════════════ HERO ══════════════════ -->
 <section class="hero">
-  <span class="room-tag">event archive</span>
-  <h1>rooms i've<br>made for people</h1>
-  <p class="hero-sub">events are temporary architecture. you build them, fill them with people, and then they're gone — but the people remember.</p>
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-label reveal">community &nbsp;·&nbsp; events &nbsp;·&nbsp; spaces</p>
+    <h1 class="hero-title reveal">spaces<br>i created</h1>
+    <p class="hero-sub reveal">building community, one event at a time.</p>
+    <p class="hero-year reveal">2023 — 2024</p>
+    <p class="hero-locations reveal">new delhi &nbsp;·&nbsp; los angeles &nbsp;·&nbsp; the shri ram school</p>
+  </div>
+  <div class="hero-scroll-cue">
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <rect x="0.5" y="0.5" width="15" height="23" rx="7.5" stroke="currentColor" stroke-opacity="0.4"/>
+      <rect x="7" y="4" width="2" height="7" rx="1" fill="currentColor" fill-opacity="0.4"/>
+    </svg>
+    scroll
+  </div>
 </section>
 
-<section class="events">
-  <p class="events-label">events</p>
-  <div id="event-list"></div>
-</section>
+<div class="section-divider"></div>
 
-<div class="divider">
-  <div class="divider-line"></div>
-  <span class="divider-text">guestbook</span>
-  <div class="divider-line"></div>
-</div>
+<!-- ══════════════════ SECTION 01: NIGERIA DAY ══════════════════ -->
+<section class="event-section" id="nigeria">
+  <div class="glow-follow" id="glow-nigeria"></div>
+  <div class="section-inner">
+    <div class="nigeria-layout">
 
-<section class="guestbook">
-  <h2 class="gb-title">leave a note</h2>
-  <p class="gb-sub">if you were at one of these events, or just want to say something — this is the spot.</p>
-  <form class="gb-form" id="gb-form">
-    <div class="gb-row">
-      <input type="text" id="gb-name" placeholder="your name" maxlength="40" autocomplete="off">
-      <input type="text" id="gb-event-ref" placeholder="which event? (optional)" maxlength="60" autocomplete="off">
+      <div class="event-info reveal">
+        <div class="event-number">01</div>
+        <p class="event-tag">cultural &nbsp;·&nbsp; literary &nbsp;·&nbsp; exhibition</p>
+        <h2 class="event-title">nigeria<br>day</h2>
+        <p class="event-meta">2023–2024 &nbsp;·&nbsp; the shri ram school, moulsari &nbsp;·&nbsp; new delhi, india</p>
+        <p class="event-desc">
+          conceptualised and executed a culture-focused exhibition tied to the IB text <em>Purple Hibiscus</em>, coordinating logistics, presentations, and visual design for a 58-student cohort. established a scalable event framework now embedded as a recurring fixture in the school calendar.
+        </p>
+      </div>
+
+      <div class="hero-photo reveal">
+        <img src="spaces-photos/nigeria/1.png" alt="nigeria day">
+      </div>
+
     </div>
-    <textarea id="gb-msg" placeholder="what do you want to leave here?" maxlength="300"></textarea>
-    <button type="submit" class="gb-submit">leave a note</button>
-  </form>
-  <div id="gb-entries"></div>
+  </div>
+
+  <div class="strip-wrapper reveal">
+    <p class="strip-label">from the archive — drag to explore</p>
+    <div class="strip-scroll" id="strip-nigeria">
+      <div class="polaroid" style="transform:rotate(-3.2deg)">
+        <img src="spaces-photos/nigeria/2.png" alt="nigeria day">
+        <span class="caption">nigeria day</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(2.1deg)">
+        <img src="spaces-photos/nigeria/3.png" alt="nigeria day">
+        <span class="caption">purple hibiscus</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(-1.8deg)">
+        <img src="spaces-photos/nigeria/4.png" alt="nigeria day">
+        <span class="caption">the exhibition</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(3.8deg)">
+        <img src="spaces-photos/nigeria/5.png" alt="nigeria day">
+        <span class="caption">2023–24</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════ SECTION 02: KHEL KHEL MEIN ══════════════════ -->
+<section class="event-section" id="khel">
+  <div class="glow-follow" id="glow-khel"></div>
+  <div class="section-inner">
+    <div class="khel-layout">
+
+      <div class="khel-mosaic reveal">
+        <div class="photo-block pb1">
+          <img src="spaces-photos/khel/1.png" alt="khel khel mein">
+        </div>
+        <div class="photo-block pb2">
+          <img src="spaces-photos/khel/2.png" alt="khel khel mein">
+        </div>
+        <div class="photo-block pb3">
+          <img src="spaces-photos/khel/3.png" alt="khel khel mein">
+        </div>
+      </div>
+
+      <div class="event-info reveal">
+        <div class="event-number" style="right:-10px;left:auto;">02</div>
+        <p class="event-tag">sport &nbsp;·&nbsp; community &nbsp;·&nbsp; team-building</p>
+        <h2 class="event-title">khel<br>khel<br>mein</h2>
+        <p class="event-meta">2023–2024 &nbsp;·&nbsp; the shri ram school, moulsari &nbsp;·&nbsp; new delhi, india</p>
+        <p class="event-desc">
+          designed and implemented a school-wide sporting initiative to address cohort segmentation through structured, activity-based programming. created cross-group collaboration opportunities fostering community engagement and team-building among middle school students.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="strip-wrapper reveal">
+    <p class="strip-label">from the archive — drag to explore</p>
+    <div class="strip-scroll" id="strip-khel">
+      <div class="polaroid" style="transform:rotate(2.2deg)">
+        <img src="spaces-photos/khel/4.png" alt="khel khel mein">
+        <span class="caption">in action</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(-2.8deg)">
+        <img src="spaces-photos/khel/5.png" alt="khel khel mein">
+        <span class="caption">team sport</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(1.2deg)">
+        <img src="spaces-photos/khel/6.png" alt="khel khel mein">
+        <span class="caption">play</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(-3.1deg)">
+        <img src="spaces-photos/khel/7.png" alt="khel khel mein">
+        <span class="caption">together</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(2.7deg)">
+        <img src="spaces-photos/khel/8.png" alt="khel khel mein">
+        <span class="caption">movement</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(-1.6deg)">
+        <img src="spaces-photos/khel/9.png" alt="khel khel mein">
+        <span class="caption">joy</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(3.2deg)">
+        <img src="spaces-photos/khel/10.png" alt="khel khel mein">
+        <span class="caption">khel khel mein</span>
+      </div>
+      <div class="polaroid" style="transform:rotate(-2.1deg)">
+        <img src="spaces-photos/khel/11.jpeg" alt="khel khel mein">
+        <span class="caption">2023–24</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════ SECTION 03: INTRAGRADE MATCHES ══════════════════ -->
+<section class="event-section" id="matches">
+  <div class="glow-follow" id="glow-matches"></div>
+  <div class="section-inner">
+    <div class="matches-layout">
+
+      <div class="event-number">03</div>
+
+      <div class="matches-header reveal">
+        <p class="event-tag">recreation &nbsp;·&nbsp; camaraderie &nbsp;·&nbsp; well-being</p>
+        <h2 class="event-title" style="font-size:clamp(44px,6.5vw,88px)">intragrade<br><em>matches</em></h2>
+        <p class="event-meta">2024 &nbsp;·&nbsp; 12th-grade students</p>
+      </div>
+
+      <div class="matches-grid reveal">
+        <div class="photo-card">
+          <img src="spaces-photos/matches/1.png" alt="intragrade matches">
+        </div>
+        <div class="photo-card">
+          <img src="spaces-photos/matches/2.png" alt="intragrade matches">
+        </div>
+        <div class="photo-card">
+          <img src="spaces-photos/matches/3.png" alt="intragrade matches">
+        </div>
+        <div class="photo-card">
+          <img src="spaces-photos/matches/4.png" alt="intragrade matches">
+        </div>
+        <div class="photo-card">
+          <img src="spaces-photos/matches/5.png" alt="intragrade matches">
+        </div>
+        <div class="photo-card">
+          <img src="spaces-photos/matches/6.png" alt="intragrade matches">
+        </div>
+      </div>
+
+      <div class="matches-inline reveal">
+        <div class="float-photo">
+          <img src="spaces-photos/matches/7.png" alt="intragrade matches">
+        </div>
+        <div class="float-photo">
+          <img src="spaces-photos/matches/8.png" alt="intragrade matches">
+        </div>
+      </div>
+
+      <p class="matches-desc reveal">
+        organized and coordinated a series of intragrade matches for 12th-grade students, providing a recreational outlet to relieve academic stress and promote student well-being. fostered camaraderie among students from different academic boards.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════ OUTRO ══════════════════ -->
+<section class="outro">
+  <div class="outro-content">
+    <p class="outro-quote reveal">"community isn't built. it's felt."</p>
+    <a href="index.html" class="outro-back reveal" data-transition>← back to playground</a>
+  </div>
 </section>
 
 <script>
-const BASE = 'spaces i created/';
-const EVENTS = [
-  {
-    name:'khel khel mein',type:'community event',year:'2024',color:'#c06a4f',
-    desc:'a school-wide sporting initiative designed to break cohort segmentation. structured, activity-based programming that built real cross-group friendships — not just tolerance.',
-    details:{school:'the shri ram school, moulsari',location:'new delhi, india',role:'designer + lead organizer'},
-    photos:[
-      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.11 PM.png',
-      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.15 PM.png',
-      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.20 PM.png',
-      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.24 PM.png',
-      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.34 PM.png',
-      BASE+'khel photos/Screenshot 2026-05-31 at 3.13.39 PM.png',
-      BASE+'khel photos/WhatsApp Image 2026-05-31 at 15.06.36.jpeg',
-    ],delay:'.08s'
-  },
-  {
-    name:'nigeria day',type:'cultural celebration',year:'2024',color:'#3d8a60',
-    desc:'conceptualised and executed a culture-focused exhibition tied to the ib text purple hibiscus, for 58 students. established a scalable framework now embedded as a recurring fixture in the school calendar.',
-    details:{school:'the shri ram school, moulsari',location:'new delhi, india',role:'co-creator + visual design'},
-    photos:[
-      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.17 PM.png',
-      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.35 PM.png',
-      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.39 PM.png',
-      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.43 PM.png',
-      BASE+'nigeria photos/Screenshot 2026-05-31 at 3.15.48 PM.png',
-    ],delay:'.18s'
-  },
-  {
-    name:'intragrade matches',type:'sports + community',year:'2024',color:'#4a7aaa',
-    desc:'organised inter-class matches for 12th-grade students — a recreational outlet that actually got people off their laptops and building camaraderie across different academic boards.',
-    details:{school:'the shri ram school, moulsari',location:'new delhi, india',role:'event lead'},
-    photos:[
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.15 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.21 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.25 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.30 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.40 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.14.47 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.15.08 PM.png',
-      BASE+'matches photos/Screenshot 2026-05-31 at 3.15.13 PM.png',
-    ],delay:'.28s'
-  },
-];
-
-const eList = document.getElementById('event-list');
-EVENTS.forEach(ev => {
-  const entry = document.createElement('div');
-  entry.className = 'event-entry';
-  entry.style.cssText = `--delay:${ev.delay};--color:${ev.color}`;
-  const photos = ev.photos.map(p=>`<div class="event-photo"><img src="${p}" alt="" loading="lazy"></div>`).join('');
-  entry.innerHTML = `
-    <div class="event-bar">
-      <div class="event-stripe"></div>
-      <span class="event-name">${ev.name}</span>
-      <span class="event-type">${ev.type}</span>
-      <span class="event-year">${ev.year}</span>
-      <button class="event-toggle" aria-label="expand">+</button>
-    </div>
-    <div class="event-body">
-      <div class="event-content">
-        <p class="event-desc">${ev.desc}</p>
-        <div class="event-details">
-          ${Object.entries(ev.details).map(([k,v])=>`
-            <div class="event-detail-item">
-              <span class="detail-key">${k}</span>
-              <span class="detail-val">${v}</span>
-            </div>`).join('')}
-        </div>
-        <div class="event-photo-strip">${photos}</div>
-      </div>
-    </div>`;
-  entry.querySelector('.event-bar').addEventListener('click', () => entry.classList.toggle('open'));
-  eList.appendChild(entry);
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
 });
 
-const STORE_KEY = 'aanya_guestbook_v1';
-function loadEntries(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch{return[];}}
-function saveEntries(arr){localStorage.setItem(STORE_KEY,JSON.stringify(arr));}
-function formatDate(ts){return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toLowerCase();}
-function renderEntries(){
-  const container=document.getElementById('gb-entries');
-  const entries=loadEntries();
-  if(!entries.length){container.innerHTML='<p class="gb-empty">no notes yet — be the first.</p>';return;}
-  container.innerHTML='';
-  [...entries].reverse().forEach(e=>{
-    const el=document.createElement('div');el.className='gb-entry';
-    el.innerHTML=`
-      <div class="gb-entry-header">
-        <span class="gb-name">${e.name}${e.event?` · <em style="opacity:.6">${e.event}</em>`:''}</span>
-        <span class="gb-date">${formatDate(e.ts)}</span>
-      </div>
-      <p class="gb-text">${e.msg}</p>`;
-    container.appendChild(el);
+/* ── PAGE TRANSITION ── */
+const overlay = document.getElementById('page-overlay');
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => overlay.classList.add('hidden'));
+});
+document.querySelectorAll('[data-transition]').forEach(link => {
+  link.addEventListener('click', e => {
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+    e.preventDefault();
+    overlay.classList.remove('hidden');
+    setTimeout(() => { window.location.href = href; }, 620);
+  });
+});
+
+/* ── SCROLL REVEAL (staggered siblings) ── */
+const revealEls = document.querySelectorAll('.reveal');
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const parent = entry.target.closest('section, .outro-content');
+    const siblings = parent
+      ? Array.from(parent.querySelectorAll('.reveal'))
+      : [entry.target];
+    const idx = siblings.indexOf(entry.target);
+    setTimeout(() => entry.target.classList.add('visible'), idx * 80);
+    revObs.unobserve(entry.target);
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+revealEls.forEach(el => revObs.observe(el));
+
+/* ── AMBIENT GLOW PER SECTION ── */
+function bindGlow(sectionId, glowId) {
+  const sec  = document.getElementById(sectionId);
+  const glow = document.getElementById(glowId);
+  if (!sec || !glow) return;
+  sec.addEventListener('mousemove', e => {
+    const r = sec.getBoundingClientRect();
+    glow.style.left = (e.clientX - r.left) + 'px';
+    glow.style.top  = (e.clientY - r.top)  + 'px';
   });
 }
-document.getElementById('gb-form').addEventListener('submit',ev=>{
-  ev.preventDefault();
-  const name=document.getElementById('gb-name').value.trim();
-  const msg=document.getElementById('gb-msg').value.trim();
-  const event=document.getElementById('gb-event-ref').value.trim();
-  if(!name||!msg)return;
-  const entries=loadEntries();
-  entries.push({name,msg,event,ts:Date.now()});
-  saveEntries(entries);
-  document.getElementById('gb-name').value='';
-  document.getElementById('gb-msg').value='';
-  document.getElementById('gb-event-ref').value='';
-  renderEntries();
-});
-renderEntries();
+bindGlow('nigeria', 'glow-nigeria');
+bindGlow('khel',    'glow-khel');
+bindGlow('matches', 'glow-matches');
 
-// drag-scroll on photo strips
-document.addEventListener('click', () => {}, true); // ensure strips exist
-setTimeout(() => {
-  document.querySelectorAll('.event-photo-strip').forEach(strip => {
-    let isDown = false, startX, startScroll, velX = 0, lastX, rafId;
-    strip.addEventListener('mousedown', e => {
-      isDown = true; strip.classList.add('dragging');
-      startX = e.pageX; startScroll = strip.scrollLeft; velX = 0;
-      cancelAnimationFrame(rafId);
-    });
-    window.addEventListener('mouseup', () => {
-      if (!isDown) return;
-      isDown = false; strip.classList.remove('dragging');
-      (function glide() {
-        if (Math.abs(velX) < 0.5) return;
-        strip.scrollLeft += velX; velX *= 0.92;
-        rafId = requestAnimationFrame(glide);
-      })();
-    });
-    window.addEventListener('mousemove', e => {
-      if (!isDown) return;
-      strip.scrollLeft = startScroll - (e.pageX - startX);
-      velX = e.pageX - (lastX || e.pageX); lastX = e.pageX;
-    });
+/* ── DRAGGABLE STRIPS ── */
+function makeDraggable(el) {
+  if (!el) return;
+  let down = false, startX, scrollLeft;
+  el.addEventListener('mousedown', e => {
+    down = true; el.classList.add('grabbing');
+    startX = e.pageX - el.offsetLeft;
+    scrollLeft = el.scrollLeft;
   });
-}, 200);
+  el.addEventListener('mouseleave', () => { down = false; el.classList.remove('grabbing'); });
+  el.addEventListener('mouseup',    () => { down = false; el.classList.remove('grabbing'); });
+  el.addEventListener('mousemove',  e => {
+    if (!down) return;
+    e.preventDefault();
+    el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
+  });
+  let tX, tS;
+  el.addEventListener('touchstart', e => { tX = e.touches[0].pageX; tS = el.scrollLeft; }, { passive: true });
+  el.addEventListener('touchmove',  e => { el.scrollLeft = tS - (e.touches[0].pageX - tX) * 1.2; }, { passive: true });
+}
+makeDraggable(document.getElementById('strip-nigeria'));
+makeDraggable(document.getElementById('strip-khel'));
+
+/* ── PHOTO TILT ON HOVER (subtle ±5deg 3D) ── */
+document.querySelectorAll('.photo-card, .photo-block, .hero-photo').forEach(card => {
+  const img = card.querySelector('img');
+  if (!img) return;
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    const xP = (e.clientX - r.left) / r.width  - 0.5;
+    const yP = (e.clientY - r.top)  / r.height - 0.5;
+    img.style.transition = 'transform 0.08s linear';
+    img.style.transform  = `perspective(900px) rotateY(${xP*6}deg) rotateX(${-yP*5}deg) scale(1.025)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    img.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1)';
+    img.style.transform  = '';
+  });
+});
 </script>
 </body>
 </html>
