@@ -639,6 +639,17 @@ nav {
 
 
 
+
+/* vertical card divider */
+.card-divider {
+  width: 1px;
+  height: 120px;
+  background: rgba(13,13,13,0.15);
+  align-self: center;
+  flex-shrink: 0;
+  margin: 0 8px;
+  border-radius: 1px;
+}
 </style>
 </head>
 <body>
@@ -853,6 +864,9 @@ nav {
               <p class="popup-desc">theatre · media · society</p>
             </div>
           </div>
+
+          <!-- DIVIDER -->
+          <div class="card-divider" aria-hidden="true"></div>
 
           <!-- AFTERHOURS -->
           <div class="project-card glass-card" data-popup="down"
