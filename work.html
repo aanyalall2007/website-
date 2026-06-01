@@ -634,6 +634,27 @@ nav {
   transition: color 0.2s;
 }
 .sheet-close:hover { color: var(--ink); }
+
+/* ── CARDS SCROLL PROGRESS BAR (under the row) ── */
+.cards-progress-track {
+  position: absolute;
+  bottom: calc(50% - 130px);
+  left: 60px;
+  right: 60px;
+  height: 1.5px;
+  background: rgba(13,13,13,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cards-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
 </style>
 </head>
 <body>
@@ -647,8 +668,7 @@ nav {
   <div class="nav-tabs">
     <button class="nav-tab active" data-panel="0">overview</button>
     <button class="nav-tab" data-panel="1">designer</button>
-    <button class="nav-tab" data-panel="2">researcher</button>
-    <button class="nav-tab" data-panel="3">founder</button>
+    <button class="nav-tab" data-panel="2">research + ventures</button>
   </div>
 </nav>
 
@@ -686,7 +706,7 @@ nav {
       <span class="section-eyebrow">selected projects</span>
       <div class="section-title">designer</div>
       <div class="panel-scroll-y">
-        <div class="cards-grid">
+        <div class="cards-grid" id="panel1-cards">
 
           <!-- tomol28 — popup up -->
           <div class="project-card glass-card"
@@ -798,90 +818,107 @@ nav {
   <!-- PANEL 2: RESEARCHER -->
   <div class="panel" id="panel-2">
     <div class="panel-inner">
-      <span class="section-eyebrow">papers + essays</span>
-      <div class="section-title">researcher</div>
+      <div class="panel-label">
+        <p class="section-eyebrow">research + ventures</p>
+        <h2 class="section-title">researching, building.</h2>
+      </div>
       <div class="panel-scroll-y">
-        <div class="research-grid">
+        <div class="cards-grid" id="panel2-cards">
 
           <!-- STEM -->
-          <div class="research-card glass-card">
-            <div class="research-category">[stem]</div>
-            <div class="research-item">fourier transformation in audio<span class="research-sub">mathematics</span></div>
-            <div class="research-item">hydraulic jump + water flow<span class="research-sub">physics</span></div>
-            <div class="research-item">critical solution temperature<span class="research-sub">chemistry</span></div>
+          <div class="project-card glass-card" data-popup="up"
+               data-title="stem" data-meta="maths · physics · chemistry"
+               data-body="fourier transformation in audio (maths) · hydraulic jump + water flow (physics) · critical solution temperature of water–phenol systems (chemistry)">
+            <div class="card-icon-wrap">
+              <img src="research-icons/stem.png" class="card-icon" alt="stem">
+            </div>
+            <span class="card-title">stem</span>
+            <span class="card-meta">3 extended essays</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">stem research</p>
+              <p class="popup-desc">maths · physics · chemistry</p>
+            </div>
           </div>
 
           <!-- ECONOMICS -->
-          <div class="research-card glass-card">
-            <div class="research-category">[economics]</div>
-            <div class="research-item">vaping regulation, uk</div>
-            <div class="research-item">inflation in nigeria</div>
-            <div class="research-item">eu tariffs on vehicles</div>
+          <div class="project-card glass-card" data-popup="down"
+               data-title="economics" data-meta="policy · markets · trade"
+               data-body="tighter regulations on vaping and tobacco in the uk · soaring inflation rate in nigeria · eu tariffs on chinese vehicles">
+            <div class="card-icon-wrap">
+              <img src="research-icons/stem.png" class="card-icon" alt="economics">
+            </div>
+            <span class="card-title">economics</span>
+            <span class="card-meta">3 commentaries</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">economics</p>
+              <p class="popup-desc">policy · markets · trade</p>
+            </div>
           </div>
 
           <!-- HUMANITIES -->
-          <div class="research-card glass-card">
-            <div class="research-category">[humanities]</div>
-            <div class="research-item">beauty standards in media<span class="research-sub">english</span></div>
-            <div class="research-item">drafting an ethical ai policy</div>
-            <div class="research-item">together, but alone<span class="research-sub">interactive museums</span></div>
-            <div class="research-item">technology in hadestown</div>
-            <div class="research-item">women, societal standards, and power<span class="research-sub">show boat to wicked</span></div>
-            <div class="research-item">conformity and the cinderella arc<span class="research-sub">musical theatre</span></div>
-            <div class="research-item">the weight of familiarity</div>
-            <div class="research-item">christine's choice<span class="research-sub">phantom of the opera</span></div>
+          <div class="project-card glass-card" data-popup="up"
+               data-title="humanities" data-meta="theatre · media · society"
+               data-body="beauty standards in media · drafting an ethical ai policy · together, but alone (grammy museum) · technology in hadestown · women + power from show boat to wicked · conformity and the cinderella arc · the weight of familiarity · christine's choice">
+            <div class="card-icon-wrap">
+              <img src="research-icons/humanities.png" class="card-icon" alt="humanities">
+            </div>
+            <span class="card-title">humanities</span>
+            <span class="card-meta">8 papers · essays</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">humanities</p>
+              <p class="popup-desc">theatre · media · society</p>
+            </div>
           </div>
 
-        </div><!-- /research-grid -->
-
-        <div class="research-form-wrap">
-          <form class="research-form" action="mailto:aanya@usc.edu" method="post" enctype="text/plain">
-            <div class="form-row">
-              <input type="email" name="email" placeholder="your email" required>
-              <textarea name="message" placeholder="which paper are you looking for?" rows="2"></textarea>
-              <button type="submit" class="form-btn">request →</button>
+          <!-- AFTERHOURS -->
+          <div class="project-card glass-card" data-popup="down"
+               data-title="afterhours" data-meta="2026 · independent, usc"
+               data-body="conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/afterhours.png" class="card-icon" alt="afterhours">
             </div>
+            <span class="card-title">afterhours</span>
+            <span class="card-meta">in beta</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">afterhours</p>
+              <p class="popup-desc">social experiences @ usc</p>
+            </div>
+          </div>
+
+          <!-- DFA -->
+          <div class="project-card glass-card" data-popup="up"
+               data-title="design for america @ usc" data-meta="2026 · usc"
+               data-body="leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure. soft launch fall 2026.">
+            <div class="card-icon-wrap">
+              <img src="design-icons/dfa.png" class="card-icon" alt="dfa">
+            </div>
+            <span class="card-title">design for america</span>
+            <span class="card-meta">founding</span>
+            <div class="card-hover-popup">
+              <p class="popup-title">dfa @ usc</p>
+              <p class="popup-desc">human-centred design for social impact</p>
+            </div>
+          </div>
+
+        </div>
+        <div class="cards-progress-track"><div class="cards-progress-fill" id="panel2-bar"></div></div><!-- /.cards-grid -->
+        <div class="cards-progress-track"><div class="cards-progress-fill" id="panel1-bar"></div></div>
+
+        <!-- research request form -->
+        <div class="research-form-wrap">
+          <p class="research-form-label">want to read something?</p>
+          <form action="mailto:aanya@usc.edu" method="post" enctype="text/plain" class="research-form">
+            <input type="email" name="email" placeholder="your email" required>
+            <textarea name="message" placeholder="which paper are you looking for?" rows="2"></textarea>
+            <button type="submit">request →</button>
           </form>
         </div>
 
-      </div><!-- /panel-scroll-y -->
-    </div><!-- /panel-inner -->
-  </div>
+      </div><!-- /.panel-scroll-y -->
+    </div><!-- /.panel-inner -->
+  </div><!-- /#panel-2 -->
 
-  <!-- PANEL 3: FOUNDER -->
-  <div class="panel" id="panel-3">
-    <div class="panel-inner">
-      <span class="section-eyebrow">ventures</span>
-      <div class="section-title">founder</div>
-      <div class="panel-scroll-y">
-        <div class="founder-grid">
-
-          <!-- afterhours -->
-          <div class="founder-card glass-card">
-            <div class="founder-icon-placeholder">✦</div>
-            <div class="founder-title">afterhours</div>
-            <div class="founder-sub">social experiences @ usc</div>
-            <p class="founder-body">conceptualising curated social experiences at usc. invite-only, vibe-first. beta launch fall 2026.</p>
-            <span class="tag-pill">in beta</span>
-            <a href="afterhours.html" class="founder-link">explore afterhours →</a>
-          </div>
-
-          <!-- design for america -->
-          <div class="founder-card glass-card">
-            <img src="design-icons/dfa.png" alt="design for america" class="founder-icon">
-            <div class="founder-title">design for america @ usc</div>
-            <div class="founder-sub">founding studio lead</div>
-            <p class="founder-body">leading the relaunch of the dfa studio at usc — human-centred design for social impact. founding team, partnerships, programme structure. soft launch fall 2026.</p>
-            <span class="tag-pill">founding</span>
-          </div>
-
-        </div>
-      </div><!-- /panel-scroll-y -->
-    </div><!-- /panel-inner -->
-  </div>
-
-  <!-- PANEL 4: OUTRO -->
-  <div class="panel" id="panel-4">
+<div class="panel" id="panel-3">
     <p class="outro-title">built to keep going.</p>
     <a href="index.html" class="outro-back">← back to playground</a>
   </div>
@@ -897,7 +934,7 @@ nav {
   <div class="dot" data-panel="1"></div>
   <div class="dot" data-panel="2"></div>
   <div class="dot" data-panel="3"></div>
-  <div class="dot" data-panel="4"></div>
+  <div class="dot" data-panel="3"></div>
 </div>
 
 <!-- BOTTOM SHEET -->
@@ -1043,6 +1080,35 @@ document.querySelectorAll('a[href]').forEach(link => {
   });
 });
 
+
+
+// ── CARDS PROGRESS BARS ──
+(function(){
+  ['panel1','panel2'].forEach(id => {
+    var grid = document.getElementById(id+'-cards');
+    var bar  = document.getElementById(id+'-bar');
+    if (!grid || !bar) return;
+    // Update on horizontal page scroll
+    hscroll.addEventListener('scroll', function(){
+      var pct = (grid.scrollLeft || 0) / Math.max(1, grid.scrollWidth - grid.clientWidth);
+      bar.style.width = (pct * 100) + '%';
+    }, { passive: true });
+    // Also update based on how many cards are visible
+    function updateBar() {
+      var gridRect = grid.getBoundingClientRect();
+      var cards = grid.querySelectorAll('.project-card');
+      if (!cards.length) return;
+      var visible = 0;
+      cards.forEach(card => {
+        var r = card.getBoundingClientRect();
+        if (r.left < gridRect.right && r.right > gridRect.left) visible++;
+      });
+      bar.style.width = Math.min(100, (visible / cards.length) * 100) + '%';
+    }
+    hscroll.addEventListener('scroll', updateBar, { passive: true });
+    updateBar();
+  });
+})();
 
 </script>
 </body>
