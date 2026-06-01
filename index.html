@@ -257,18 +257,26 @@ body.cursor-on-link #cursor-trail { width: 44px; height: 44px; border-color: rgb
 /* ══ OVAL LEARN MORE ══ */
 .oval-learn-tag {
   position: fixed;
-  top: calc(50% + 62px); left: 50%;
+  /* sits just below-right of the oval, angled into the dark side */
+  top: calc(50% + 38px);
+  left: calc(50% + 16px);
   font-family: 'EB Garamond', serif;
-  font-size: 10.5px; font-style: italic;
-  letter-spacing: 0.12em;
+  font-size: 11px; font-style: italic;
+  letter-spacing: 0.1em;
   color: rgba(244,239,228,0);
   white-space: nowrap; pointer-events: none;
   text-decoration: none;
-  transform: rotate(-7deg); transform-origin: left center;
-  transition: color 0.35s ease; cursor: none; z-index: 101;
+  transform: rotate(-12deg);
+  transform-origin: left center;
+  transition: color 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  cursor: none; z-index: 101;
 }
 #main-oval-wrap:hover ~ .oval-learn-tag,
-.oval-learn-tag.visible { color: rgba(244,239,228,0.65); pointer-events: all; }
+.oval-learn-tag.visible {
+  color: rgba(244,239,228,0.7);
+  pointer-events: all;
+  transform: rotate(-12deg) translateY(-3px);
+}
 .oval-learn-tag::after { display: none !important; }
 
 /* ══ DRAW UNDERLINE ON HOVER ══ */
@@ -563,8 +571,9 @@ document.addEventListener('keydown', e => {
   if (!btn || !tag) return;
   function positionTag() {
     var r = btn.getBoundingClientRect();
-    tag.style.top  = (r.bottom + 14) + 'px';
-    tag.style.left = (r.left + r.width * 0.52) + 'px';
+    // just below and slightly right — near button, dark side
+    tag.style.top  = (r.bottom + 10) + 'px';
+    tag.style.left = (r.left + r.width * 0.55) + 'px';
   }
   window.addEventListener('load', positionTag);
   window.addEventListener('resize', positionTag);
