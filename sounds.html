@@ -2,728 +2,591 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>aanya's replay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>my songs · aanya lall</title>
 <style>
+/* ── RESET + SYSTEM ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
+  --bg:        #F2F2F7;
+  --bg-primary:#FFFFFF;
+  --label:     #1C1C1E;
+  --label-2:   rgba(60,60,67,0.6);
+  --label-3:   rgba(60,60,67,0.3);
+  --separator: rgba(60,60,67,0.18);
+  --fill:      rgba(120,120,128,0.12);
+  --pink:      #FF2D55;
+  --purple:    #AF52DE;
+  --blue:      #007AFF;
+  --teal:      #32ADE6;
+  --green:     #34C759;
+  --orange:    #FF9500;
   --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
-  --spring: linear(0,.006,.025,.056,.098,.15,.21,.27,.34,.41,.48,.55,.62,.69,.75,.81,.86,.91,.95,.98,1.004,1.015,1.022,1.025,1.024,1.021,1.015,1.008,1.002,.998,.996,.995,.996,.997,.999,1);
+  --spring: linear(
+    0, 0.006, 0.025, 0.056, 0.098, 0.15, 0.21, 0.27, 0.34, 0.41,
+    0.48, 0.55, 0.62, 0.69, 0.75, 0.81, 0.86, 0.91, 0.95, 0.98,
+    1.004, 1.015, 1.022, 1.025, 1.024, 1.021, 1.015, 1.008, 1.002, 0.998,
+    0.996, 0.995, 0.996, 0.997, 0.999, 1
+  );
 }
-html, body { height: 100%; overflow: hidden; }
+html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-sf);
-  background: #1a0a00;
+  background: var(--bg);
+  color: var(--label);
   -webkit-font-smoothing: antialiased;
-  touch-action: manipulation;
-  user-select: none;
+  overflow-x: hidden;
 }
-
-/* ── STORY SHELL ── */
-#story {
-  position: fixed; inset: 0;
-  display: flex; flex-direction: column;
-}
-
-/* ── PROGRESS BAR ── */
-#progress-bar {
-  position: absolute; top: 14px; left: 14px; right: 14px;
-  display: flex; gap: 3px; z-index: 20; pointer-events: none;
-}
-.prog-seg {
-  flex: 1; height: 3px; border-radius: 2px;
-  background: rgba(255,255,255,0.32); overflow: hidden;
-}
-.prog-fill {
-  height: 100%; width: 0%; background: #fff;
-  border-radius: 2px;
-  transition: width 0.25s ease;
-}
-.prog-seg.done .prog-fill { width: 100%; }
-.prog-seg.active .prog-fill { width: 100%; }
-
-/* ── STORY HEADER LABELS ── */
-#story-header {
-  position: absolute; top: 26px; left: 14px; right: 14px;
-  display: flex; justify-content: space-between; align-items: center;
-  z-index: 20; pointer-events: none;
-}
-.header-label {
-  font-size: 13px; font-weight: 600;
-  color: rgba(255,255,255,0.85);
-  letter-spacing: -0.01em;
-}
-.header-apple {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 13px; font-weight: 500;
-  color: rgba(255,255,255,0.7);
-}
-.header-apple svg { width: 14px; height: 14px; fill: currentColor; }
-
-/* ── TAP ZONES ── */
-#tap-left, #tap-right {
-  position: absolute; top: 0; bottom: 0; z-index: 15;
-  cursor: pointer;
-}
-#tap-left  { left: 0; width: 33%; }
-#tap-right { right: 0; width: 67%; }
-
-/* ── SLIDES ── */
-.slide {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  padding: 60px 28px 44px;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.12s ease;
-  overflow: hidden;
-}
-.slide.active { opacity: 1; pointer-events: none; }
-
-/* Gradient per slide */
-.slide-1 { background: linear-gradient(160deg, #C85A00 0%, #7B2D8B 100%); }
-.slide-2 { background: linear-gradient(160deg, #F0900C 0%, #C85A00 60%, #8B3000 100%); }
-.slide-3 { background: linear-gradient(160deg, #F59520 0%, #E07010 50%, #B84000 100%); }
-.slide-4 { background: linear-gradient(160deg, #E87C10 0%, #D06000 60%, #7B3090 100%); }
-.slide-5 { background: linear-gradient(160deg, #F08010 0%, #C05000 55%, #803000 100%); }
-.slide-6 { background: linear-gradient(160deg, #D04090 0%, #8830B0 50%, #4820A0 100%); }
-.slide-7 { background: linear-gradient(160deg, #E08010 0%, #A03060 50%, #602090 100%); }
-.slide-8 { background: linear-gradient(160deg, #4820A0 0%, #2010C0 50%, #100880 100%); }
-.slide-9 { background: linear-gradient(160deg, #F09015 0%, #E07010 40%, #C85A00 100%); }
-
-/* ── SLIDE TEXT SYSTEM ── */
-.slide-eyebrow {
-  font-size: 13px; font-weight: 500;
-  color: rgba(255,255,255,0.65); letter-spacing: 0.02em;
-  margin-bottom: 20px; margin-top: auto;
-}
-.slide-huge {
-  font-size: clamp(56px, 17vw, 128px);
-  font-weight: 800; letter-spacing: -0.04em;
-  color: #fff; line-height: 0.9;
-  /* overflow intentional — bleeds off screen like Replay */
-}
-.slide-huge.bleed {
-  font-size: clamp(80px, 24vw, 200px);
-  margin-left: -4px;
-}
-.slide-large {
-  font-size: clamp(36px, 8vw, 72px);
-  font-weight: 700; letter-spacing: -0.035em;
-  color: #fff; line-height: 1.0;
-}
-.slide-body {
-  font-size: clamp(15px, 2.5vw, 20px);
-  font-weight: 400; color: rgba(255,255,255,0.75);
-  line-height: 1.5; margin-top: 12px;
-  max-width: 340px;
-}
-.slide-sub {
-  font-size: 13px; font-weight: 500;
-  color: rgba(255,255,255,0.5); letter-spacing: 0.02em;
-  margin-top: 16px;
-}
-.text-dim { color: rgba(255,255,255,0.35); }
-
-/* ── ENTRANCE ANIMATION ── */
-.slide-content {
-  display: flex; flex-direction: column;
-  flex: 1; justify-content: flex-end;
-}
-.slide.active .anim-item {
-  animation: slide-up 0.55s var(--spring) both;
-}
-.slide.active .anim-item:nth-child(2) { animation-delay: 0.08s; }
-.slide.active .anim-item:nth-child(3) { animation-delay: 0.16s; }
-.slide.active .anim-item:nth-child(4) { animation-delay: 0.24s; }
-.slide.active .anim-item:nth-child(5) { animation-delay: 0.32s; }
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(32px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── SLIDE 1: INTRO ── */
-.intro-bg {
-  position: absolute; inset: 0;
-  background: url('') center/cover no-repeat;
-  filter: blur(0px) brightness(0.65) saturate(1.2);
-}
-.intro-bg-grad {
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, transparent 20%, rgba(100,20,0,0.7) 70%, rgba(80,10,0,0.95) 100%);
-}
-.intro-title-wrap {
-  margin-top: auto;
-}
-.intro-name {
-  font-size: clamp(72px, 22vw, 180px);
-  font-weight: 800; letter-spacing: -0.05em;
-  color: #fff; line-height: 0.88;
-}
-.intro-sub-line {
-  font-size: 16px; font-weight: 400;
-  color: rgba(255,255,255,0.6);
-  margin-top: 12px; letter-spacing: 0.01em;
-}
-
-/* ── SLIDE 4: ALBUM GRID ── */
-.album-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  margin: 0 -28px;
-  flex: 1;
-  overflow: hidden;
-}
-.album-cell {
-  aspect-ratio: 1; overflow: hidden;
-  background: rgba(255,255,255,0.08);
-  position: relative;
-  /* spring lift on hover */
-  transition: transform 0.35s linear(0,.01,.04,.1,.19,.29,.4,.51,.61,.7,.78,.85,.9,.94,.97,.99,1.005,1.008,1.007,1.004,1);
-}
-.album-cell:hover { transform: scale(1.04); z-index: 2; }
-.album-cell img {
-  width: 100%; height: 100%; object-fit: cover;
-  display: block;
-  transition: opacity 0.5s ease;
-  opacity: 0;
-}
-.album-cell img.loaded { opacity: 1; }
-.album-cell-placeholder {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; opacity: 0.25;
-}
-/* shimmer loading state */
-.album-cell::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
-}
-.album-cell img.loaded ~ .album-cell-placeholder { display: none; }
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* ── SLIDE 5: SONG LIST ── */
-.fav-list {
-  display: flex; flex-direction: column; gap: 0;
-  margin-top: 20px;
-}
-.fav-item {
-  padding: 11px 0;
-  border-bottom: 0.5px solid rgba(255,255,255,0.15);
-  display: flex; align-items: baseline; gap: 12px;
-}
-.fav-num {
-  font-size: 12px; font-weight: 500;
-  color: rgba(255,255,255,0.4); width: 18px; flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.fav-name {
-  font-size: clamp(16px, 3vw, 20px); font-weight: 600;
-  color: #fff; letter-spacing: -0.02em; flex: 1;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.fav-show {
-  font-size: 12px; color: rgba(255,255,255,0.45);
-  flex-shrink: 0; letter-spacing: 0.01em;
-}
-
-/* ── SLIDE 7: FUTURE SONGS ── */
-.future-list {
-  display: flex; flex-direction: column; gap: 8px;
-  margin-top: 16px;
-}
-.future-item {
-  font-size: clamp(15px, 2.8vw, 18px); font-weight: 500;
-  color: rgba(255,255,255,0.7); letter-spacing: -0.02em;
-  padding: 4px 0;
-}
-.future-item strong { color: #fff; }
-
-/* ── SLIDE 9: PORTFOLIO ── */
-.portfolio-card {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 20px; padding: 24px 22px;
-  margin-top: 20px;
-  cursor: pointer;
-  transition: transform 0.3s var(--spring), background 0.2s;
-}
-.portfolio-card:active { transform: scale(0.97); }
-.portfolio-card:hover { background: rgba(255,255,255,0.18); }
-.portfolio-card-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: rgba(255,255,255,0.5);
-  margin-bottom: 8px;
-}
-.portfolio-card-title {
-  font-size: 22px; font-weight: 700;
-  letter-spacing: -0.03em; color: #fff;
-  margin-bottom: 4px;
-}
-.portfolio-card-sub {
-  font-size: 14px; color: rgba(255,255,255,0.55);
-}
-.portfolio-arrow {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 16px;
-}
-.portfolio-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: white; color: #1C1C1E;
-  border: none; border-radius: 999px;
-  padding: 10px 20px; font-size: 15px; font-weight: 600;
-  font-family: var(--font-sf); cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.2s var(--spring), opacity 0.15s;
-}
-.portfolio-btn:hover { opacity: 0.9; }
-.portfolio-btn:active { transform: scale(0.94); }
-
-/* ── SLIDE SKIP / BACK NAV (bottom) ── */
-.nav-dots {
-  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 6px; z-index: 20;
-}
-.nav-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transition: all 0.3s var(--spring);
-}
-.nav-dot.active { background: #fff; transform: scale(1.4); }
-
-/* tap feedback ring */
-.tap-ring {
-  position: fixed; border-radius: 50%;
-  background: rgba(255,255,255,0.18);
-  pointer-events: none; z-index: 30;
-  width: 64px; height: 64px;
-  transform: translate(-50%,-50%) scale(0);
-  animation: ring-out 0.5s ease forwards;
-}
-@keyframes ring-out {
-  0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.6; }
-  100% { transform: translate(-50%,-50%) scale(1.5); opacity: 0; }
-}
-
-/* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ── PAGE TRANSITION OVERLAY ── */
+#page-overlay {
+  position: fixed; inset: 0; background: #1C1C1E;
+  z-index: 9999; opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+#page-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* ── SCROLL PROGRESS BAR ── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--pink), var(--purple));
+  z-index: 9998; transition: width 0.06s linear;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  height: 52px;
+  background: rgba(242,242,247,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 0.5px solid var(--separator);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.nav-back {
+  font-size: 17px; color: var(--blue);
+  text-decoration: none; display: flex; align-items: center; gap: 5px;
+  font-weight: 400; transition: opacity 0.15s;
+}
+.nav-back:hover { opacity: 0.7; }
+.nav-back svg { width: 10px; height: 17px; }
+.nav-title {
+  font-size: 17px; font-weight: 600;
+  letter-spacing: -0.022em; color: var(--label);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.nav-title.visible { opacity: 1; }
+.nav-right { width: 80px; display: flex; justify-content: flex-end; }
+.nav-portfolio-link {
+  font-size: 15px; color: var(--blue);
+  text-decoration: none; font-weight: 400; transition: opacity 0.15s;
+}
+.nav-portfolio-link:hover { opacity: 0.7; }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh; position: relative;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 100px 32px 80px;
+  background: #fff; overflow: hidden;
+}
+.orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; opacity: 0.5; }
+.orb-1 { width: 560px; height: 560px; background: radial-gradient(circle, #FFB3C8, transparent 70%); top: -150px; left: -100px; animation: orb-a 10s ease-in-out infinite alternate; }
+.orb-2 { width: 460px; height: 460px; background: radial-gradient(circle, #C8A8FF, transparent 70%); top: 5%; right: -120px; animation: orb-b 13s ease-in-out infinite alternate; }
+.orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, #A8D8FF, transparent 70%); bottom: 0; left: 20%; animation: orb-c 11s ease-in-out infinite alternate; }
+@keyframes orb-a { to { transform: translate(50px, 40px) scale(1.1); } }
+@keyframes orb-b { to { transform: translate(-40px, 50px) scale(0.92); } }
+@keyframes orb-c { to { transform: translate(30px, -40px) scale(1.08); } }
+
+.hero-eyebrow { font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--label-2); margin-bottom: 22px; animation: hero-in 0.7s 0.1s ease both; position: relative; z-index: 1; }
+.hero-title { font-size: clamp(56px, 11vw, 96px); font-weight: 700; letter-spacing: -0.04em; line-height: 0.93; color: var(--label); animation: hero-in 0.8s 0.22s ease both; position: relative; z-index: 1; }
+.hero-sub { margin-top: 22px; font-size: clamp(16px, 2.5vw, 20px); font-weight: 400; color: var(--label-2); letter-spacing: -0.01em; max-width: 480px; animation: hero-in 0.8s 0.38s ease both; position: relative; z-index: 1; line-height: 1.45; }
+.hero-stats-row { display: flex; gap: 8px; align-items: center; margin-top: 36px; animation: hero-in 0.8s 0.52s ease both; position: relative; z-index: 1; flex-wrap: wrap; justify-content: center; }
+.hero-stats-row span { font-size: 15px; color: var(--label-2); font-weight: 400; letter-spacing: -0.01em; }
+.hero-stats-row .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--label-3); display: inline-block; flex-shrink: 0; }
+.hero-scroll-cue { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; animation: hero-in 1s 1.1s ease both; opacity: 0.4; }
+.scroll-cue-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--label-2), transparent); animation: line-pulse 2.2s ease-in-out infinite; }
+@keyframes line-pulse { 0%, 100% { opacity: 0.4; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.12); } }
+@keyframes hero-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── SECTION WRAPPER ── */
+.page-section { max-width: 780px; margin: 0 auto; padding: clamp(48px, 6vw, 80px) 24px; }
+
+/* ── SECTION EYEBROW ── */
+.section-eyebrow {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--label-2); margin-bottom: 18px; padding: 0 2px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.section-eyebrow.revealed { opacity: 1; transform: none; }
+
+/* ── STATS CARDS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  background: var(--bg-primary); border-radius: 16px; padding: 20px 18px;
+  box-shadow: 0 1px 0 var(--separator), 0 2px 12px rgba(0,0,0,0.05);
+  opacity: 0; transform: translateY(20px) scale(0.97);
+  transition: opacity 0.55s ease, transform 0.55s var(--spring);
+}
+.stat-card.revealed { opacity: 1; transform: none; }
+.stat-card:nth-child(2) { transition-delay: 0.08s; }
+.stat-card:nth-child(3) { transition-delay: 0.16s; }
+.stat-card:nth-child(4) { transition-delay: 0.10s; }
+.stat-card:nth-child(5) { transition-delay: 0.18s; }
+.stat-card:nth-child(6) { transition-delay: 0.26s; }
+.stat-icon { font-size: 20px; margin-bottom: 10px; line-height: 1; }
+.stat-num { font-size: 30px; font-weight: 700; letter-spacing: -0.04em; color: var(--label); font-variant-numeric: tabular-nums; line-height: 1; }
+.stat-desc { font-size: 12px; color: var(--label-2); margin-top: 4px; line-height: 1.4; }
+
+/* ── IOS-STYLE INSET LIST ── */
+.ios-list-card { background: var(--bg-primary); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 var(--separator), 0 2px 16px rgba(0,0,0,0.04); }
+.song-row {
+  display: flex; align-items: center; gap: 14px; padding: 11px 16px;
+  border-bottom: 0.5px solid var(--separator);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.42s ease, transform 0.42s var(--spring), background 0.12s;
+  cursor: default;
+}
+.song-row:last-child { border-bottom: none; }
+.song-row.revealed { opacity: 1; transform: none; }
+.song-row:hover { background: var(--fill); }
+.song-num { font-size: 14px; color: var(--label-3); width: 20px; flex-shrink: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 400; }
+.song-disc { width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0; overflow: hidden; position: relative; background: var(--fill); }
+.song-disc.skeleton { animation: skeleton-pulse 1.6s ease-in-out infinite; }
+@keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.song-disc img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease; position: absolute; inset: 0; }
+.disc-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.song-info { flex: 1; min-width: 0; }
+.song-name { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-source { font-size: 13px; color: var(--label-2); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-badge { flex-shrink: 0; display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 100px; font-size: 11px; font-weight: 500; white-space: nowrap; letter-spacing: 0.01em; }
+.badge-musical    { background: rgba(175,82,222,0.12); color: var(--purple); }
+.badge-classical  { background: rgba(50,173,230,0.12);  color: var(--teal); }
+.badge-pop        { background: rgba(255,45,85,0.12);   color: var(--pink); }
+.badge-traditional{ background: rgba(255,149,0,0.12);   color: var(--orange); }
+
+/* ── PLACEHOLDER GRADIENTS ── */
+.placeholder-teal   { background: linear-gradient(135deg, #32ADE6, #007AFF); }
+.placeholder-purple { background: linear-gradient(135deg, #AF52DE, #5856D6); }
+.placeholder-blue   { background: linear-gradient(135deg, #007AFF, #32ADE6); }
+.placeholder-pink   { background: linear-gradient(135deg, #FF2D55, #AF52DE); }
+.placeholder-orange { background: linear-gradient(135deg, #FF9500, #FF6B00); }
+
+/* ── FAVORITES SECTION ── */
+.favorites-section { background: var(--bg-primary); }
+.favorites-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 560px) { .favorites-grid { grid-template-columns: 1fr; } }
+.fav-card {
+  border-radius: 18px; overflow: hidden; position: relative;
+  padding: 28px 24px; min-height: 130px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  opacity: 0; transform: translateY(18px) scale(0.98);
+  transition: opacity 0.55s ease, transform 0.55s var(--spring), box-shadow 0.3s ease;
+  cursor: default; box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+}
+.fav-card.revealed { opacity: 1; transform: none; }
+.fav-card:hover { transform: translateY(-3px) !important; box-shadow: 0 12px 40px rgba(0,0,0,0.18) !important; }
+.fav-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 60%, transparent 100%); pointer-events: none; }
+.fav-heart { position: absolute; top: 16px; right: 16px; font-size: 18px; z-index: 2; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); }
+.fav-title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: white; position: relative; z-index: 2; line-height: 1.2; margin-bottom: 5px; }
+.fav-musical { font-size: 13px; color: rgba(255,255,255,0.75); position: relative; z-index: 2; margin-bottom: 8px; }
+.fav-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 100px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.2); color: white; position: relative; z-index: 2; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); width: fit-content; }
+.fav-grad-1 { background: linear-gradient(135deg, #FF2D55 0%, #FF9500 100%); }
+.fav-grad-2 { background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%); }
+.fav-grad-3 { background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%); }
+.fav-grad-4 { background: linear-gradient(135deg, #AF52DE 0%, #FF2D55 100%); }
+.fav-grad-5 { background: linear-gradient(135deg, #5856D6 0%, #AF52DE 100%); }
+.fav-grad-6 { background: linear-gradient(135deg, #34C759 0%, #007AFF 100%); }
+.fav-grad-7 { background: linear-gradient(135deg, #FF2D55 0%, #5856D6 100%); }
+.fav-grad-8 { background: linear-gradient(135deg, #1C1C1E 0%, #3A3A3C 100%); }
+.fav-grad-9 { background: linear-gradient(135deg, #32ADE6 0%, #34C759 100%); }
+
+/* ── ON STAGE SECTION ── */
+.stage-cards { display: flex; flex-direction: column; gap: 12px; }
+.stage-card {
+  background: var(--bg-primary); border-radius: 16px; padding: 20px;
+  box-shadow: 0 1px 0 var(--separator), 0 2px 12px rgba(0,0,0,0.05);
+  display: flex; align-items: flex-start; gap: 16px;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s var(--spring);
+}
+.stage-card.revealed { opacity: 1; transform: none; }
+.stage-card:nth-child(2) { transition-delay: 0.07s; }
+.stage-card:nth-child(3) { transition-delay: 0.14s; }
+.stage-card:nth-child(4) { transition-delay: 0.21s; }
+.stage-card:nth-child(5) { transition-delay: 0.28s; }
+.stage-icon { font-size: 22px; flex-shrink: 0; width: 46px; height: 46px; border-radius: 12px; background: var(--fill); display: flex; align-items: center; justify-content: center; }
+.stage-info { flex: 1; }
+.stage-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: var(--label); margin-bottom: 4px; }
+.stage-desc { font-size: 14px; color: var(--label-2); line-height: 1.45; }
+.stage-badge { flex-shrink: 0; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.01em; }
+.badge-milestone   { background: rgba(255,149,0,0.12); color: var(--orange); }
+.badge-achievement { background: rgba(52,199,89,0.12);  color: var(--green); }
+.badge-performance { background: rgba(0,122,255,0.12);  color: var(--blue); }
+
+/* ── WISHLIST ── */
+.wishlist-card { background: var(--bg-primary); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 var(--separator), 0 2px 12px rgba(0,0,0,0.04); }
+.wishlist-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 18px;
+  border-bottom: 0.5px solid var(--separator);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.38s ease, transform 0.38s var(--spring), background 0.12s;
+}
+.wishlist-row:last-child { border-bottom: none; }
+.wishlist-row.revealed { opacity: 1; transform: none; }
+.wishlist-row:hover { background: var(--fill); }
+.wishlist-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--label-3); flex-shrink: 0; }
+.wishlist-name { font-size: 14px; color: var(--label-2); font-weight: 400; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wishlist-source { font-size: 12px; color: var(--label-3); }
+
+/* ── PRACTICE ROOM ── */
+.practice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 560px) { .practice-grid { grid-template-columns: 1fr; } }
+.practice-card {
+  background: var(--bg-primary); border-radius: 18px; overflow: hidden;
+  box-shadow: 0 1px 0 var(--separator), 0 4px 20px rgba(0,0,0,0.07);
+  opacity: 0; transform: translateY(16px) scale(0.98);
+  transition: opacity 0.55s ease, transform 0.55s var(--spring);
+}
+.practice-card.revealed { opacity: 1; transform: none; }
+.practice-card:nth-child(2) { transition-delay: 0.1s; }
+.practice-accent { height: 4px; }
+.practice-accent-pink { background: linear-gradient(90deg, var(--pink), var(--purple)); }
+.practice-accent-blue { background: linear-gradient(90deg, var(--blue), var(--teal)); }
+.practice-body { padding: 22px 22px 24px; }
+.practice-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--pink); margin-bottom: 8px; }
+.practice-card:nth-child(2) .practice-label { color: var(--blue); }
+.practice-title { font-size: 20px; font-weight: 700; letter-spacing: -0.025em; color: var(--label); line-height: 1.15; margin-bottom: 4px; }
+.practice-source { font-size: 14px; color: var(--label-2); }
+.practice-pulse { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; font-weight: 500; color: var(--label-3); letter-spacing: 0.02em; }
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse-anim 1.8s ease-in-out infinite; }
+@keyframes pulse-anim { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } }
+
+/* ── OUTRO ── */
+#outro { background: #1C1C1E; text-align: center; padding: clamp(72px, 10vw, 120px) 24px; }
+.outro-inner { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s var(--spring); }
+.outro-inner.revealed { opacity: 1; transform: none; }
+.outro-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
+.outro-title { font-size: clamp(38px, 6vw, 60px); font-weight: 700; letter-spacing: -0.035em; color: white; line-height: 1.08; margin-bottom: 14px; }
+.outro-sub { font-size: 17px; color: rgba(255,255,255,0.5); margin-bottom: 44px; line-height: 1.5; }
+.outro-back-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: white; color: #1C1C1E; border: none; border-radius: 999px;
+  padding: 14px 32px; font-size: 15px; font-weight: 600; font-family: var(--font-sf);
+  cursor: pointer; text-decoration: none;
+  transition: transform 0.08s var(--spring), box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.outro-back-btn:active { transform: scale(0.96); }
+.outro-back-btn svg { width: 10px; height: 17px; }
+
+@media (max-width: 480px) { .hero-stats-row span { font-size: 14px; } }
 </style>
 </head>
 <body>
 
-<div id="story">
+<div id="page-overlay"></div>
+<div id="scroll-progress"></div>
 
-  <!-- PROGRESS SEGMENTS -->
-  <div id="progress-bar">
-    <!-- generated by JS -->
+<nav>
+  <a href="aanya-portfolio-v14.html" class="nav-back" data-transition>
+    <svg viewBox="0 0 10 17"><path d="M9 1L1.5 8.5 9 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    aanya
+  </a>
+  <span class="nav-title" id="nav-title">my songs</span>
+  <div class="nav-right">
+    <a href="aanya-portfolio-v14.html" class="nav-portfolio-link" data-transition>portfolio</a>
   </div>
+</nav>
 
-  <!-- STORY HEADER -->
-  <div id="story-header">
-    <span class="header-label">aanya's replay</span>
-    <span class="header-apple">
-      <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-37.3-149.3-81.1c-51.4-51.9-93.7-129.9-93.7-204.7 0-207.7 135.4-317 269.8-317 36.5 0 102.1 10.9 148.1 10.9 44.4 0 109.3-11.5 148.2-11.5 60.4 0 120.6 28.5 159.3 82.1zm-166.5-115.1c-5.1 36.3-27.7 77.9-60.3 103.2-29.7 23.3-63.7 44-120.2 44-6.4 0-12.8-.5-19.2-.5-5.1-34.9 11.8-81.1 40.7-109.5 30.8-30.8 76.1-53.6 119-53.6 6.4 0 12.8.5 39.5 16.4z"/></svg>
-      Music
-    </span>
+<!-- HERO -->
+<section id="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-eyebrow">a replay · all time</div>
+  <h1 class="hero-title">my songs</h1>
+  <p class="hero-sub">every performance, every stage — since i was 13</p>
+  <div class="hero-stats-row">
+    <span>47+ songs</span>
+    <span class="dot"></span>
+    <span>3 genres</span>
+    <span class="dot"></span>
+    <span>10+ years</span>
   </div>
+  <div class="hero-scroll-cue">
+    <div class="scroll-cue-line"></div>
+  </div>
+</section>
 
-  <!-- TAP ZONES -->
-  <div id="tap-left"></div>
-  <div id="tap-right"></div>
+<!-- STATS CARDS -->
+<section class="page-section">
+  <div class="section-eyebrow">by the numbers</div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🎭</div><div class="stat-num">35+</div><div class="stat-desc">musical theatre songs</div></div>
+    <div class="stat-card"><div class="stat-icon">🎼</div><div class="stat-num">8+</div><div class="stat-desc">classical pieces</div></div>
+    <div class="stat-card"><div class="stat-icon">🎤</div><div class="stat-num">12+</div><div class="stat-desc">contemporary & pop</div></div>
+    <div class="stat-card"><div class="stat-icon">🎓</div><div class="stat-num">10+</div><div class="stat-desc">years of vocal training</div></div>
+    <div class="stat-card"><div class="stat-icon">🌍</div><div class="stat-num">3</div><div class="stat-desc">languages — english, italian, german</div></div>
+    <div class="stat-card"><div class="stat-icon">✨</div><div class="stat-num">1st</div><div class="stat-desc">flashmob performer in delhi</div></div>
+  </div>
+</section>
 
-  <!-- NAV DOTS -->
-  <div class="nav-dots" id="nav-dots"></div>
+<!-- MUSICAL THEATRE -->
+<section class="page-section" style="padding-top:0;">
+  <div class="section-eyebrow">musical theatre · 35+ songs</div>
+  <div class="ios-list-card">
+    <div class="song-row"><span class="song-num">1</span><div class="song-disc skeleton placeholder-pink"><img data-itunes="waitress musical" alt=""></div><div class="song-info"><div class="song-name">she used to be mine</div><div class="song-source">waitress</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">2</span><div class="song-disc skeleton placeholder-pink"><img data-itunes="waitress musical" alt=""></div><div class="song-info"><div class="song-name">when he sees me</div><div class="song-source">waitress</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">3</span><div class="song-disc skeleton placeholder-purple"><img data-itunes="wicked original cast" alt=""></div><div class="song-info"><div class="song-name">defying gravity</div><div class="song-source">wicked</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">4</span><div class="song-disc skeleton placeholder-purple"><img data-itunes="wicked original cast" alt=""></div><div class="song-info"><div class="song-name">i'm not that girl</div><div class="song-source">wicked</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">5</span><div class="song-disc skeleton placeholder-purple"><img data-itunes="wicked original cast" alt=""></div><div class="song-info"><div class="song-name">for good</div><div class="song-source">wicked</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">6</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="my fair lady cast recording" alt=""></div><div class="song-info"><div class="song-name">show me</div><div class="song-source">my fair lady</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">7</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="my fair lady cast recording" alt=""></div><div class="song-info"><div class="song-name">i could have danced all night</div><div class="song-source">my fair lady</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">8</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="les miserables cast recording" alt=""></div><div class="song-info"><div class="song-name">i dreamed a dream</div><div class="song-source">les misérables</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">9</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="les miserables cast recording" alt=""></div><div class="song-info"><div class="song-name">on my own</div><div class="song-source">les misérables</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">10</span><div class="song-disc skeleton placeholder-pink"><img data-itunes="evita musical cast" alt=""></div><div class="song-info"><div class="song-name">don't cry for me argentina</div><div class="song-source">evita</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">11</span><div class="song-disc skeleton placeholder-teal"><img data-itunes="mamma mia musical" alt=""></div><div class="song-info"><div class="song-name">the winner takes it all</div><div class="song-source">mamma mia</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">12</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="little mermaid musical" alt=""></div><div class="song-info"><div class="song-name">part of your world</div><div class="song-source">the little mermaid</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">13</span><div class="song-disc skeleton placeholder-purple"><img data-itunes="west side story cast recording" alt=""></div><div class="song-info"><div class="song-name">i feel pretty</div><div class="song-source">west side story</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">14</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="greatest showman soundtrack" alt=""></div><div class="song-info"><div class="song-name">never enough</div><div class="song-source">the greatest showman</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">15</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="greatest showman soundtrack" alt=""></div><div class="song-info"><div class="song-name">rewrite the stars</div><div class="song-source">the greatest showman</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">16</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="lion king cast recording" alt=""></div><div class="song-info"><div class="song-name">can you feel the love tonight</div><div class="song-source">the lion king</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">17</span><div class="song-disc skeleton placeholder-teal"><img data-itunes="moana soundtrack" alt=""></div><div class="song-info"><div class="song-name">shiny</div><div class="song-source">moana</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">18</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="aladdin broadway cast" alt=""></div><div class="song-info"><div class="song-name">a whole new world</div><div class="song-source">aladdin</div></div><span class="song-badge badge-musical">musical</span></div>
+    <div class="song-row"><span class="song-num">19</span><div class="song-disc placeholder-teal"><div class="disc-placeholder">🎵</div></div><div class="song-info"><div class="song-name">gartan mother's lullaby</div><div class="song-source">traditional</div></div><span class="song-badge badge-traditional">traditional</span></div>
+  </div>
+</section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 1 — INTRO
-  ══════════════════════════════════════ -->
-  <div class="slide slide-1" id="s1">
-    <div class="intro-bg-grad" style="background:linear-gradient(to bottom,rgba(100,20,0,0.3) 0%,rgba(80,10,80,0.6) 60%,rgba(40,0,60,0.95) 100%);position:absolute;inset:0;"></div>
-    <div class="slide-content" style="position:relative;z-index:2;">
-      <div class="intro-title-wrap">
-        <div class="anim-item intro-name">aanya<br>recapped.</div>
-        <div class="anim-item intro-sub-line">a lifetime of singing, revisited.</div>
+<!-- CLASSICAL -->
+<section class="page-section" style="padding-top:0;">
+  <div class="section-eyebrow">classical · 8+ songs</div>
+  <div class="ios-list-card">
+    <div class="song-row"><span class="song-num">1</span><div class="song-disc skeleton placeholder-teal"><img data-itunes="caro mio ben soprano" alt=""></div><div class="song-info"><div class="song-name">caro mio ben</div><div class="song-source">giordani</div></div><span class="song-badge badge-classical">classical</span></div>
+    <div class="song-row"><span class="song-num">2</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="handel ombra mai fu" alt=""></div><div class="song-info"><div class="song-name">ombra mai fu</div><div class="song-source">handel</div></div><span class="song-badge badge-classical">classical</span></div>
+    <div class="song-row"><span class="song-num">3</span><div class="song-disc skeleton placeholder-teal"><img data-itunes="franck panis angelicus" alt=""></div><div class="song-info"><div class="song-name">panis angelicus</div><div class="song-source">franck</div></div><span class="song-badge badge-classical">classical</span></div>
+    <div class="song-row"><span class="song-num">4</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="schumann die lotosblume" alt=""></div><div class="song-info"><div class="song-name">die lotosblume</div><div class="song-source">schumann</div></div><span class="song-badge badge-classical">classical</span></div>
+    <div class="song-row"><span class="song-num">5</span><div class="song-disc skeleton placeholder-teal"><img data-itunes="schubert ave maria" alt=""></div><div class="song-info"><div class="song-name">ave maria</div><div class="song-source">schubert</div></div><span class="song-badge badge-classical">classical</span></div>
+    <div class="song-row"><span class="song-num">6</span><div class="song-disc placeholder-purple"><div class="disc-placeholder">🎵</div></div><div class="song-info"><div class="song-name">o holy night</div><div class="song-source">traditional</div></div><span class="song-badge badge-traditional">traditional</span></div>
+    <div class="song-row"><span class="song-num">7</span><div class="song-disc placeholder-blue"><div class="disc-placeholder">🎵</div></div><div class="song-info"><div class="song-name">mary did you know</div><div class="song-source">traditional</div></div><span class="song-badge badge-traditional">traditional</span></div>
+    <div class="song-row"><span class="song-num">8</span><div class="song-disc placeholder-blue"><div class="disc-placeholder">🎵</div></div><div class="song-info"><div class="song-name">away in a manger</div><div class="song-source">traditional</div></div><span class="song-badge badge-traditional">traditional</span></div>
+  </div>
+</section>
+
+<!-- CONTEMPORARY & POP -->
+<section class="page-section" style="padding-top:0;">
+  <div class="section-eyebrow">contemporary & pop · 12+ songs</div>
+  <div class="ios-list-card">
+    <div class="song-row"><span class="song-num">1</span><div class="song-disc skeleton placeholder-pink"><img data-itunes="a star is born soundtrack 2018" alt=""></div><div class="song-info"><div class="song-name">shallow</div><div class="song-source">lady gaga</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">2</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="adele 25" alt=""></div><div class="song-info"><div class="song-name">when we were young</div><div class="song-source">adele</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">3</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="adele 25" alt=""></div><div class="song-info"><div class="song-name">all i ask</div><div class="song-source">adele</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">4</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="adele skyfall" alt=""></div><div class="song-info"><div class="song-name">skyfall</div><div class="song-source">adele</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">5</span><div class="song-disc skeleton placeholder-pink"><img data-itunes="a star is born soundtrack 2018" alt=""></div><div class="song-info"><div class="song-name">always remember us this way</div><div class="song-source">lady gaga</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">6</span><div class="song-disc skeleton placeholder-blue"><img data-itunes="coldplay a rush of blood to the head" alt=""></div><div class="song-info"><div class="song-name">the scientist</div><div class="song-source">coldplay</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">7</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="bruno mars doo wops hooligans" alt=""></div><div class="song-info"><div class="song-name">talking to the moon</div><div class="song-source">bruno mars</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">8</span><div class="song-disc skeleton placeholder-orange"><img data-itunes="bruno mars unorthodox jukebox" alt=""></div><div class="song-info"><div class="song-name">when i was your man</div><div class="song-source">bruno mars</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">9</span><div class="song-disc skeleton placeholder-teal"><img data-itunes="keane hopes fears" alt=""></div><div class="song-info"><div class="song-name">somewhere only we know</div><div class="song-source">keane</div></div><span class="song-badge badge-pop">pop</span></div>
+    <div class="song-row"><span class="song-num">10</span><div class="song-disc skeleton placeholder-purple"><img data-itunes="radiohead pablo honey" alt=""></div><div class="song-info"><div class="song-name">creep</div><div class="song-source">radiohead</div></div><span class="song-badge badge-pop">pop</span></div>
+  </div>
+</section>
+
+<!-- FAVORITES -->
+<section class="favorites-section">
+  <div class="page-section">
+    <div class="section-eyebrow">songs that live in me</div>
+    <div class="favorites-grid">
+      <div class="fav-card fav-grad-1"><div class="fav-heart">♥</div><div class="fav-title">she used to be mine</div><div class="fav-musical">waitress</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-2"><div class="fav-heart">♥</div><div class="fav-title">when he sees me</div><div class="fav-musical">waitress</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-3"><div class="fav-heart">♥</div><div class="fav-title">show me!</div><div class="fav-musical">my fair lady</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-4"><div class="fav-heart">♥</div><div class="fav-title">defying gravity</div><div class="fav-musical">wicked</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-5"><div class="fav-heart">♥</div><div class="fav-title">i'm not that girl</div><div class="fav-musical">wicked</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-6"><div class="fav-heart">♥</div><div class="fav-title">for good</div><div class="fav-musical">wicked</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-7"><div class="fav-heart">♥</div><div class="fav-title">don't cry for me argentina</div><div class="fav-musical">evita</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-8"><div class="fav-heart">♥</div><div class="fav-title">i dreamed a dream</div><div class="fav-musical">les misérables</div><span class="fav-badge">musical theatre</span></div>
+      <div class="fav-card fav-grad-9" style="grid-column: 1 / -1; max-width: 380px;"><div class="fav-heart">♥</div><div class="fav-title">the winner takes it all</div><div class="fav-musical">mamma mia</div><span class="fav-badge">musical theatre</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ON STAGE -->
+<section class="page-section">
+  <div class="section-eyebrow">on stage · moments that mattered</div>
+  <div class="stage-cards">
+    <div class="stage-card"><div class="stage-icon">✨</div><div class="stage-info"><div class="stage-title">first flashmob in delhi</div><div class="stage-desc">the first ever flashmob in new delhi. spontaneous, unrehearsed, unforgettable.</div></div><span class="stage-badge badge-milestone">milestone</span></div>
+    <div class="stage-card"><div class="stage-icon">🎭</div><div class="stage-info"><div class="stage-title">capital city minstrels</div><div class="stage-desc">youngest member of delhi's capital city minstrels choral society.</div></div><span class="stage-badge badge-achievement">achievement</span></div>
+    <div class="stage-card"><div class="stage-icon">🎤</div><div class="stage-info"><div class="stage-title">vatican embassy, delhi</div><div class="stage-desc">performed at the vatican embassy in new delhi.</div></div><span class="stage-badge badge-performance">performance</span></div>
+    <div class="stage-card"><div class="stage-icon">🎤</div><div class="stage-info"><div class="stage-title">mirai</div><div class="stage-desc">performed at mirai.</div></div><span class="stage-badge badge-performance">performance</span></div>
+    <div class="stage-card"><div class="stage-icon">🌟</div><div class="stage-info"><div class="stage-title">solo recital</div><div class="stage-desc">my first solo vocal recital.</div></div><span class="stage-badge badge-milestone">milestone</span></div>
+  </div>
+</section>
+
+<!-- PRACTICE ROOM -->
+<section class="page-section" style="padding-top:0;">
+  <div class="section-eyebrow">in the practice room</div>
+  <div class="practice-grid">
+    <div class="practice-card">
+      <div class="practice-accent practice-accent-pink"></div>
+      <div class="practice-body">
+        <div class="practice-label">currently learning</div>
+        <div class="practice-title">don't rain on my parade</div>
+        <div class="practice-source">funny girl</div>
+        <div class="practice-pulse"><div class="pulse-dot"></div>active</div>
+      </div>
+    </div>
+    <div class="practice-card">
+      <div class="practice-accent practice-accent-blue"></div>
+      <div class="practice-body">
+        <div class="practice-label">currently learning</div>
+        <div class="practice-title">what more do i need</div>
+        <div class="practice-source">saturday night</div>
+        <div class="practice-pulse"><div class="pulse-dot"></div>active</div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 2 — STATEMENT
-  ══════════════════════════════════════ -->
-  <div class="slide slide-2" id="s2">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item slide-huge" style="font-size:clamp(44px,13vw,100px);line-height:1.02;">A lot of<br>singing can<br>happen in<br>a lifetime.</div>
-    </div>
+<!-- WISHLIST -->
+<section class="page-section" style="padding-top:0;">
+  <div class="section-eyebrow">on the wishlist</div>
+  <div class="wishlist-card">
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">the girl in 14g</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">without you</div><div class="wishlist-source">my fair lady</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">the wizard and i</div><div class="wishlist-source">wicked</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">la vie en rose</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">what is this feeling?</div><div class="wishlist-source">wicked</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">as long as you're mine</div><div class="wishlist-source">wicked</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">hopelessly devoted to you</div><div class="wishlist-source">grease</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">popular</div><div class="wishlist-source">wicked</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">gimme gimme</div><div class="wishlist-source">thoroughly modern millie</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">on the street where you live</div><div class="wishlist-source">my fair lady</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">almost there</div><div class="wishlist-source">the princess and the frog</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">rainbow high</div><div class="wishlist-source">evita</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">i'm here</div><div class="wishlist-source">the color purple</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">no good deed</div><div class="wishlist-source">wicked</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">something there</div><div class="wishlist-source">beauty and the beast</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">something's got a hold on me</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">speechless</div><div class="wishlist-source">aladdin</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">what more do i need</div><div class="wishlist-source">saturday night</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">reflection</div><div class="wishlist-source">mulan</div></div>
+    <div class="wishlist-row"><div class="wishlist-dot"></div><div class="wishlist-name">don't rain on my parade</div><div class="wishlist-source">funny girl</div></div>
   </div>
+</section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 3 — BIG NUMBER
-  ══════════════════════════════════════ -->
-  <div class="slide slide-3" id="s3">
-    <div class="slide-content" style="justify-content:flex-end;">
-      <div class="anim-item slide-eyebrow" style="margin-bottom:12px;">and she's performed</div>
-      <div class="anim-item slide-huge bleed" style="font-size:clamp(120px,38vw,300px);line-height:0.85;margin-left:-6px;color:rgba(255,255,255,0.95);">47</div>
-      <div class="anim-item" style="font-size:clamp(32px,8vw,64px);font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:-0.03em;margin-top:-4px;">songs. to date.</div>
-      <div class="anim-item slide-sub">musical theater · classical · pop · traditional</div>
-    </div>
+<!-- OUTRO -->
+<section id="outro">
+  <div class="outro-inner">
+    <div class="outro-label">my replay · all time</div>
+    <div class="outro-title">keep performing</div>
+    <div class="outro-sub">47 songs down. every note has a story.</div>
+    <a href="aanya-portfolio-v14.html" class="outro-back-btn" data-transition>
+      <svg viewBox="0 0 10 17"><path d="M9 1L1.5 8.5 9 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      back to portfolio
+    </a>
   </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 4 — ALBUM MOSAIC
-  ══════════════════════════════════════ -->
-  <div class="slide slide-4" id="s4" style="padding:60px 0 0;">
-    <div style="padding:0 28px;margin-bottom:12px;position:relative;z-index:1;">
-      <div class="anim-item slide-eyebrow" style="margin-bottom:4px;">from the shows you love</div>
-      <div class="anim-item" style="font-size:clamp(28px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1;">your repertoire.</div>
-    </div>
-    <div class="album-grid" id="album-grid" style="position:relative;z-index:1;">
-      <!-- 9 album covers — loaded via iTunes API -->
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Wicked" data-search="Wicked Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Les Misérables" data-search="Les Misérables Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="My Fair Lady" data-search="My Fair Lady Original Cast Recording Broadway"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎵</div><img alt="The Sound of Music" data-search="The Sound of Music Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎪</div><img alt="The Greatest Showman" data-search="The Greatest Showman Soundtrack"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Evita" data-search="Evita Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🥧</div><img alt="Waitress" data-search="Waitress The Musical Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎤</div><img alt="Adele 25" data-search="Adele 25"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🌹</div><img alt="A Star is Born" data-search="A Star is Born Soundtrack 2018"></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 5 — FAVOURITES TO PERFORM
-  ══════════════════════════════════════ -->
-  <div class="slide slide-5" id="s5">
-    <div class="slide-content">
-      <div class="anim-item slide-eyebrow">the ones she keeps coming back to</div>
-      <div class="anim-item" style="font-size:clamp(30px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.05;">her favourites<br>to perform.</div>
-      <div class="fav-list">
-        <div class="fav-item anim-item">
-          <span class="fav-num">01</span>
-          <span class="fav-name">she used to be mine</span>
-          <span class="fav-show">Waitress</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">02</span>
-          <span class="fav-name">when he sees me</span>
-          <span class="fav-show">Waitress</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">03</span>
-          <span class="fav-name">defying gravity</span>
-          <span class="fav-show">Wicked</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">04</span>
-          <span class="fav-name">i'm not that girl</span>
-          <span class="fav-show">Wicked</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">05</span>
-          <span class="fav-name">for good</span>
-          <span class="fav-show">Wicked</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">06</span>
-          <span class="fav-name">don't cry for me argentina</span>
-          <span class="fav-show">Evita</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">07</span>
-          <span class="fav-name">i dreamed a dream</span>
-          <span class="fav-show">Les Mis</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">08</span>
-          <span class="fav-name">the winner takes it all</span>
-          <span class="fav-show">Mamma Mia</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">09</span>
-          <span class="fav-name">show me!</span>
-          <span class="fav-show">My Fair Lady</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 6 — YOUR SHOWS
-  ══════════════════════════════════════ -->
-  <div class="slide slide-6" id="s6">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item slide-eyebrow" style="text-align:left;">her favourite musicals to perform from</div>
-      <!-- Album covers row -->
-      <div class="anim-item" style="display:flex;gap:12px;margin-bottom:20px;">
-        <div style="flex:1;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);background:rgba(255,255,255,0.1);">
-          <img id="wicked-cover" alt="Wicked" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s;">
-        </div>
-        <div style="flex:1;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);background:rgba(255,255,255,0.1);">
-          <img id="mfl-cover" alt="My Fair Lady" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s;">
-        </div>
-      </div>
-      <div class="anim-item" style="font-size:clamp(52px,15vw,120px);font-weight:800;letter-spacing:-0.05em;color:#fff;line-height:0.88;margin-left:-3px;">WICKED.</div>
-      <div class="anim-item" style="font-size:clamp(26px,7vw,58px);font-weight:700;letter-spacing:-0.04em;color:rgba(255,255,255,0.55);line-height:1.0;margin-top:6px;">MY FAIR LADY.</div>
-      <div class="anim-item slide-body" style="margin-top:16px;">3 songs from wicked alone.<br>and she's still not done with it.</div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 7 — HARDEST SONG
-  ══════════════════════════════════════ -->
-  <div class="slide slide-7" id="s7">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item slide-eyebrow">the one that challenged her most</div>
-      <div class="anim-item slide-huge" style="font-size:clamp(48px,14vw,110px);">SHOW ME!</div>
-      <div class="anim-item slide-body" style="margin-top:16px;font-size:17px;color:rgba(255,255,255,0.7);">My Fair Lady.<br>learning to find her voice<br>wasn't just about the notes.</div>
-      <div class="anim-item" style="margin-top:28px;padding:14px 18px;background:rgba(255,255,255,0.12);border-radius:14px;border:1px solid rgba(255,255,255,0.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">
-        <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase;">currently working on</div>
-        <div style="font-size:17px;font-weight:600;color:#fff;letter-spacing:-0.02em;">Don't Rain on My Parade</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px;">Funny Girl</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 8 — SONGS TO LEARN
-  ══════════════════════════════════════ -->
-  <div class="slide slide-8" id="s8">
-    <div class="slide-content">
-      <div class="anim-item slide-eyebrow">still on the list</div>
-      <div class="anim-item" style="font-size:clamp(30px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.05;margin-bottom:16px;">songs she wants<br>to learn.</div>
-      <div class="future-list">
-        <div class="future-item anim-item"><strong>The Girl in 14G</strong></div>
-        <div class="future-item anim-item"><strong>The Wizard and I</strong> · Wicked</div>
-        <div class="future-item anim-item"><strong>La Vie en Rose</strong></div>
-        <div class="future-item anim-item"><strong>What Is This Feeling?</strong> · Wicked</div>
-        <div class="future-item anim-item"><strong>Popular</strong> · Wicked</div>
-        <div class="future-item anim-item"><strong>Gimme Gimme</strong> · Thoroughly Modern Millie</div>
-        <div class="future-item anim-item"><strong>Almost There</strong> · Princess and the Frog</div>
-        <div class="future-item anim-item"><strong>I'm Here</strong> · The Color Purple</div>
-        <div class="future-item anim-item"><strong>Speechless</strong></div>
-        <div class="future-item anim-item"><strong>Reflection</strong> · Mulan</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 9 — PORTFOLIO / OUTRO
-  ══════════════════════════════════════ -->
-  <div class="slide slide-9" id="s9">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item" style="font-size:clamp(48px,13vw,96px);font-weight:800;letter-spacing:-0.04em;color:#fff;line-height:0.9;">keep<br>performing.</div>
-      <div class="anim-item slide-body" style="margin-top:16px;">47 songs down. so many more to go.</div>
-
-      <div class="anim-item portfolio-card" onclick="window.location.href='music.html'">
-        <div class="portfolio-card-label">vocal portfolio</div>
-        <div class="portfolio-card-title">my full repertoire</div>
-        <div class="portfolio-card-sub">scores, recordings &amp; performance notes</div>
-        <div class="portfolio-arrow">
-          <a href="music.html" class="portfolio-btn">
-            explore →
-          </a>
-          <span style="font-size:13px;color:rgba(255,255,255,0.4);">47 songs</span>
-        </div>
-      </div>
-
-      <!-- Overview button — shows full data summary page -->
-      <div class="anim-item" style="margin-top:14px;">
-        <a href="sounds-overview.html" class="portfolio-btn" style="width:100%;justify-content:center;background:rgba(255,255,255,0.15);color:#fff;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);box-shadow:none;">
-          overview
-        </a>
-      </div>
-
-      <div class="anim-item" style="margin-top:12px;text-align:center;">
-        <a href="index.html" style="font-size:14px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:-0.01em;">← back to portfolio</a>
-      </div>
-
-      <div class="anim-item" style="margin-top:24px;text-align:center;">
-        <span style="font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:0.04em;">aanya's replay · every performance, counted</span>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /#story -->
+</section>
 
 <script>
-// ── STORY ENGINE ──
-const TOTAL = 9;
-let current = 0;
-let animating = false;
-
-const slides   = document.querySelectorAll('.slide');
-const progBar  = document.getElementById('progress-bar');
-const navDots  = document.getElementById('nav-dots');
-
-// Build progress segments + nav dots
-for (let i = 0; i < TOTAL; i++) {
-  const seg = document.createElement('div');
-  seg.className = 'prog-seg';
-  seg.innerHTML = '<div class="prog-fill"></div>';
-  progBar.appendChild(seg);
-
-  const dot = document.createElement('div');
-  dot.className = 'nav-dot';
-  dot.dataset.i = i;
-  dot.addEventListener('click', e => { e.stopPropagation(); goTo(parseInt(dot.dataset.i)); });
-  navDots.appendChild(dot);
-}
-
-function goTo(idx, dir = 1) {
-  if (animating || idx === current || idx < 0 || idx >= TOTAL) return;
-  animating = true;
-
-  const prev = slides[current];
-  const next = slides[idx];
-
-  // Remove active from old
-  prev.classList.remove('active');
-  // Clear animations so they re-fire
-  next.querySelectorAll('.anim-item').forEach(el => {
-    el.style.animation = 'none';
-    el.offsetHeight; // reflow
-    el.style.animation = '';
-  });
-  next.classList.add('active');
-
-  current = idx;
-  updateUI();
-
-  setTimeout(() => { animating = false; }, 300);
-}
-
-function advance() { goTo(current + 1); }
-function back()    { goTo(current - 1); }
-
-function updateUI() {
-  // Progress segments
-  document.querySelectorAll('.prog-seg').forEach((seg, i) => {
-    seg.classList.toggle('done',   i < current);
-    seg.classList.toggle('active', i === current);
-  });
-  // Nav dots
-  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
-    dot.classList.toggle('active', i === current);
-  });
-}
-
-// ── TAP ZONES ──
-document.getElementById('tap-right').addEventListener('click', e => {
-  // Don't advance if clicking a link/button inside
-  if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) return;
-  ripple(e.clientX, e.clientY);
-  advance();
-});
-document.getElementById('tap-left').addEventListener('click', e => {
-  ripple(e.clientX, e.clientY);
-  back();
-});
-
-// ── RIPPLE FEEDBACK ──
-function ripple(x, y) {
-  const r = document.createElement('div');
-  r.className = 'tap-ring';
-  r.style.left = x + 'px';
-  r.style.top  = y + 'px';
-  document.body.appendChild(r);
-  r.addEventListener('animationend', () => r.remove());
-}
-
-// ── KEYBOARD NAV ──
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === ' ')  advance();
-  if (e.key === 'ArrowLeft')                    back();
-});
-
-// ── TOUCH SWIPE ──
-let touchStartX = 0, touchStartY = 0;
-document.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-    dx < 0 ? advance() : back();
-  }
+// ── SCROLL PROGRESS BAR ──
+const progressBar = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  const max = document.body.scrollHeight - window.innerHeight;
+  progressBar.style.width = (window.scrollY / max * 100) + '%';
 }, { passive: true });
 
-// ── INIT ──
-slides[0].classList.add('active');
-updateUI();
+// ── NAV TITLE FADE ──
+const navTitle = document.getElementById('nav-title');
+new IntersectionObserver(([e]) => {
+  navTitle.classList.toggle('visible', !e.isIntersecting);
+}, { threshold: 0.1 }).observe(document.getElementById('hero'));
 
-// ── ALBUM ARTWORK (iTunes Search API) ──
-async function loadAlbumArt() {
-  const cells = document.querySelectorAll('#album-grid .album-cell img');
-  const searches = [
-    'Wicked Original Broadway Cast',
-    'Les Miserables Original Cast',
-    'My Fair Lady Original Broadway',
-    'Sound of Music Original Cast',
-    'The Greatest Showman Soundtrack',
-    'Evita Original Cast Broadway',
-    'Waitress Musical Original Cast',
-    'Adele 25',
-    'A Star is Born 2018 Soundtrack'
-  ];
+// ── GENERIC SCROLL REVEAL ──
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('revealed');
+    revealObs.unobserve(e.target);
+  });
+}, { threshold: 0.1 });
 
-  for (let i = 0; i < cells.length; i++) {
-    const img = cells[i];
-    const term = encodeURIComponent(img.dataset.search || searches[i] || searches[i % searches.length]);
-    try {
-      const res  = await fetch(`https://itunes.apple.com/search?term=${term}&entity=album&limit=3&country=us`);
-      const data = await res.json();
-      // Prefer results that look like cast recordings
-      const result = data.results.find(r =>
-        r.artworkUrl100 && (r.primaryGenreName === 'Soundtrack' || r.primaryGenreName === 'Musical' || data.results[0])
-      ) || data.results[0];
-      if (result?.artworkUrl100) {
-        const url = result.artworkUrl100.replace('100x100bb', '600x600bb');
-        img.src = url;
-        img.addEventListener('load',  () => img.classList.add('loaded'), { once: true });
-        img.addEventListener('error', () => {}, { once: true });
-      }
-    } catch (_) {}
-    await new Promise(r => setTimeout(r, 80)); // stagger requests
+document.querySelectorAll(
+  '.section-eyebrow, .stat-card, .fav-card, .stage-card, .practice-card, .outro-inner'
+).forEach(el => revealObs.observe(el));
+
+// ── STAGGER REVEAL FOR SONG / WISHLIST ROWS ──
+function setupStaggerList(listEl, rowSel) {
+  const rows = listEl.querySelectorAll(rowSel);
+  if (!rows.length) return;
+  const obs = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    rows.forEach((row, i) => setTimeout(() => row.classList.add('revealed'), i * 38));
+    obs.disconnect();
+  }, { threshold: 0.05 });
+  obs.observe(rows[0]);
+}
+document.querySelectorAll('.ios-list-card').forEach(l => setupStaggerList(l, '.song-row'));
+document.querySelectorAll('.wishlist-card').forEach(l => setupStaggerList(l, '.wishlist-row'));
+
+// ── SPRING BUTTON PRESS ──
+document.querySelectorAll('.outro-back-btn, .nav-back, .nav-portfolio-link').forEach(btn => {
+  btn.addEventListener('mousedown', () => { btn.style.transform = 'scale(0.96)'; });
+  btn.addEventListener('mouseup',   () => { btn.style.transform = ''; });
+  btn.addEventListener('mouseleave',() => { btn.style.transform = ''; });
+});
+
+// ── ITUNES ARTWORK LOADER ──
+const artCache = {};
+async function loadArtwork(imgEl, term) {
+  if (artCache[term] !== undefined) {
+    if (artCache[term]) {
+      imgEl.src = artCache[term];
+      imgEl.onload = () => { imgEl.style.opacity = '1'; imgEl.closest('.song-disc')?.classList.remove('skeleton'); };
+    } else {
+      imgEl.closest('.song-disc')?.classList.remove('skeleton');
+    }
+    return;
+  }
+  try {
+    const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=album&limit=1`);
+    const data = await res.json();
+    if (data.results && data.results[0]) {
+      const url = data.results[0].artworkUrl100.replace('100x100bb', '300x300bb');
+      artCache[term] = url;
+      imgEl.src = url;
+      imgEl.onload = () => { imgEl.style.opacity = '1'; imgEl.closest('.song-disc')?.classList.remove('skeleton'); };
+    } else {
+      artCache[term] = null;
+      imgEl.closest('.song-disc')?.classList.remove('skeleton');
+    }
+  } catch(e) {
+    artCache[term] = null;
+    imgEl.closest('.song-disc')?.classList.remove('skeleton');
   }
 }
 
-loadAlbumArt();
+let reqDelay = 0;
+document.querySelectorAll('[data-itunes]').forEach(img => {
+  setTimeout(() => loadArtwork(img, img.dataset.itunes), reqDelay);
+  reqDelay += 90;
+});
 
-// ── LOAD WICKED + MY FAIR LADY COVERS FOR SLIDE 6 ──
-async function loadShowCovers() {
-  const shows = [
-    { id: 'wicked-cover',  search: 'Wicked Original Broadway Cast Recording' },
-    { id: 'mfl-cover',     search: 'My Fair Lady Original Broadway Cast' }
-  ];
-  for (const show of shows) {
-    try {
-      const res  = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(show.search)}&entity=album&limit=3&country=us`);
-      const data = await res.json();
-      const hit  = data.results.find(r => r.artworkUrl100) || data.results[0];
-      if (hit?.artworkUrl100) {
-        const img = document.getElementById(show.id);
-        if (img) {
-          img.src = hit.artworkUrl100.replace('100x100bb','600x600bb');
-          img.onload = () => { img.style.opacity = '1'; };
-        }
-      }
-    } catch (_) {}
-    await new Promise(r => setTimeout(r, 120));
-  }
-}
-loadShowCovers();
+// ── PAGE TRANSITION ──
+const overlay = document.getElementById('page-overlay');
+document.querySelectorAll('a[data-transition]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const href = link.href;
+    overlay.classList.add('active');
+    setTimeout(() => { window.location.href = href; }, 350);
+  });
+});
+window.addEventListener('pageshow', () => overlay.classList.remove('active'));
 </script>
 </body>
 </html>
