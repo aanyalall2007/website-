@@ -217,7 +217,7 @@ body {
   bottom: 76px;
   left: 24px;
   right: 24px;
-  z-index: 2;
+  z-index: 20;
   overflow: hidden;
 }
 
@@ -433,7 +433,7 @@ body {
 .slide.on .u { animation-play-state: running; }
 .u { will-change: opacity, transform; }
 
-/* ── PHONE-SCOPED FONT OVERRIDES (no vw) ── */
+
 .phone-screen .iname {
   font-size: clamp(42px, 11vw, 66px) !important;
   line-height: 0.92;
@@ -457,6 +457,23 @@ body {
 .phone-screen * {
   max-width: 100%;
 }
+
+
+/* ── PHONE FONT SIZES (px, not vw) ── */
+/* ── PHONE EXTRAS ── */
+.phone-screen .huge { font-size: 52px !important; word-break: break-word; max-width: 100%; }
+.phone-screen .bnum { font-size: 110px !important; }
+.phone-screen .bwrap { overflow: hidden; }
+.phone-screen .oey, .phone-screen .ot { font-size: 14px !important; }
+
+.phone-screen .iname { font-size: 62px !important; line-height: 0.92; max-width: 100%; word-break: break-word; }
+.phone-screen .stmt  { font-size: 36px !important; line-height: 1.15; max-width: 100%; word-break: break-word; }
+.phone-screen .snum  { font-size: 72px !important; line-height: 0.9;  max-width: 100%; }
+.phone-screen .itag  { font-size: 16px !important; }
+.phone-screen .slbl  { font-size: 13px !important; letter-spacing: 0.05em; }
+.phone-screen .ac, .phone-screen .sk, .phone-screen .ac2 { max-width: 100%; overflow: hidden; }
+/* Prevent any text from bleeding outside phone */
+.phone-screen .slide * { max-width: 100%; box-sizing: border-box; }
 
 </style>
 </head>
@@ -693,7 +710,7 @@ function sync() {
 }
 
 document.getElementById('tr').addEventListener('click', e => {
-  if (e.target.closest('a,button,.oglass,a *')) return;
+  if (e.target.closest('a,button,.oglass')) return;
   rp(e.clientX, e.clientY); next();
 });
 document.getElementById('tl').addEventListener('click', e => {
