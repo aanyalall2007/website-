@@ -399,6 +399,7 @@ body {
   backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
   border:1px solid rgba(255,255,255,.18);
   border-radius:20px; padding:20px 18px; margin-top:20px;
+  position:relative; z-index:25;
 }
 .oey { font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px; }
 .ot  { font-size:19px;font-weight:700;letter-spacing:-.03em;color:#fff;margin-bottom:2px; }
@@ -459,21 +460,24 @@ body {
 }
 
 
-/* ── PHONE FONT SIZES (px, not vw) ── */
-/* ── PHONE EXTRAS ── */
-.phone-screen .huge { font-size: 52px !important; word-break: break-word; max-width: 100%; }
-.phone-screen .bnum { font-size: 110px !important; }
-.phone-screen .bwrap { overflow: hidden; }
-.phone-screen .oey, .phone-screen .ot { font-size: 14px !important; }
 
-.phone-screen .iname { font-size: 62px !important; line-height: 0.92; max-width: 100%; word-break: break-word; }
-.phone-screen .stmt  { font-size: 36px !important; line-height: 1.15; max-width: 100%; word-break: break-word; }
-.phone-screen .snum  { font-size: 72px !important; line-height: 0.9;  max-width: 100%; }
-.phone-screen .itag  { font-size: 16px !important; }
-.phone-screen .slbl  { font-size: 13px !important; letter-spacing: 0.05em; }
-.phone-screen .ac, .phone-screen .sk, .phone-screen .ac2 { max-width: 100%; overflow: hidden; }
-/* Prevent any text from bleeding outside phone */
 .phone-screen .slide * { max-width: 100%; box-sizing: border-box; }
+
+
+/* ══ PHONE TEXT SIZES (pure px, no vw) ══ */
+.phone-screen .iname { font-size: 58px !important; line-height: 0.92 !important; word-break: break-word !important; }
+.phone-screen .stmt  { font-size: 32px !important; line-height: 1.2 !important; word-break: break-word !important; max-width: 100% !important; }
+.phone-screen .huge  { font-size: 44px !important; line-height: 1.1 !important; word-break: break-word !important; max-width: 100% !important; }
+.phone-screen .snum  { font-size: 64px !important; line-height: 0.9 !important; }
+.phone-screen .bnum  { font-size: 90px !important; line-height: 0.9 !important; overflow: hidden !important; }
+.phone-screen .itag  { font-size: 15px !important; }
+.phone-screen .slbl  { font-size: 12px !important; }
+.phone-screen .sub   { font-size: 15px !important; }
+.phone-screen .oey   { font-size: 13px !important; }
+.phone-screen .ot    { font-size: 20px !important; }
+/* prevent any text bleeding outside phone */
+.phone-screen .sb * { max-width: 100% !important; overflow-wrap: break-word !important; }
+.phone-screen .slide { overflow: hidden !important; }
 
 </style>
 </head>
@@ -660,7 +664,7 @@ body {
         <div class="os">scores, recordings & performance notes</div>
         <div class="obr">
           <a href="aanya-lall-music.pdf" target="_blank"           class="ob">explore →</a>
-          <a href="sounds-overview.html" class="ob g">overview</a>
+          <a href="sounds-overview.html" target="_blank" class="ob g">overview</a>
         </div>
       </div>
       <div class="u ohm"><a href="index.html">← back to playground</a></div>
