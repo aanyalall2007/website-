@@ -22,13 +22,13 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 40px 20px 60px;
+  padding: 20px 20px 40px;
   overflow: auto;
 }
 /* phone wrapper */
 .phone-outer {
   position: relative;
-  width: 393px;
+  width: 390px;
   flex-shrink: 0;
 }
 .phone-bezel {
@@ -63,8 +63,8 @@ body {
 .phone-screen {
   position: relative;
   z-index: 1;
-  width: 393px;
-  height: 780px;
+  width: 390px;
+  height: 844px;
   border-radius: 54px;
   overflow: hidden;
   background: #1a0800;
@@ -158,7 +158,7 @@ body {
 .ctrl svg { width:17px; height:17px; fill:white; }
 
 /* ── tap zones ── */
-#tl, #tr { position:absolute; top:0; bottom:0; z-index:15; cursor:pointer; }
+#tl, #tr { position:absolute; top:0; bottom:0; z-index:5; cursor:pointer; }
 #tl { left:0; width:32%; }
 #tr { right:0; width:68%; }
 
@@ -650,7 +650,7 @@ function sync() {
 }
 
 document.getElementById('tr').addEventListener('click', e => {
-  if (e.target.closest('a,button,.oglass')) return;
+  if (e.target.closest('a,button,.oglass,a *')) return;
   rp(e.clientX, e.clientY); next();
 });
 document.getElementById('tl').addEventListener('click', e => {
