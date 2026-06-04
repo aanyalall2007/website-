@@ -13,7 +13,7 @@
 html { height: 100%; }
 body {
   font-family: var(--font);
-  background: linear-gradient(145deg,#e8eef5 0%,#dde5f0 50%,#e4ddf0 100%);
+  background: linear-gradient(145deg,#f0eaf2 0%,#ede0ef 40%,#e8d8ec 100%);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   touch-action: manipulation;
@@ -68,6 +68,7 @@ body {
   border-radius: 54px;
   overflow: hidden;
   background: #1a0800;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 /* dynamic island */
 .phone-island {
@@ -143,7 +144,7 @@ body {
 
 /* ── bottom controls ── */
 #btns {
-  position: absolute; bottom: 16px; left: 14px; right: 14px;
+  position: absolute; bottom: 20px; left: 20px; right: 20px;
   display: flex; justify-content: space-between; z-index: 20;
 }
 .ctrl {
@@ -422,6 +423,10 @@ body {
 </head>
 <body>
 
+<a href="index.html" style="align-self:flex-start;font-size:15px;color:rgba(60,60,67,0.6);text-decoration:none;display:flex;align-items:center;gap:4px;margin-bottom:20px;transition:color 0.15s" onmouseover="this.style.color='#000'" onmouseout="this.style.color='rgba(60,60,67,0.6)'">
+  <svg width="8" height="14" fill="none" viewBox="0 0 8 14"><path d="M7 1L1 7l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  playground
+</a>
 <div class="phone-outer">
   <div class="phone-bezel"></div>
   <div class="phone-screen">
@@ -631,7 +636,7 @@ function goTo(idx) {
   sl.querySelectorAll('.u').forEach(el => { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
   sl.classList.add('on');
   sync();
-  setTimeout(() => busy = false, 200);
+  setTimeout(() => busy = false, 80);
 }
 const next = () => goTo(cur + 1);
 const prev = () => goTo(cur - 1);
