@@ -13,7 +13,7 @@
 html { height: 100%; }
 body {
   font-family: var(--font);
-  background: linear-gradient(145deg,#f0eaf2 0%,#ede0ef 40%,#e8d8ec 100%);
+  background: linear-gradient(145deg,#f2e8ee 0%,#ece0f0 35%,#e0d4f0 70%,#d8cee8 100%);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   touch-action: manipulation;
@@ -104,7 +104,7 @@ body {
 
 /* ── progress: dashed segments with gaps ── */
 #pb {
-  position: absolute; top: 58px; left: 12px; right: 12px;
+  position: absolute; top: 58px; left: 16px; right: 16px;
   display: flex; gap: 4px; z-index: 20; pointer-events: none;
 }
 .seg {
@@ -419,6 +419,10 @@ body {
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
 }
+
+/* force-reveal on fast tap */
+.slide.on .u { animation-play-state: running; }
+.u { will-change: opacity, transform; }
 </style>
 </head>
 <body>
@@ -636,7 +640,11 @@ function goTo(idx) {
   sl.querySelectorAll('.u').forEach(el => { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
   sl.classList.add('on');
   sync();
-  setTimeout(() => busy = false, 80);
+  // Force animations to complete quickly so content is always visible
+  setTimeout(() => {
+    sl.querySelectorAll('.u').forEach(el => { el.style.animationDuration = '0.15s'; });
+    busy = false;
+  }, 80);
 }
 const next = () => goTo(cur + 1);
 const prev = () => goTo(cur - 1);
@@ -679,7 +687,10 @@ document.addEventListener('touchend',   e => {
 let muted = false;
 document.getElementById('vbtn').addEventListener('click', () => {
   muted = !muted;
-  document.getElementById('vbtn').style.opacity = muted ? '0.4' : '1';
+  const vbtn = document.getElementById('vbtn');
+  vbtn.style.opacity = muted ? '0.45' : '1';
+  vbtn.title = muted ? 'unmute' : 'mute';
+  vbtn.querySelector('svg').style.filter = muted ? 'grayscale(1)' : '';
 });
 
 slides[0].classList.add('on');
