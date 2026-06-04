@@ -370,6 +370,49 @@ body.intro-active .oval-wrap { opacity: 0 !important; pointer-events: none !impo
   #intro-bg, #intro-paradox, #intro-statement, #intro-oval-wrap { transition-duration: 0.01ms !important; }
 }
 
+
+/* ── SITE FOOTER ── */
+#site-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  background: rgba(13,13,13,0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 190;
+  font-family: 'EB Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.35);
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.footer-status {
+  color: rgba(138,115,85,0.7);
+  font-style: italic;
+}
+.footer-divider { opacity: 0.3; }
+.footer-built { font-style: italic; }
+.footer-link {
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 4px;
+  transition: color 0.2s, opacity 0.2s;
+}
+.footer-link:hover { color: rgba(255,255,255,0.9); }
+.footer-link::after { display: none !important; }
+.footer-amp { opacity: 0.3; }
+.footer-icon-claude { width: 13px; height: 13px; color: currentColor; }
+.footer-rocky-logo {
+  height: 14px; width: auto;
+  opacity: 0.55;
+  filter: brightness(10); /* make dark logo white-ish */
+  vertical-align: middle;
+  transition: opacity 0.2s;
+}
+.footer-link:hover .footer-rocky-logo { opacity: 0.9; }
+
 </style>
 </head>
 <body>
@@ -704,5 +747,24 @@ document.addEventListener('keydown', e => {
 })();
 </script>
 
+
+<!-- ── SITE FOOTER ── -->
+<div id="site-footer" aria-label="site status">
+  <span class="footer-status">✦ in progress</span>
+  <span class="footer-divider">·</span>
+  <span class="footer-built">currently building with</span>
+  <a href="https://claude.ai" target="_blank" class="footer-link footer-claude">
+    <svg class="footer-icon-claude" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Claude">
+      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" fill="currentColor" opacity="0.15"/>
+      <path d="M8 12.5l2.5 2.5 5.5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    claude
+  </a>
+  <span class="footer-amp">&</span>
+  <a href="https://rockysmatcha.com" target="_blank" class="footer-link footer-rocky">
+    <img src="https://www.rockysmatcha.com/cdn/shop/files/Rm-Blue-Header.png?crop=center&height=57&v=1711155080&width=100" 
+         class="footer-rocky-logo" alt="rocky's matcha" loading="lazy">
+  </a>
+</div>
 </body>
 </html>
