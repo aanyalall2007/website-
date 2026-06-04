@@ -3,315 +3,425 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>aanya's replay</title>
+<title>aanya recapped.</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
   --spring: linear(0,.006,.025,.056,.098,.15,.21,.27,.34,.41,.48,.55,.62,.69,.75,.81,.86,.91,.95,.98,1.004,1.015,1.022,1.025,1.024,1.021,1.015,1.008,1.002,.998,.996,.995,.996,.997,.999,1);
 }
 html, body { height: 100%; overflow: hidden; }
 body {
-  font-family: var(--font-sf);
+  font-family: var(--font);
   background: #1a0a00;
   -webkit-font-smoothing: antialiased;
   touch-action: manipulation;
   user-select: none;
 }
 
-/* ── STORY SHELL ── */
-#story {
-  position: fixed; inset: 0;
-  display: flex; flex-direction: column;
-}
+/* ════════════════════════════════════════════
+   STORY SHELL
+════════════════════════════════════════════ */
+#story { position: fixed; inset: 0; }
 
-/* ── PROGRESS BAR ── */
+/* ── PROGRESS BAR (dashed segments with gaps) ── */
 #progress-bar {
-  position: absolute; top: 14px; left: 14px; right: 14px;
-  display: flex; gap: 3px; z-index: 20; pointer-events: none;
+  position: absolute; top: 12px; left: 14px; right: 14px;
+  display: flex; gap: 4px; z-index: 20; pointer-events: none;
 }
 .prog-seg {
-  flex: 1; height: 3px; border-radius: 2px;
-  background: rgba(255,255,255,0.32); overflow: hidden;
+  flex: 1; height: 2.5px; border-radius: 2px;
+  background: rgba(255,255,255,0.35);
+  position: relative; overflow: hidden;
 }
-.prog-fill {
-  height: 100%; width: 0%; background: #fff;
-  border-radius: 2px;
-  transition: width 0.25s ease;
+.prog-seg.done { background: rgba(255,255,255,0.9); }
+.prog-seg.active { background: rgba(255,255,255,0.35); }
+.prog-seg.active::after {
+  content: '';
+  position: absolute; inset: 0; left: -100%;
+  background: rgba(255,255,255,0.9);
+  animation: seg-fill 0.3s ease forwards;
 }
-.prog-seg.done .prog-fill { width: 100%; }
-.prog-seg.active .prog-fill { width: 100%; }
+@keyframes seg-fill { to { left: 0; } }
 
-/* ── STORY HEADER LABELS ── */
+/* ── HEADER ── */
 #story-header {
-  position: absolute; top: 26px; left: 14px; right: 14px;
+  position: absolute; top: 24px; left: 14px; right: 14px;
   display: flex; justify-content: space-between; align-items: center;
   z-index: 20; pointer-events: none;
 }
-.header-label {
-  font-size: 13px; font-weight: 600;
-  color: rgba(255,255,255,0.85);
-  letter-spacing: -0.01em;
+.hdr-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.88); letter-spacing: -0.01em; }
+.hdr-apple {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.65);
 }
-.header-apple {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 13px; font-weight: 500;
-  color: rgba(255,255,255,0.7);
+.hdr-apple svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* ── BOTTOM CONTROLS (volume + share) ── */
+#story-controls {
+  position: absolute; bottom: 20px; left: 16px; right: 16px;
+  display: flex; justify-content: space-between; z-index: 20;
+  pointer-events: none;
 }
-.header-apple svg { width: 14px; height: 14px; fill: currentColor; }
+.ctrl-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(0,0,0,0.32);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: none; display: flex; align-items: center; justify-content: center;
+  pointer-events: auto; cursor: pointer;
+  transition: transform 0.2s var(--spring), background 0.15s;
+}
+.ctrl-btn:active { transform: scale(0.88); background: rgba(0,0,0,0.5); }
+.ctrl-btn svg { width: 18px; height: 18px; fill: white; }
 
 /* ── TAP ZONES ── */
 #tap-left, #tap-right {
-  position: absolute; top: 0; bottom: 0; z-index: 15;
-  cursor: pointer;
+  position: absolute; top: 0; bottom: 0; z-index: 15; cursor: pointer;
 }
 #tap-left  { left: 0; width: 33%; }
 #tap-right { right: 0; width: 67%; }
 
-/* ── SLIDES ── */
+/* ── NAV DOTS ── */
+#nav-dots {
+  position: absolute; bottom: 68px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 5px; z-index: 20; pointer-events: none;
+}
+.nav-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  transition: all 0.3s var(--spring);
+}
+.nav-dot.active { background: #fff; transform: scale(1.5); }
+
+/* ════════════════════════════════════════════
+   SLIDE BASE
+════════════════════════════════════════════ */
 .slide {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  padding: 60px 28px 44px;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.12s ease;
   overflow: hidden;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.15s ease;
 }
 .slide.active { opacity: 1; pointer-events: none; }
 
-/* Gradient per slide */
-.slide-1 { background: linear-gradient(160deg, #C85A00 0%, #7B2D8B 100%); }
-.slide-2 { background: linear-gradient(160deg, #F0900C 0%, #C85A00 60%, #8B3000 100%); }
-.slide-3 { background: linear-gradient(160deg, #F59520 0%, #E07010 50%, #B84000 100%); }
-.slide-4 { background: linear-gradient(160deg, #E87C10 0%, #D06000 60%, #7B3090 100%); }
-.slide-5 { background: linear-gradient(160deg, #F08010 0%, #C05000 55%, #803000 100%); }
-.slide-6 { background: linear-gradient(160deg, #D04090 0%, #8830B0 50%, #4820A0 100%); }
-.slide-7 { background: linear-gradient(160deg, #E08010 0%, #A03060 50%, #602090 100%); }
-.slide-8 { background: linear-gradient(160deg, #4820A0 0%, #2010C0 50%, #100880 100%); }
-.slide-9 { background: linear-gradient(160deg, #F09015 0%, #E07010 40%, #C85A00 100%); }
+/* Slide-specific gradients */
+.s-amber  { background: linear-gradient(160deg, #F09015 0%, #D06000 55%, #9A3D00 100%); }
+.s-amber2 { background: linear-gradient(160deg, #E88010 0%, #C05000 50%, #7B2D00 100%); }
+.s-warm   { background: linear-gradient(160deg, #F0900C 0%, #C85A00 60%, #8B3000 100%); }
+.s-teal   { background: linear-gradient(145deg, #1E7060 0%, #2D9070 40%, #3AAA80 80%, #60C090 100%); }
+.s-silver { background: linear-gradient(160deg, #3C3C3E 0%, #2A2A2C 50%, #1C1C1E 100%); }
+.s-deep   { background: linear-gradient(160deg, #28204A 0%, #1A1430 50%, #100C20 100%); }
+.s-intro  { background: linear-gradient(160deg, #B85000 0%, #6B2080 60%, #3A1060 100%); }
 
-/* ── SLIDE TEXT SYSTEM ── */
-.slide-eyebrow {
-  font-size: 13px; font-weight: 500;
-  color: rgba(255,255,255,0.65); letter-spacing: 0.02em;
-  margin-bottom: 20px; margin-top: auto;
+/* Noise texture overlay for silver slides */
+.noise::before {
+  content: '';
+  position: absolute; inset: -200%; width: 400%; height: 400%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04; pointer-events: none; z-index: 0;
+  animation: noise-anim 0.5s steps(1) infinite;
 }
-.slide-huge {
-  font-size: clamp(56px, 17vw, 128px);
-  font-weight: 800; letter-spacing: -0.04em;
-  color: #fff; line-height: 0.9;
-  /* overflow intentional — bleeds off screen like Replay */
+@keyframes noise-anim {
+  0%  { transform: translate(0,0); }
+  20% { transform: translate(-2%,-3%); }
+  40% { transform: translate(3%,2%); }
+  60% { transform: translate(-1%,4%); }
+  80% { transform: translate(4%,-2%); }
+  100%{ transform: translate(-2%,3%); }
 }
-.slide-huge.bleed {
-  font-size: clamp(80px, 24vw, 200px);
-  margin-left: -4px;
-}
-.slide-large {
-  font-size: clamp(36px, 8vw, 72px);
-  font-weight: 700; letter-spacing: -0.035em;
-  color: #fff; line-height: 1.0;
-}
-.slide-body {
-  font-size: clamp(15px, 2.5vw, 20px);
-  font-weight: 400; color: rgba(255,255,255,0.75);
-  line-height: 1.5; margin-top: 12px;
-  max-width: 340px;
-}
-.slide-sub {
-  font-size: 13px; font-weight: 500;
-  color: rgba(255,255,255,0.5); letter-spacing: 0.02em;
-  margin-top: 16px;
-}
-.text-dim { color: rgba(255,255,255,0.35); }
 
-/* ── ENTRANCE ANIMATION ── */
-.slide-content {
-  display: flex; flex-direction: column;
-  flex: 1; justify-content: flex-end;
+/* slide content wrapper */
+.slide-body { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; padding: 60px 22px 88px; }
+
+/* entrance animation */
+.slide.active .anim-in {
+  animation: anim-up 0.55s var(--spring) both;
 }
-.slide.active .anim-item {
-  animation: slide-up 0.55s var(--spring) both;
-}
-.slide.active .anim-item:nth-child(2) { animation-delay: 0.08s; }
-.slide.active .anim-item:nth-child(3) { animation-delay: 0.16s; }
-.slide.active .anim-item:nth-child(4) { animation-delay: 0.24s; }
-.slide.active .anim-item:nth-child(5) { animation-delay: 0.32s; }
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(32px); }
+.slide.active .anim-in:nth-child(2) { animation-delay: 0.06s; }
+.slide.active .anim-in:nth-child(3) { animation-delay: 0.13s; }
+.slide.active .anim-in:nth-child(4) { animation-delay: 0.20s; }
+.slide.active .anim-in:nth-child(5) { animation-delay: 0.27s; }
+.slide.active .anim-in:nth-child(6) { animation-delay: 0.34s; }
+@keyframes anim-up {
+  from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── SLIDE 1: INTRO ── */
-.intro-bg {
-  position: absolute; inset: 0;
-  background: url('') center/cover no-repeat;
-  filter: blur(0px) brightness(0.65) saturate(1.2);
+/* ── TYPE SYSTEM (Apple Music Replay spec) ── */
+.t-label {
+  font-size: 15px; font-weight: 400;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: -0.01em; margin-bottom: 4px;
 }
-.intro-bg-grad {
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, transparent 20%, rgba(100,20,0,0.7) 70%, rgba(80,10,0,0.95) 100%);
+.t-huge {
+  font-size: clamp(52px, 16vw, 110px);
+  font-weight: 800; letter-spacing: -0.04em;
+  color: #fff; line-height: 0.92;
 }
-.intro-title-wrap {
-  margin-top: auto;
+.t-large {
+  font-size: clamp(36px, 10vw, 72px);
+  font-weight: 800; letter-spacing: -0.04em;
+  color: #fff; line-height: 0.94;
 }
+.t-statement {
+  font-size: clamp(30px, 8.5vw, 60px);
+  font-weight: 700; letter-spacing: -0.035em;
+  color: #fff; line-height: 1.02;
+}
+.t-stat {
+  font-size: clamp(15px, 3.5vw, 22px);
+  font-weight: 400; color: rgba(255,255,255,0.7);
+  margin-top: 8px; letter-spacing: -0.01em;
+}
+.t-body {
+  font-size: 17px; font-weight: 400;
+  color: rgba(255,255,255,0.65); line-height: 1.5;
+}
+.t-small {
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  letter-spacing: 0.01em;
+}
+
+/* ── CIRCLE ARTWORK ── */
+.circle-art {
+  border-radius: 50%; overflow: hidden;
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.12);
+  flex-shrink: 0;
+}
+.circle-art img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s; }
+.circle-art img.loaded { opacity: 1; }
+
+/* ════════════════════════════════════════════
+   SLIDE 1 — INTRO
+════════════════════════════════════════════ */
+#s1.slide { justify-content: flex-end; }
+#s1 .slide-body { justify-content: flex-end; padding-bottom: 100px; }
 .intro-name {
-  font-size: clamp(72px, 22vw, 180px);
+  font-size: clamp(68px, 20vw, 150px);
   font-weight: 800; letter-spacing: -0.05em;
   color: #fff; line-height: 0.88;
 }
-.intro-sub-line {
-  font-size: 16px; font-weight: 400;
-  color: rgba(255,255,255,0.6);
-  margin-top: 12px; letter-spacing: 0.01em;
+.intro-tagline {
+  font-size: 17px; font-weight: 400;
+  color: rgba(255,255,255,0.55); margin-top: 12px;
 }
 
-/* ── SLIDE 4: ALBUM GRID ── */
-.album-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  margin: 0 -28px;
-  flex: 1;
-  overflow: hidden;
+/* ════════════════════════════════════════════
+   SLIDE 2 — ALBUM FAN COLLAGE
+════════════════════════════════════════════ */
+#s2 .slide-body { padding: 60px 0 88px; }
+.fan-header { padding: 0 22px 16px; }
+.fan-stage {
+  position: relative; flex: 1;
+  min-height: 0; overflow: hidden;
 }
-.album-cell {
-  aspect-ratio: 1; overflow: hidden;
-  background: rgba(255,255,255,0.08);
-  position: relative;
-  /* spring lift on hover */
-  transition: transform 0.35s linear(0,.01,.04,.1,.19,.29,.4,.51,.61,.7,.78,.85,.9,.94,.97,.99,1.005,1.008,1.007,1.004,1);
-}
-.album-cell:hover { transform: scale(1.04); z-index: 2; }
-.album-cell img {
-  width: 100%; height: 100%; object-fit: cover;
-  display: block;
-  transition: opacity 0.5s ease;
+.fan-album {
+  position: absolute;
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.1);
   opacity: 0;
 }
-.album-cell img.loaded { opacity: 1; }
-.album-cell-placeholder {
+.fan-album img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Settled fan positions */
+.fan-album:nth-child(1)  { width:140px;height:140px; top: 5%;  left: 4%;  transform: rotate(-9deg); }
+.fan-album:nth-child(2)  { width:160px;height:160px; top: 8%;  left: 36%; transform: rotate(3deg); }
+.fan-album:nth-child(3)  { width:130px;height:130px; top: 2%;  left: 65%; transform: rotate(-5deg); }
+.fan-album:nth-child(4)  { width:155px;height:155px; top: 40%; left: 8%;  transform: rotate(7deg); }
+.fan-album:nth-child(5)  { width:170px;height:170px; top: 38%; left: 38%; transform: rotate(-3deg); }
+.fan-album:nth-child(6)  { width:135px;height:135px; top: 42%; left: 72%; transform: rotate(6deg); }
+.fan-album:nth-child(7)  { width:120px;height:120px; top: 72%; left: 3%;  transform: rotate(-6deg); }
+.fan-album:nth-child(8)  { width:145px;height:145px; top: 70%; left: 32%; transform: rotate(4deg); }
+.fan-album:nth-child(9)  { width:125px;height:125px; top: 74%; left: 66%; transform: rotate(-8deg); }
+
+/* Fan-in animation — each from off-screen direction */
+#s2.active .fan-album:nth-child(1) { animation: fan1 0.65s var(--spring) 0.05s both; }
+#s2.active .fan-album:nth-child(2) { animation: fan2 0.65s var(--spring) 0.12s both; }
+#s2.active .fan-album:nth-child(3) { animation: fan3 0.65s var(--spring) 0.08s both; }
+#s2.active .fan-album:nth-child(4) { animation: fan4 0.65s var(--spring) 0.18s both; }
+#s2.active .fan-album:nth-child(5) { animation: fan5 0.65s var(--spring) 0.10s both; }
+#s2.active .fan-album:nth-child(6) { animation: fan6 0.65s var(--spring) 0.22s both; }
+#s2.active .fan-album:nth-child(7) { animation: fan7 0.65s var(--spring) 0.28s both; }
+#s2.active .fan-album:nth-child(8) { animation: fan8 0.65s var(--spring) 0.16s both; }
+#s2.active .fan-album:nth-child(9) { animation: fan9 0.65s var(--spring) 0.32s both; }
+
+@keyframes fan1 { from { opacity:0; transform:rotate(-9deg) translate(-180px,-80px) scale(0.7); } to { opacity:1; transform:rotate(-9deg) translate(0,0) scale(1); } }
+@keyframes fan2 { from { opacity:0; transform:rotate(3deg) translate(0,-200px) scale(0.7); }  to { opacity:1; transform:rotate(3deg) translate(0,0) scale(1); } }
+@keyframes fan3 { from { opacity:0; transform:rotate(-5deg) translate(180px,-160px) scale(0.7); } to { opacity:1; transform:rotate(-5deg) translate(0,0) scale(1); } }
+@keyframes fan4 { from { opacity:0; transform:rotate(7deg) translate(-200px,0) scale(0.7); }   to { opacity:1; transform:rotate(7deg) translate(0,0) scale(1); } }
+@keyframes fan5 { from { opacity:0; transform:rotate(-3deg) scale(0.5); }                      to { opacity:1; transform:rotate(-3deg) scale(1); } }
+@keyframes fan6 { from { opacity:0; transform:rotate(6deg) translate(200px,40px) scale(0.7); } to { opacity:1; transform:rotate(6deg) translate(0,0) scale(1); } }
+@keyframes fan7 { from { opacity:0; transform:rotate(-6deg) translate(-180px,120px) scale(0.7); } to { opacity:1; transform:rotate(-6deg) translate(0,0) scale(1); } }
+@keyframes fan8 { from { opacity:0; transform:rotate(4deg) translate(0,200px) scale(0.7); }    to { opacity:1; transform:rotate(4deg) translate(0,0) scale(1); } }
+@keyframes fan9 { from { opacity:0; transform:rotate(-8deg) translate(180px,160px) scale(0.7); } to { opacity:1; transform:rotate(-8deg) translate(0,0) scale(1); } }
+
+/* ════════════════════════════════════════════
+   SLIDE 3 — STATEMENT
+════════════════════════════════════════════ */
+#s3 .slide-body { justify-content: center; }
+
+/* ════════════════════════════════════════════
+   SLIDE 4 — BIG NUMBER
+════════════════════════════════════════════ */
+#s4 .slide-body { justify-content: flex-end; }
+.bleed-num {
+  font-size: clamp(130px, 40vw, 280px);
+  font-weight: 800; letter-spacing: -0.05em;
+  color: rgba(255,255,255,0.95); line-height: 0.82;
+  margin-left: -6px;
+}
+
+/* ════════════════════════════════════════════
+   SLIDE 5 — TOP SHOW HERO (like Top Artist)
+════════════════════════════════════════════ */
+#s5 .slide-body { justify-content: flex-start; }
+.hero-circle-wrap {
+  margin: 20px auto 0;
+  width: min(220px, 58vw);
+  height: min(220px, 58vw);
+}
+
+/* ════════════════════════════════════════════
+   SLIDE 6 — STACKED CIRCLES (Each show brought new stories)
+════════════════════════════════════════════ */
+#s6 .slide-body { padding: 60px 0 88px; position: relative; }
+.stacked-hdr { padding: 0 22px 0; position: relative; z-index: 3; }
+.stacked-circles {
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  top: 110px; bottom: 50px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: -40px;
+}
+.stack-circle {
+  width: min(210px, 56vw);
+  height: min(210px, 56vw);
+  border-radius: 50%; overflow: hidden;
+  box-shadow: 0 -20px 40px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
+  flex-shrink: 0; margin-top: -44px;
+  opacity: 0; transform: translateY(60px) scale(0.85);
+  transition: opacity 0.55s ease, transform 0.55s var(--spring);
+}
+.stack-circle:first-child { margin-top: 0; }
+.stack-circle img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s; }
+.stack-circle img.loaded { opacity: 1; }
+#s6.active .stack-circle:nth-child(1) { opacity:1; transform:none; transition-delay: 0.1s; }
+#s6.active .stack-circle:nth-child(2) { opacity:1; transform:none; transition-delay: 0.22s; }
+#s6.active .stack-circle:nth-child(3) { opacity:1; transform:none; transition-delay: 0.34s; }
+
+/* ════════════════════════════════════════════
+   SLIDE 7 — REPEATED COVER ANTHEM
+════════════════════════════════════════════ */
+#s7 .slide-body { padding: 60px 0 88px; }
+.anthem-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 3px; margin: 0; flex: 1;
+}
+.anthem-cell {
+  aspect-ratio: 1; overflow: hidden;
+  background: rgba(255,255,255,0.08);
+  opacity: 0; transform: scale(0.85);
+  transition: opacity 0.4s ease, transform 0.4s var(--spring);
+}
+.anthem-cell img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s; }
+.anthem-cell img.loaded { opacity: 1; }
+#s7.active .anthem-cell:nth-child(1) { opacity:1; transform:none; transition-delay: 0.04s; }
+#s7.active .anthem-cell:nth-child(2) { opacity:1; transform:none; transition-delay: 0.10s; }
+#s7.active .anthem-cell:nth-child(3) { opacity:1; transform:none; transition-delay: 0.16s; }
+#s7.active .anthem-cell:nth-child(4) { opacity:1; transform:none; transition-delay: 0.22s; }
+#s7.active .anthem-cell:nth-child(5) { opacity:1; transform:none; transition-delay: 0.28s; }
+#s7.active .anthem-cell:nth-child(6) { opacity:1; transform:none; transition-delay: 0.34s; }
+.anthem-caption { padding: 16px 22px 0; position: relative; z-index: 2; }
+
+/* ════════════════════════════════════════════
+   SLIDE 8 — TOP SONG DETAIL
+════════════════════════════════════════════ */
+#s8 .slide-body { padding: 60px 0 88px; }
+.topsong-art {
+  width: 100%; height: 55vh; max-height: 380px;
+  position: relative; overflow: hidden;
+  flex-shrink: 0;
+}
+.topsong-art img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity 0.5s;
+}
+.topsong-art img.loaded { opacity: 1; }
+.topsong-art-placeholder {
   position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
   display: flex; align-items: center; justify-content: center;
-  font-size: 28px; opacity: 0.25;
+  font-size: 64px;
 }
-/* shimmer loading state */
-.album-cell::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
-}
-.album-cell img.loaded ~ .album-cell-placeholder { display: none; }
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+.topsong-info { padding: 20px 22px 0; }
 
-/* ── SLIDE 5: SONG LIST ── */
-.fav-list {
-  display: flex; flex-direction: column; gap: 0;
-  margin-top: 20px;
+/* ════════════════════════════════════════════
+   SLIDE 9 — FUTURE (songs to learn)
+════════════════════════════════════════════ */
+#s9 .slide-body { padding: 60px 22px 88px; }
+.learn-list { margin-top: 18px; display: flex; flex-direction: column; gap: 0; }
+.learn-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0; border-bottom: 0.5px solid rgba(255,255,255,0.1);
+  opacity: 0; transform: translateX(-16px);
+  transition: opacity 0.38s ease, transform 0.38s var(--spring);
 }
-.fav-item {
-  padding: 11px 0;
-  border-bottom: 0.5px solid rgba(255,255,255,0.15);
-  display: flex; align-items: baseline; gap: 12px;
+.learn-row:last-child { border-bottom: none; }
+#s9.active .learn-row:nth-child(1)  { opacity:1;transform:none;transition-delay:0.08s; }
+#s9.active .learn-row:nth-child(2)  { opacity:1;transform:none;transition-delay:0.14s; }
+#s9.active .learn-row:nth-child(3)  { opacity:1;transform:none;transition-delay:0.20s; }
+#s9.active .learn-row:nth-child(4)  { opacity:1;transform:none;transition-delay:0.26s; }
+#s9.active .learn-row:nth-child(5)  { opacity:1;transform:none;transition-delay:0.32s; }
+#s9.active .learn-row:nth-child(6)  { opacity:1;transform:none;transition-delay:0.38s; }
+#s9.active .learn-row:nth-child(7)  { opacity:1;transform:none;transition-delay:0.44s; }
+#s9.active .learn-row:nth-child(8)  { opacity:1;transform:none;transition-delay:0.50s; }
+#s9.active .learn-row:nth-child(9)  { opacity:1;transform:none;transition-delay:0.56s; }
+#s9.active .learn-row:nth-child(10) { opacity:1;transform:none;transition-delay:0.62s; }
+.learn-bullet {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); flex-shrink: 0;
 }
-.fav-num {
-  font-size: 12px; font-weight: 500;
-  color: rgba(255,255,255,0.4); width: 18px; flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.fav-name {
-  font-size: clamp(16px, 3vw, 20px); font-weight: 600;
-  color: #fff; letter-spacing: -0.02em; flex: 1;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.fav-show {
-  font-size: 12px; color: rgba(255,255,255,0.45);
-  flex-shrink: 0; letter-spacing: 0.01em;
-}
+.learn-name { font-size: 16px; font-weight: 500; color: #fff; letter-spacing: -0.02em; flex: 1; }
+.learn-show { font-size: 12px; color: rgba(255,255,255,0.4); flex-shrink: 0; }
 
-/* ── SLIDE 7: FUTURE SONGS ── */
-.future-list {
-  display: flex; flex-direction: column; gap: 8px;
-  margin-top: 16px;
-}
-.future-item {
-  font-size: clamp(15px, 2.8vw, 18px); font-weight: 500;
-  color: rgba(255,255,255,0.7); letter-spacing: -0.02em;
-  padding: 4px 0;
-}
-.future-item strong { color: #fff; }
-
-/* ── SLIDE 9: PORTFOLIO ── */
-.portfolio-card {
+/* ════════════════════════════════════════════
+   SLIDE 10 — OUTRO
+════════════════════════════════════════════ */
+#s10 .slide-body { justify-content: center; }
+.outro-card {
   background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 20px; padding: 24px 22px;
-  margin-top: 20px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px; padding: 22px 20px; margin-top: 24px;
   cursor: pointer;
   transition: transform 0.3s var(--spring), background 0.2s;
 }
-.portfolio-card:active { transform: scale(0.97); }
-.portfolio-card:hover { background: rgba(255,255,255,0.18); }
-.portfolio-card-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: rgba(255,255,255,0.5);
-  margin-bottom: 8px;
-}
-.portfolio-card-title {
-  font-size: 22px; font-weight: 700;
-  letter-spacing: -0.03em; color: #fff;
-  margin-bottom: 4px;
-}
-.portfolio-card-sub {
-  font-size: 14px; color: rgba(255,255,255,0.55);
-}
-.portfolio-arrow {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 16px;
-}
-.portfolio-btn {
-  display: inline-flex; align-items: center; gap: 6px;
+.outro-card:hover { background: rgba(255,255,255,0.17); }
+.outro-card:active { transform: scale(0.97); }
+.outro-card-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 6px; }
+.outro-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: #fff; margin-bottom: 3px; }
+.outro-card-sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
+.outro-btn-row { display: flex; gap: 10px; }
+.outro-btn {
+  display: inline-flex; align-items: center; gap: 5px;
   background: white; color: #1C1C1E;
   border: none; border-radius: 999px;
-  padding: 10px 20px; font-size: 15px; font-weight: 600;
-  font-family: var(--font-sf); cursor: pointer;
-  text-decoration: none;
+  padding: 10px 20px; font-size: 14px; font-weight: 600;
+  font-family: var(--font); cursor: pointer; text-decoration: none;
   transition: transform 0.2s var(--spring), opacity 0.15s;
 }
-.portfolio-btn:hover { opacity: 0.9; }
-.portfolio-btn:active { transform: scale(0.94); }
-
-/* ── SLIDE SKIP / BACK NAV (bottom) ── */
-.nav-dots {
-  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 6px; z-index: 20;
+.outro-btn:hover { opacity: 0.9; }
+.outro-btn:active { transform: scale(0.94); }
+.outro-btn.ghost {
+  background: rgba(255,255,255,0.14); color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
 }
-.nav-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transition: all 0.3s var(--spring);
-}
-.nav-dot.active { background: #fff; transform: scale(1.4); }
-
-/* tap feedback ring */
-.tap-ring {
-  position: fixed; border-radius: 50%;
-  background: rgba(255,255,255,0.18);
-  pointer-events: none; z-index: 30;
-  width: 64px; height: 64px;
-  transform: translate(-50%,-50%) scale(0);
-  animation: ring-out 0.5s ease forwards;
-}
-@keyframes ring-out {
-  0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.6; }
-  100% { transform: translate(-50%,-50%) scale(1.5); opacity: 0; }
-}
+.outro-home { margin-top: 16px; text-align: center; }
+.outro-home a { font-size: 14px; color: rgba(255,255,255,0.38); text-decoration: none; }
 
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
@@ -323,18 +433,26 @@ body {
 
 <div id="story">
 
-  <!-- PROGRESS SEGMENTS -->
-  <div id="progress-bar">
-    <!-- generated by JS -->
-  </div>
+  <!-- PROGRESS BAR -->
+  <div id="progress-bar"></div>
 
-  <!-- STORY HEADER -->
+  <!-- HEADER -->
   <div id="story-header">
-    <span class="header-label">aanya's replay</span>
-    <span class="header-apple">
+    <span class="hdr-label">aanya recapped.</span>
+    <span class="hdr-apple">
       <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-37.3-149.3-81.1c-51.4-51.9-93.7-129.9-93.7-204.7 0-207.7 135.4-317 269.8-317 36.5 0 102.1 10.9 148.1 10.9 44.4 0 109.3-11.5 148.2-11.5 60.4 0 120.6 28.5 159.3 82.1zm-166.5-115.1c-5.1 36.3-27.7 77.9-60.3 103.2-29.7 23.3-63.7 44-120.2 44-6.4 0-12.8-.5-19.2-.5-5.1-34.9 11.8-81.1 40.7-109.5 30.8-30.8 76.1-53.6 119-53.6 6.4 0 12.8.5 39.5 16.4z"/></svg>
       Music
     </span>
+  </div>
+
+  <!-- BOTTOM CONTROLS -->
+  <div id="story-controls">
+    <button class="ctrl-btn" id="vol-btn" aria-label="volume">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+    </button>
+    <button class="ctrl-btn" id="share-btn" aria-label="share">
+      <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.50-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
   </div>
 
   <!-- TAP ZONES -->
@@ -342,213 +460,173 @@ body {
   <div id="tap-right"></div>
 
   <!-- NAV DOTS -->
-  <div class="nav-dots" id="nav-dots"></div>
+  <div id="nav-dots"></div>
 
   <!-- ══════════════════════════════════════
        SLIDE 1 — INTRO
   ══════════════════════════════════════ -->
-  <div class="slide slide-1" id="s1">
-    <div class="intro-bg-grad" style="background:linear-gradient(to bottom,rgba(100,20,0,0.3) 0%,rgba(80,10,80,0.6) 60%,rgba(40,0,60,0.95) 100%);position:absolute;inset:0;"></div>
-    <div class="slide-content" style="position:relative;z-index:2;">
-      <div class="intro-title-wrap">
-        <div class="anim-item intro-name">aanya<br>recapped.</div>
-        <div class="anim-item intro-sub-line">a lifetime of singing, revisited.</div>
+  <div class="slide s-intro" id="s1">
+    <div class="slide-body">
+      <div class="anim-in intro-name">aanya<br>recapped.</div>
+      <div class="anim-in intro-tagline">a lifetime of singing, revisited.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 2 — ALBUM FAN COLLAGE
+  ══════════════════════════════════════ -->
+  <div class="slide s-amber" id="s2">
+    <div class="slide-body">
+      <div class="fan-header">
+        <div class="anim-in t-label">from the shows she performs</div>
+        <div class="anim-in t-large" style="font-size:clamp(28px,8vw,52px);">her repertoire.</div>
+      </div>
+      <div class="fan-stage">
+        <div class="fan-album"><img alt="Wicked"            data-search="Wicked Original Broadway Cast Recording"></div>
+        <div class="fan-album"><img alt="Les Misérables"    data-search="Les Misérables Original Cast Recording"></div>
+        <div class="fan-album"><img alt="My Fair Lady"      data-search="My Fair Lady Original Broadway Cast Recording"></div>
+        <div class="fan-album"><img alt="Sound of Music"    data-search="Sound of Music Original Cast Recording"></div>
+        <div class="fan-album"><img alt="Greatest Showman"  data-search="The Greatest Showman Soundtrack"></div>
+        <div class="fan-album"><img alt="Evita"             data-search="Evita Original Cast Broadway Recording"></div>
+        <div class="fan-album"><img alt="Waitress"          data-search="Waitress Musical Original Cast Recording"></div>
+        <div class="fan-album"><img alt="Adele 25"          data-search="Adele 25"></div>
+        <div class="fan-album"><img alt="A Star is Born"    data-search="A Star is Born 2018 Soundtrack"></div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       SLIDE 2 — STATEMENT
+       SLIDE 3 — STATEMENT
   ══════════════════════════════════════ -->
-  <div class="slide slide-2" id="s2">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item slide-huge" style="font-size:clamp(44px,13vw,100px);line-height:1.02;">A lot of<br>singing can<br>happen in<br>a lifetime.</div>
+  <div class="slide s-warm" id="s3">
+    <div class="slide-body">
+      <div class="anim-in t-statement">A lot of<br>singing can<br>happen in<br>a lifetime.</div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       SLIDE 3 — BIG NUMBER
+       SLIDE 4 — BIG NUMBER
   ══════════════════════════════════════ -->
-  <div class="slide slide-3" id="s3">
-    <div class="slide-content" style="justify-content:flex-end;">
-      <div class="anim-item slide-eyebrow" style="margin-bottom:12px;">and she's performed</div>
-      <div class="anim-item slide-huge bleed" style="font-size:clamp(120px,38vw,300px);line-height:0.85;margin-left:-6px;color:rgba(255,255,255,0.95);">47</div>
-      <div class="anim-item" style="font-size:clamp(32px,8vw,64px);font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:-0.03em;margin-top:-4px;">songs. to date.</div>
-      <div class="anim-item slide-sub">musical theater · classical · pop · traditional</div>
+  <div class="slide s-amber2" id="s4">
+    <div class="slide-body">
+      <div class="anim-in t-label">and she's performed</div>
+      <div class="anim-in bleed-num">47</div>
+      <div class="anim-in t-large" style="color:rgba(255,255,255,0.8);font-size:clamp(28px,8vw,56px);margin-top:2px;">songs. to date.</div>
+      <div class="anim-in t-small" style="margin-top:12px;">musical theater · classical · pop · traditional</div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       SLIDE 4 — ALBUM MOSAIC
+       SLIDE 5 — TOP SHOW HERO (like Top Artist)
   ══════════════════════════════════════ -->
-  <div class="slide slide-4" id="s4" style="padding:60px 0 0;">
-    <div style="padding:0 28px;margin-bottom:12px;position:relative;z-index:1;">
-      <div class="anim-item slide-eyebrow" style="margin-bottom:4px;">from the shows you love</div>
-      <div class="anim-item" style="font-size:clamp(28px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1;">your repertoire.</div>
-    </div>
-    <div class="album-grid" id="album-grid" style="position:relative;z-index:1;">
-      <!-- 9 album covers — loaded via iTunes API -->
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Wicked" data-search="Wicked Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Les Misérables" data-search="Les Misérables Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="My Fair Lady" data-search="My Fair Lady Original Cast Recording Broadway"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎵</div><img alt="The Sound of Music" data-search="The Sound of Music Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎪</div><img alt="The Greatest Showman" data-search="The Greatest Showman Soundtrack"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎭</div><img alt="Evita" data-search="Evita Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🥧</div><img alt="Waitress" data-search="Waitress The Musical Original Cast Recording"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🎤</div><img alt="Adele 25" data-search="Adele 25"></div>
-      <div class="album-cell"><div class="album-cell-placeholder">🌹</div><img alt="A Star is Born" data-search="A Star is Born Soundtrack 2018"></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 5 — FAVOURITES TO PERFORM
-  ══════════════════════════════════════ -->
-  <div class="slide slide-5" id="s5">
-    <div class="slide-content">
-      <div class="anim-item slide-eyebrow">the ones she keeps coming back to</div>
-      <div class="anim-item" style="font-size:clamp(30px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.05;">her favourites<br>to perform.</div>
-      <div class="fav-list">
-        <div class="fav-item anim-item">
-          <span class="fav-num">01</span>
-          <span class="fav-name">she used to be mine</span>
-          <span class="fav-show">Waitress</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">02</span>
-          <span class="fav-name">when he sees me</span>
-          <span class="fav-show">Waitress</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">03</span>
-          <span class="fav-name">defying gravity</span>
-          <span class="fav-show">Wicked</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">04</span>
-          <span class="fav-name">i'm not that girl</span>
-          <span class="fav-show">Wicked</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">05</span>
-          <span class="fav-name">for good</span>
-          <span class="fav-show">Wicked</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">06</span>
-          <span class="fav-name">don't cry for me argentina</span>
-          <span class="fav-show">Evita</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">07</span>
-          <span class="fav-name">i dreamed a dream</span>
-          <span class="fav-show">Les Mis</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">08</span>
-          <span class="fav-name">the winner takes it all</span>
-          <span class="fav-show">Mamma Mia</span>
-        </div>
-        <div class="fav-item anim-item">
-          <span class="fav-num">09</span>
-          <span class="fav-name">show me!</span>
-          <span class="fav-show">My Fair Lady</span>
+  <div class="slide s-teal" id="s5">
+    <div class="slide-body">
+      <div class="anim-in t-label">Top Musical</div>
+      <div class="anim-in t-huge">Wicked.</div>
+      <div class="anim-in t-stat">3 songs performed</div>
+      <div class="anim-in hero-circle-wrap">
+        <div class="circle-art" style="width:100%;height:100%;">
+          <img id="hero-wicked-img" alt="Wicked" data-search="Wicked Original Broadway Cast Recording">
         </div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       SLIDE 6 — YOUR SHOWS
+       SLIDE 6 — STACKED CIRCLES
   ══════════════════════════════════════ -->
-  <div class="slide slide-6" id="s6">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item slide-eyebrow" style="text-align:left;">her favourite musicals to perform from</div>
-      <!-- Album covers row -->
-      <div class="anim-item" style="display:flex;gap:12px;margin-bottom:20px;">
-        <div style="flex:1;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);background:rgba(255,255,255,0.1);">
-          <img id="wicked-cover" alt="Wicked" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s;">
-        </div>
-        <div style="flex:1;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);background:rgba(255,255,255,0.1);">
-          <img id="mfl-cover" alt="My Fair Lady" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s;">
-        </div>
+  <div class="slide s-silver noise" id="s6">
+    <div class="slide-body">
+      <div class="stacked-hdr">
+        <div class="anim-in t-statement" style="font-size:clamp(24px,7vw,44px);">Each show<br>brought new<br>stories.</div>
       </div>
-      <div class="anim-item" style="font-size:clamp(52px,15vw,120px);font-weight:800;letter-spacing:-0.05em;color:#fff;line-height:0.88;margin-left:-3px;">WICKED.</div>
-      <div class="anim-item" style="font-size:clamp(26px,7vw,58px);font-weight:700;letter-spacing:-0.04em;color:rgba(255,255,255,0.55);line-height:1.0;margin-top:6px;">MY FAIR LADY.</div>
-      <div class="anim-item slide-body" style="margin-top:16px;">3 songs from wicked alone.<br>and she's still not done with it.</div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 7 — HARDEST SONG
-  ══════════════════════════════════════ -->
-  <div class="slide slide-7" id="s7">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item slide-eyebrow">the one that challenged her most</div>
-      <div class="anim-item slide-huge" style="font-size:clamp(48px,14vw,110px);">SHOW ME!</div>
-      <div class="anim-item slide-body" style="margin-top:16px;font-size:17px;color:rgba(255,255,255,0.7);">My Fair Lady.<br>learning to find her voice<br>wasn't just about the notes.</div>
-      <div class="anim-item" style="margin-top:28px;padding:14px 18px;background:rgba(255,255,255,0.12);border-radius:14px;border:1px solid rgba(255,255,255,0.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">
-        <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase;">currently working on</div>
-        <div style="font-size:17px;font-weight:600;color:#fff;letter-spacing:-0.02em;">Don't Rain on My Parade</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px;">Funny Girl</div>
+      <div class="stacked-circles">
+        <div class="stack-circle"><img alt="Wicked"     id="sc1" data-search="Wicked Original Broadway Cast Recording"></div>
+        <div class="stack-circle"><img alt="My Fair Lady" id="sc2" data-search="My Fair Lady Original Broadway Cast Recording"></div>
+        <div class="stack-circle"><img alt="Waitress"   id="sc3" data-search="Waitress Musical Original Cast Recording"></div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       SLIDE 8 — SONGS TO LEARN
+       SLIDE 7 — REPEATED COVER ANTHEM
   ══════════════════════════════════════ -->
-  <div class="slide slide-8" id="s8">
-    <div class="slide-content">
-      <div class="anim-item slide-eyebrow">still on the list</div>
-      <div class="anim-item" style="font-size:clamp(30px,7vw,52px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.05;margin-bottom:16px;">songs she wants<br>to learn.</div>
-      <div class="future-list">
-        <div class="future-item anim-item"><strong>The Girl in 14G</strong></div>
-        <div class="future-item anim-item"><strong>The Wizard and I</strong> · Wicked</div>
-        <div class="future-item anim-item"><strong>La Vie en Rose</strong></div>
-        <div class="future-item anim-item"><strong>What Is This Feeling?</strong> · Wicked</div>
-        <div class="future-item anim-item"><strong>Popular</strong> · Wicked</div>
-        <div class="future-item anim-item"><strong>Gimme Gimme</strong> · Thoroughly Modern Millie</div>
-        <div class="future-item anim-item"><strong>Almost There</strong> · Princess and the Frog</div>
-        <div class="future-item anim-item"><strong>I'm Here</strong> · The Color Purple</div>
-        <div class="future-item anim-item"><strong>Speechless</strong></div>
-        <div class="future-item anim-item"><strong>Reflection</strong> · Mulan</div>
+  <div class="slide s-silver noise" id="s7">
+    <div class="slide-body">
+      <div class="anthem-grid">
+        <div class="anthem-cell"><img alt="Waitress" id="ant1" data-search="Waitress Musical Original Cast Recording"></div>
+        <div class="anthem-cell"><img alt="Waitress" id="ant2" data-search="Waitress Musical Original Cast Recording"></div>
+        <div class="anthem-cell"><img alt="Waitress" id="ant3" data-search="Waitress Musical Original Cast Recording"></div>
+        <div class="anthem-cell"><img alt="Waitress" id="ant4" data-search="Waitress Musical Original Cast Recording"></div>
+        <div class="anthem-cell"><img alt="Waitress" id="ant5" data-search="Waitress Musical Original Cast Recording"></div>
+        <div class="anthem-cell"><img alt="Waitress" id="ant6" data-search="Waitress Musical Original Cast Recording"></div>
+      </div>
+      <div class="anthem-caption">
+        <div class="anim-in t-statement" style="font-size:clamp(22px,6vw,38px);">One song.<br>she just kept<br>coming back.</div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       SLIDE 9 — PORTFOLIO / OUTRO
+       SLIDE 8 — TOP SONG DETAIL
   ══════════════════════════════════════ -->
-  <div class="slide slide-9" id="s9">
-    <div class="slide-content" style="justify-content:center;">
-      <div class="anim-item" style="font-size:clamp(48px,13vw,96px);font-weight:800;letter-spacing:-0.04em;color:#fff;line-height:0.9;">keep<br>performing.</div>
-      <div class="anim-item slide-body" style="margin-top:16px;">47 songs down. so many more to go.</div>
+  <div class="slide s-silver noise" id="s8">
+    <div class="slide-body">
+      <div class="topsong-art">
+        <div class="topsong-art-placeholder">🥧</div>
+        <img id="topsong-img" alt="Waitress" data-search="Waitress Musical Original Cast Recording">
+      </div>
+      <div class="topsong-info">
+        <div class="anim-in t-label" style="margin-top:6px;">Top Song</div>
+        <div class="anim-in t-huge" style="font-size:clamp(34px,9vw,64px);line-height:0.95;">She Used to<br>Be Mine</div>
+        <div class="anim-in t-stat" style="margin-top:6px;">Waitress · Sara Bareilles</div>
+        <div class="anim-in t-small" style="margin-top:4px;">First learned: 2023</div>
+      </div>
+    </div>
+  </div>
 
-      <div class="anim-item portfolio-card" onclick="window.location.href='music.html'">
-        <div class="portfolio-card-label">vocal portfolio</div>
-        <div class="portfolio-card-title">my full repertoire</div>
-        <div class="portfolio-card-sub">scores, recordings &amp; performance notes</div>
-        <div class="portfolio-arrow">
-          <a href="music.html" class="portfolio-btn">
-            explore →
-          </a>
-          <span style="font-size:13px;color:rgba(255,255,255,0.4);">47 songs</span>
+  <!-- ══════════════════════════════════════
+       SLIDE 9 — SONGS TO LEARN
+  ══════════════════════════════════════ -->
+  <div class="slide s-deep" id="s9">
+    <div class="slide-body">
+      <div class="anim-in t-label">still on the list</div>
+      <div class="anim-in t-large" style="font-size:clamp(34px,10vw,64px);">She's still<br>not done.</div>
+      <div class="learn-list">
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Don't Rain on My Parade</span><span class="learn-show">Funny Girl</span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">The Wizard and I</span><span class="learn-show">Wicked</span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">What Is This Feeling?</span><span class="learn-show">Wicked</span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Popular</span><span class="learn-show">Wicked</span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">La Vie en Rose</span><span class="learn-show"></span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">The Girl in 14G</span><span class="learn-show"></span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Almost There</span><span class="learn-show">Princess and the Frog</span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">I'm Here</span><span class="learn-show">The Color Purple</span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Speechless</span><span class="learn-show"></span></div>
+        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Reflection</span><span class="learn-show">Mulan</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 10 — OUTRO
+  ══════════════════════════════════════ -->
+  <div class="slide s-amber" id="s10">
+    <div class="slide-body">
+      <div class="anim-in t-huge" style="font-size:clamp(56px,16vw,110px);">Keep<br>performing.</div>
+      <div class="anim-in t-body" style="margin-top:12px;">47 songs down. so many more to go.</div>
+
+      <div class="anim-in outro-card" onclick="window.location.href='music.html'">
+        <div class="outro-card-eyebrow">vocal portfolio</div>
+        <div class="outro-card-title">my full repertoire</div>
+        <div class="outro-card-sub">scores, recordings & performance notes</div>
+        <div class="outro-btn-row">
+          <a href="music.html" class="outro-btn">explore →</a>
+          <a href="sounds-overview.html" class="outro-btn ghost">overview</a>
         </div>
       </div>
 
-      <!-- Overview button — shows full data summary page -->
-      <div class="anim-item" style="margin-top:14px;">
-        <a href="sounds-overview.html" class="portfolio-btn" style="width:100%;justify-content:center;background:rgba(255,255,255,0.15);color:#fff;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);box-shadow:none;">
-          overview
-        </a>
-      </div>
-
-      <div class="anim-item" style="margin-top:12px;text-align:center;">
-        <a href="index.html" style="font-size:14px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:-0.01em;">← back to portfolio</a>
-      </div>
-
-      <div class="anim-item" style="margin-top:24px;text-align:center;">
-        <span style="font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:0.04em;">aanya's replay · every performance, counted</span>
+      <div class="outro-home anim-in">
+        <a href="aanya-portfolio-v14.html">← back to portfolio</a>
       </div>
     </div>
   </div>
@@ -556,174 +634,161 @@ body {
 </div><!-- /#story -->
 
 <script>
-// ── STORY ENGINE ──
-const TOTAL = 9;
+const TOTAL = 10;
 let current = 0;
-let animating = false;
+let busy = false;
 
-const slides   = document.querySelectorAll('.slide');
-const progBar  = document.getElementById('progress-bar');
-const navDots  = document.getElementById('nav-dots');
+const slides  = document.querySelectorAll('.slide');
+const bar     = document.getElementById('progress-bar');
+const dotsEl  = document.getElementById('nav-dots');
 
-// Build progress segments + nav dots
+// Build progress + dots
 for (let i = 0; i < TOTAL; i++) {
-  const seg = document.createElement('div');
-  seg.className = 'prog-seg';
-  seg.innerHTML = '<div class="prog-fill"></div>';
-  progBar.appendChild(seg);
-
-  const dot = document.createElement('div');
-  dot.className = 'nav-dot';
-  dot.dataset.i = i;
-  dot.addEventListener('click', e => { e.stopPropagation(); goTo(parseInt(dot.dataset.i)); });
-  navDots.appendChild(dot);
+  const s = document.createElement('div'); s.className = 'prog-seg'; bar.appendChild(s);
+  const d = document.createElement('div'); d.className = 'nav-dot'; d.dataset.i = i;
+  d.addEventListener('click', e => { e.stopPropagation(); goTo(i); });
+  dotsEl.appendChild(d);
 }
 
-function goTo(idx, dir = 1) {
-  if (animating || idx === current || idx < 0 || idx >= TOTAL) return;
-  animating = true;
-
-  const prev = slides[current];
-  const next = slides[idx];
-
-  // Remove active from old
-  prev.classList.remove('active');
-  // Clear animations so they re-fire
-  next.querySelectorAll('.anim-item').forEach(el => {
-    el.style.animation = 'none';
-    el.offsetHeight; // reflow
-    el.style.animation = '';
-  });
-  next.classList.add('active');
-
+function goTo(idx, _dir = 1) {
+  if (busy || idx === current || idx < 0 || idx >= TOTAL) return;
+  busy = true;
+  slides[current].classList.remove('active');
   current = idx;
+  const slide = slides[current];
+  // Reset animations
+  slide.querySelectorAll('.anim-in').forEach(el => { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
+  slide.classList.add('active');
   updateUI();
-
-  setTimeout(() => { animating = false; }, 300);
+  setTimeout(() => busy = false, 200);
 }
 
 function advance() { goTo(current + 1); }
 function back()    { goTo(current - 1); }
 
 function updateUI() {
-  // Progress segments
-  document.querySelectorAll('.prog-seg').forEach((seg, i) => {
-    seg.classList.toggle('done',   i < current);
-    seg.classList.toggle('active', i === current);
+  document.querySelectorAll('.prog-seg').forEach((s, i) => {
+    s.classList.toggle('done',   i < current);
+    s.classList.toggle('active', i === current);
   });
-  // Nav dots
-  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
-    dot.classList.toggle('active', i === current);
-  });
+  document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === current));
 }
 
-// ── TAP ZONES ──
+// Tap zones
 document.getElementById('tap-right').addEventListener('click', e => {
-  // Don't advance if clicking a link/button inside
-  if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) return;
-  ripple(e.clientX, e.clientY);
-  advance();
+  if (e.target.closest('a, button, .outro-card')) return;
+  ripple(e.clientX, e.clientY); advance();
 });
 document.getElementById('tap-left').addEventListener('click', e => {
-  ripple(e.clientX, e.clientY);
-  back();
+  ripple(e.clientX, e.clientY); back();
 });
 
-// ── RIPPLE FEEDBACK ──
+// Ripple
 function ripple(x, y) {
   const r = document.createElement('div');
-  r.className = 'tap-ring';
-  r.style.left = x + 'px';
-  r.style.top  = y + 'px';
+  Object.assign(r.style, {
+    position:'fixed', left:x+'px', top:y+'px',
+    width:'60px', height:'60px', borderRadius:'50%',
+    background:'rgba(255,255,255,0.16)', transform:'translate(-50%,-50%) scale(0)',
+    animation:'rp 0.45s ease forwards', pointerEvents:'none', zIndex:'30'
+  });
+  const style = document.createElement('style');
+  style.textContent = '@keyframes rp { to { transform:translate(-50%,-50%) scale(1.6); opacity:0; } }';
+  document.head.appendChild(style);
   document.body.appendChild(r);
-  r.addEventListener('animationend', () => r.remove());
+  r.addEventListener('animationend', () => { r.remove(); style.remove(); });
 }
 
-// ── KEYBOARD NAV ──
+// Keyboard
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === ' ')  advance();
-  if (e.key === 'ArrowLeft')                    back();
+  if (e.key==='ArrowRight'||e.key===' ') advance();
+  if (e.key==='ArrowLeft') back();
 });
 
-// ── TOUCH SWIPE ──
-let touchStartX = 0, touchStartY = 0;
-document.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
+// Touch swipe
+let tx0=0, ty0=0;
+document.addEventListener('touchstart', e => { tx0=e.touches[0].clientX; ty0=e.touches[0].clientY; }, {passive:true});
 document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-    dx < 0 ? advance() : back();
-  }
-}, { passive: true });
+  const dx=e.changedTouches[0].clientX-tx0, dy=e.changedTouches[0].clientY-ty0;
+  if (Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40) dx<0?advance():back();
+}, {passive:true});
 
-// ── INIT ──
+// Volume toggle
+let muted = false;
+document.getElementById('vol-btn').addEventListener('click', () => {
+  muted = !muted;
+  document.getElementById('vol-btn').style.opacity = muted ? '0.45' : '1';
+});
+
+// Init
 slides[0].classList.add('active');
 updateUI();
 
-// ── ALBUM ARTWORK (iTunes Search API) ──
-async function loadAlbumArt() {
-  const cells = document.querySelectorAll('#album-grid .album-cell img');
-  const searches = [
-    'Wicked Original Broadway Cast',
-    'Les Miserables Original Cast',
-    'My Fair Lady Original Broadway',
-    'Sound of Music Original Cast',
-    'The Greatest Showman Soundtrack',
-    'Evita Original Cast Broadway',
-    'Waitress Musical Original Cast',
-    'Adele 25',
-    'A Star is Born 2018 Soundtrack'
-  ];
+// ══ ARTWORK LOADING ══
+const artCache = {};
 
-  for (let i = 0; i < cells.length; i++) {
-    const img = cells[i];
-    const term = encodeURIComponent(img.dataset.search || searches[i] || searches[i % searches.length]);
-    try {
-      const res  = await fetch(`https://itunes.apple.com/search?term=${term}&entity=album&limit=3&country=us`);
-      const data = await res.json();
-      // Prefer results that look like cast recordings
-      const result = data.results.find(r =>
-        r.artworkUrl100 && (r.primaryGenreName === 'Soundtrack' || r.primaryGenreName === 'Musical' || data.results[0])
-      ) || data.results[0];
-      if (result?.artworkUrl100) {
-        const url = result.artworkUrl100.replace('100x100bb', '600x600bb');
-        img.src = url;
-        img.addEventListener('load',  () => img.classList.add('loaded'), { once: true });
-        img.addEventListener('error', () => {}, { once: true });
-      }
-    } catch (_) {}
-    await new Promise(r => setTimeout(r, 80)); // stagger requests
+async function fetchArt(search) {
+  if (artCache[search]) return artCache[search];
+  try {
+    const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(search)}&entity=album&limit=3&country=us`);
+    const d = await r.json();
+    const hit = d.results.find(x => x.artworkUrl100) || d.results[0];
+    const url = hit?.artworkUrl100?.replace('100x100bb','600x600bb') || null;
+    artCache[search] = url;
+    return url;
+  } catch { return null; }
+}
+
+function loadImg(img) {
+  const search = img.dataset.search;
+  if (!search) return;
+  fetchArt(search).then(url => {
+    if (!url) return;
+    img.src = url;
+    img.onload = () => img.classList.add('loaded');
+  });
+}
+
+// Load all images — fan albums first (most visible), then others
+async function loadAllArt() {
+  // Fan albums (slide 2)
+  const fanImgs = document.querySelectorAll('.fan-album img');
+  for (const img of fanImgs) { loadImg(img); await new Promise(r => setTimeout(r, 60)); }
+
+  // Single circle images
+  const singles = [
+    { el: document.getElementById('hero-wicked-img'), search: 'Wicked Original Broadway Cast Recording' },
+    { el: document.getElementById('sc1'), search: 'Wicked Original Broadway Cast Recording' },
+    { el: document.getElementById('sc2'), search: 'My Fair Lady Original Broadway Cast Recording' },
+    { el: document.getElementById('sc3'), search: 'Waitress Musical Original Cast Recording' },
+  ];
+  for (const { el, search } of singles) {
+    if (!el) continue;
+    const url = await fetchArt(search);
+    if (url) { el.src = url; el.onload = () => el.classList.add('loaded'); }
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  // Waitress anthem grid (all same image)
+  const waitressUrl = await fetchArt('Waitress Musical Original Cast Recording');
+  if (waitressUrl) {
+    ['ant1','ant2','ant3','ant4','ant5','ant6'].forEach(id => {
+      const img = document.getElementById(id);
+      if (!img) return;
+      img.src = waitressUrl;
+      img.onload = () => img.classList.add('loaded');
+    });
+  }
+
+  // Top song full image
+  const topsongImg = document.getElementById('topsong-img');
+  if (topsongImg && waitressUrl) {
+    topsongImg.src = waitressUrl;
+    topsongImg.onload = () => topsongImg.classList.add('loaded');
   }
 }
 
-loadAlbumArt();
-
-// ── LOAD WICKED + MY FAIR LADY COVERS FOR SLIDE 6 ──
-async function loadShowCovers() {
-  const shows = [
-    { id: 'wicked-cover',  search: 'Wicked Original Broadway Cast Recording' },
-    { id: 'mfl-cover',     search: 'My Fair Lady Original Broadway Cast' }
-  ];
-  for (const show of shows) {
-    try {
-      const res  = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(show.search)}&entity=album&limit=3&country=us`);
-      const data = await res.json();
-      const hit  = data.results.find(r => r.artworkUrl100) || data.results[0];
-      if (hit?.artworkUrl100) {
-        const img = document.getElementById(show.id);
-        if (img) {
-          img.src = hit.artworkUrl100.replace('100x100bb','600x600bb');
-          img.onload = () => { img.style.opacity = '1'; };
-        }
-      }
-    } catch (_) {}
-    await new Promise(r => setTimeout(r, 120));
-  }
-}
-loadShowCovers();
+loadAllArt();
 </script>
 </body>
 </html>
