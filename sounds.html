@@ -13,782 +13,612 @@
 html, body { height: 100%; overflow: hidden; }
 body {
   font-family: var(--font);
-  background: #1a0a00;
+  background: #1a0800;
   -webkit-font-smoothing: antialiased;
   touch-action: manipulation;
   user-select: none;
 }
 
-/* ════════════════════════════════════════════
-   STORY SHELL
-════════════════════════════════════════════ */
+/* ════════ STORY SHELL ════════ */
 #story { position: fixed; inset: 0; }
 
-/* ── PROGRESS BAR (dashed segments with gaps) ── */
-#progress-bar {
-  position: absolute; top: 12px; left: 14px; right: 14px;
+/* ── progress: dashed segments with gaps ── */
+#pb {
+  position: absolute; top: 10px; left: 12px; right: 12px;
   display: flex; gap: 4px; z-index: 20; pointer-events: none;
 }
-.prog-seg {
-  flex: 1; height: 2.5px; border-radius: 2px;
-  background: rgba(255,255,255,0.35);
-  position: relative; overflow: hidden;
+.seg {
+  flex: 1; height: 2px; border-radius: 2px;
+  background: rgba(255,255,255,0.3); position: relative; overflow: hidden;
 }
-.prog-seg.done { background: rgba(255,255,255,0.9); }
-.prog-seg.active { background: rgba(255,255,255,0.35); }
-.prog-seg.active::after {
-  content: '';
-  position: absolute; inset: 0; left: -100%;
-  background: rgba(255,255,255,0.9);
-  animation: seg-fill 0.3s ease forwards;
+.seg.done { background: rgba(255,255,255,0.85); }
+.seg.active::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0.85);
+  animation: sfill .25s ease forwards;
 }
-@keyframes seg-fill { to { left: 0; } }
+@keyframes sfill { from { transform:scaleX(0); transform-origin:left; } to { transform:scaleX(1); } }
 
-/* ── HEADER ── */
-#story-header {
-  position: absolute; top: 24px; left: 14px; right: 14px;
+/* ── header ── */
+#hdr {
+  position: absolute; top: 20px; left: 12px; right: 12px;
   display: flex; justify-content: space-between; align-items: center;
   z-index: 20; pointer-events: none;
 }
-.hdr-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.88); letter-spacing: -0.01em; }
-.hdr-apple {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.65);
-}
-.hdr-apple svg { width: 13px; height: 13px; fill: currentColor; }
+.hl { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); }
+.hr { display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:rgba(255,255,255,.65); }
+.hr svg { width:12px; height:12px; fill:currentColor; }
 
-/* ── BOTTOM CONTROLS (volume + share) ── */
-#story-controls {
-  position: absolute; bottom: 20px; left: 16px; right: 16px;
-  display: flex; justify-content: space-between; z-index: 20;
-  pointer-events: none;
-}
-.ctrl-btn {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: rgba(0,0,0,0.32);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  border: none; display: flex; align-items: center; justify-content: center;
-  pointer-events: auto; cursor: pointer;
-  transition: transform 0.2s var(--spring), background 0.15s;
-}
-.ctrl-btn:active { transform: scale(0.88); background: rgba(0,0,0,0.5); }
-.ctrl-btn svg { width: 18px; height: 18px; fill: white; }
-
-/* ── TAP ZONES ── */
-#tap-left, #tap-right {
-  position: absolute; top: 0; bottom: 0; z-index: 15; cursor: pointer;
-}
-#tap-left  { left: 0; width: 33%; }
-#tap-right { right: 0; width: 67%; }
-
-/* ── NAV DOTS ── */
-#nav-dots {
-  position: absolute; bottom: 68px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 5px; z-index: 20; pointer-events: none;
-}
-.nav-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: rgba(255,255,255,0.28);
-  transition: all 0.3s var(--spring);
-}
-.nav-dot.active { background: #fff; transform: scale(1.5); }
-
-/* ════════════════════════════════════════════
-   SLIDE BASE
-════════════════════════════════════════════ */
-.slide {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  overflow: hidden;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-.slide.active { opacity: 1; pointer-events: none; }
-
-/* Slide-specific gradients */
-.s-amber  { background: linear-gradient(160deg, #F09015 0%, #D06000 55%, #9A3D00 100%); }
-.s-amber2 { background: linear-gradient(160deg, #E88010 0%, #C05000 50%, #7B2D00 100%); }
-.s-warm   { background: linear-gradient(160deg, #F0900C 0%, #C85A00 60%, #8B3000 100%); }
-.s-teal   { background: linear-gradient(145deg, #1E7060 0%, #2D9070 40%, #3AAA80 80%, #60C090 100%); }
-.s-silver { background: linear-gradient(160deg, #3C3C3E 0%, #2A2A2C 50%, #1C1C1E 100%); }
-.s-deep   { background: linear-gradient(160deg, #28204A 0%, #1A1430 50%, #100C20 100%); }
-.s-intro  { background: linear-gradient(160deg, #B85000 0%, #6B2080 60%, #3A1060 100%); }
-
-/* Noise texture overlay for silver slides */
-.noise::before {
-  content: '';
-  position: absolute; inset: -200%; width: 400%; height: 400%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.04; pointer-events: none; z-index: 0;
-  animation: noise-anim 0.5s steps(1) infinite;
-}
-@keyframes noise-anim {
-  0%  { transform: translate(0,0); }
-  20% { transform: translate(-2%,-3%); }
-  40% { transform: translate(3%,2%); }
-  60% { transform: translate(-1%,4%); }
-  80% { transform: translate(4%,-2%); }
-  100%{ transform: translate(-2%,3%); }
-}
-
-/* slide content wrapper */
-.slide-body { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; padding: 60px 22px 88px; }
-
-/* entrance animation */
-.slide.active .anim-in {
-  animation: anim-up 0.55s var(--spring) both;
-}
-.slide.active .anim-in:nth-child(2) { animation-delay: 0.06s; }
-.slide.active .anim-in:nth-child(3) { animation-delay: 0.13s; }
-.slide.active .anim-in:nth-child(4) { animation-delay: 0.20s; }
-.slide.active .anim-in:nth-child(5) { animation-delay: 0.27s; }
-.slide.active .anim-in:nth-child(6) { animation-delay: 0.34s; }
-@keyframes anim-up {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── TYPE SYSTEM (Apple Music Replay spec) ── */
-.t-label {
-  font-size: 15px; font-weight: 400;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: -0.01em; margin-bottom: 4px;
-}
-.t-huge {
-  font-size: clamp(52px, 16vw, 110px);
-  font-weight: 800; letter-spacing: -0.04em;
-  color: #fff; line-height: 0.92;
-}
-.t-large {
-  font-size: clamp(36px, 10vw, 72px);
-  font-weight: 800; letter-spacing: -0.04em;
-  color: #fff; line-height: 0.94;
-}
-.t-statement {
-  font-size: clamp(30px, 8.5vw, 60px);
-  font-weight: 700; letter-spacing: -0.035em;
-  color: #fff; line-height: 1.02;
-}
-.t-stat {
-  font-size: clamp(15px, 3.5vw, 22px);
-  font-weight: 400; color: rgba(255,255,255,0.7);
-  margin-top: 8px; letter-spacing: -0.01em;
-}
-.t-body {
-  font-size: 17px; font-weight: 400;
-  color: rgba(255,255,255,0.65); line-height: 1.5;
-}
-.t-small {
-  font-size: 13px; color: rgba(255,255,255,0.45);
-  letter-spacing: 0.01em;
-}
-
-/* ── CIRCLE ARTWORK ── */
-.circle-art {
-  border-radius: 50%; overflow: hidden;
-  background: rgba(255,255,255,0.12);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.12);
-  flex-shrink: 0;
-}
-.circle-art img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s; }
-.circle-art img.loaded { opacity: 1; }
-
-/* ════════════════════════════════════════════
-   SLIDE 1 — INTRO
-════════════════════════════════════════════ */
-#s1.slide { justify-content: flex-end; }
-#s1 .slide-body { justify-content: flex-end; padding-bottom: 100px; }
-.intro-name {
-  font-size: clamp(68px, 20vw, 150px);
-  font-weight: 800; letter-spacing: -0.05em;
-  color: #fff; line-height: 0.88;
-}
-.intro-tagline {
-  font-size: 17px; font-weight: 400;
-  color: rgba(255,255,255,0.55); margin-top: 12px;
-}
-
-/* ════════════════════════════════════════════
-   SLIDE 2 — ALBUM FAN COLLAGE
-════════════════════════════════════════════ */
-#s2 .slide-body { padding: 60px 0 88px; }
-.fan-header { padding: 0 22px 16px; }
-.fan-stage {
-  position: relative; flex: 1;
-  min-height: 0; overflow: hidden;
-}
-.fan-album {
-  position: absolute;
-  border-radius: 10px; overflow: hidden;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-  background: rgba(255,255,255,0.1);
-  opacity: 0;
-}
-.fan-album img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* Settled fan positions */
-.fan-album:nth-child(1)  { width:140px;height:140px; top: 5%;  left: 4%;  transform: rotate(-9deg); }
-.fan-album:nth-child(2)  { width:160px;height:160px; top: 8%;  left: 36%; transform: rotate(3deg); }
-.fan-album:nth-child(3)  { width:130px;height:130px; top: 2%;  left: 65%; transform: rotate(-5deg); }
-.fan-album:nth-child(4)  { width:155px;height:155px; top: 40%; left: 8%;  transform: rotate(7deg); }
-.fan-album:nth-child(5)  { width:170px;height:170px; top: 38%; left: 38%; transform: rotate(-3deg); }
-.fan-album:nth-child(6)  { width:135px;height:135px; top: 42%; left: 72%; transform: rotate(6deg); }
-.fan-album:nth-child(7)  { width:120px;height:120px; top: 72%; left: 3%;  transform: rotate(-6deg); }
-.fan-album:nth-child(8)  { width:145px;height:145px; top: 70%; left: 32%; transform: rotate(4deg); }
-.fan-album:nth-child(9)  { width:125px;height:125px; top: 74%; left: 66%; transform: rotate(-8deg); }
-
-/* Fan-in animation — each from off-screen direction */
-#s2.active .fan-album:nth-child(1) { animation: fan1 0.65s var(--spring) 0.05s both; }
-#s2.active .fan-album:nth-child(2) { animation: fan2 0.65s var(--spring) 0.12s both; }
-#s2.active .fan-album:nth-child(3) { animation: fan3 0.65s var(--spring) 0.08s both; }
-#s2.active .fan-album:nth-child(4) { animation: fan4 0.65s var(--spring) 0.18s both; }
-#s2.active .fan-album:nth-child(5) { animation: fan5 0.65s var(--spring) 0.10s both; }
-#s2.active .fan-album:nth-child(6) { animation: fan6 0.65s var(--spring) 0.22s both; }
-#s2.active .fan-album:nth-child(7) { animation: fan7 0.65s var(--spring) 0.28s both; }
-#s2.active .fan-album:nth-child(8) { animation: fan8 0.65s var(--spring) 0.16s both; }
-#s2.active .fan-album:nth-child(9) { animation: fan9 0.65s var(--spring) 0.32s both; }
-
-@keyframes fan1 { from { opacity:0; transform:rotate(-9deg) translate(-180px,-80px) scale(0.7); } to { opacity:1; transform:rotate(-9deg) translate(0,0) scale(1); } }
-@keyframes fan2 { from { opacity:0; transform:rotate(3deg) translate(0,-200px) scale(0.7); }  to { opacity:1; transform:rotate(3deg) translate(0,0) scale(1); } }
-@keyframes fan3 { from { opacity:0; transform:rotate(-5deg) translate(180px,-160px) scale(0.7); } to { opacity:1; transform:rotate(-5deg) translate(0,0) scale(1); } }
-@keyframes fan4 { from { opacity:0; transform:rotate(7deg) translate(-200px,0) scale(0.7); }   to { opacity:1; transform:rotate(7deg) translate(0,0) scale(1); } }
-@keyframes fan5 { from { opacity:0; transform:rotate(-3deg) scale(0.5); }                      to { opacity:1; transform:rotate(-3deg) scale(1); } }
-@keyframes fan6 { from { opacity:0; transform:rotate(6deg) translate(200px,40px) scale(0.7); } to { opacity:1; transform:rotate(6deg) translate(0,0) scale(1); } }
-@keyframes fan7 { from { opacity:0; transform:rotate(-6deg) translate(-180px,120px) scale(0.7); } to { opacity:1; transform:rotate(-6deg) translate(0,0) scale(1); } }
-@keyframes fan8 { from { opacity:0; transform:rotate(4deg) translate(0,200px) scale(0.7); }    to { opacity:1; transform:rotate(4deg) translate(0,0) scale(1); } }
-@keyframes fan9 { from { opacity:0; transform:rotate(-8deg) translate(180px,160px) scale(0.7); } to { opacity:1; transform:rotate(-8deg) translate(0,0) scale(1); } }
-
-/* ════════════════════════════════════════════
-   SLIDE 3 — STATEMENT
-════════════════════════════════════════════ */
-#s3 .slide-body { justify-content: center; }
-
-/* ════════════════════════════════════════════
-   SLIDE 4 — BIG NUMBER
-════════════════════════════════════════════ */
-#s4 .slide-body { justify-content: flex-end; }
-.bleed-num {
-  font-size: clamp(130px, 40vw, 280px);
-  font-weight: 800; letter-spacing: -0.05em;
-  color: rgba(255,255,255,0.95); line-height: 0.82;
-  margin-left: -6px;
-}
-
-/* ════════════════════════════════════════════
-   SLIDE 5 — TOP SHOW HERO (like Top Artist)
-════════════════════════════════════════════ */
-#s5 .slide-body { justify-content: flex-start; }
-.hero-circle-wrap {
-  margin: 20px auto 0;
-  width: min(220px, 58vw);
-  height: min(220px, 58vw);
-}
-
-/* ════════════════════════════════════════════
-   SLIDE 6 — STACKED CIRCLES (Each show brought new stories)
-════════════════════════════════════════════ */
-#s6 .slide-body { padding: 60px 0 88px; position: relative; }
-.stacked-hdr { padding: 0 22px 0; position: relative; z-index: 3; }
-.stacked-circles {
-  position: absolute;
-  left: 50%; transform: translateX(-50%);
-  top: 110px; bottom: 50px;
-  display: flex; flex-direction: column; align-items: center;
-  gap: -40px;
-}
-.stack-circle {
-  width: min(210px, 56vw);
-  height: min(210px, 56vw);
-  border-radius: 50%; overflow: hidden;
-  box-shadow: 0 -20px 40px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.08);
-  flex-shrink: 0; margin-top: -44px;
-  opacity: 0; transform: translateY(60px) scale(0.85);
-  transition: opacity 0.55s ease, transform 0.55s var(--spring);
-}
-.stack-circle:first-child { margin-top: 0; }
-.stack-circle img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s; }
-.stack-circle img.loaded { opacity: 1; }
-#s6.active .stack-circle:nth-child(1) { opacity:1; transform:none; transition-delay: 0.1s; }
-#s6.active .stack-circle:nth-child(2) { opacity:1; transform:none; transition-delay: 0.22s; }
-#s6.active .stack-circle:nth-child(3) { opacity:1; transform:none; transition-delay: 0.34s; }
-
-/* ════════════════════════════════════════════
-   SLIDE 7 — REPEATED COVER ANTHEM
-════════════════════════════════════════════ */
-#s7 .slide-body { padding: 60px 0 88px; }
-.anthem-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 3px; margin: 0; flex: 1;
-}
-.anthem-cell {
-  aspect-ratio: 1; overflow: hidden;
-  background: rgba(255,255,255,0.08);
-  opacity: 0; transform: scale(0.85);
-  transition: opacity 0.4s ease, transform 0.4s var(--spring);
-}
-.anthem-cell img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s; }
-.anthem-cell img.loaded { opacity: 1; }
-#s7.active .anthem-cell:nth-child(1) { opacity:1; transform:none; transition-delay: 0.04s; }
-#s7.active .anthem-cell:nth-child(2) { opacity:1; transform:none; transition-delay: 0.10s; }
-#s7.active .anthem-cell:nth-child(3) { opacity:1; transform:none; transition-delay: 0.16s; }
-#s7.active .anthem-cell:nth-child(4) { opacity:1; transform:none; transition-delay: 0.22s; }
-#s7.active .anthem-cell:nth-child(5) { opacity:1; transform:none; transition-delay: 0.28s; }
-#s7.active .anthem-cell:nth-child(6) { opacity:1; transform:none; transition-delay: 0.34s; }
-.anthem-caption { padding: 16px 22px 0; position: relative; z-index: 2; }
-
-/* ════════════════════════════════════════════
-   SLIDE 8 — TOP SONG DETAIL
-════════════════════════════════════════════ */
-#s8 .slide-body { padding: 60px 0 88px; }
-.topsong-art {
-  width: 100%; height: 55vh; max-height: 380px;
-  position: relative; overflow: hidden;
-  flex-shrink: 0;
-}
-.topsong-art img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-  opacity: 0; transition: opacity 0.5s;
-}
-.topsong-art img.loaded { opacity: 1; }
-.topsong-art-placeholder {
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+/* ── X close button (light circle top-right) ── */
+#xbtn {
+  position: absolute; top: 14px; right: 14px; z-index: 21;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(210,210,210,0.22);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 64px;
+  transition: background .15s;
 }
-.topsong-info { padding: 20px 22px 0; }
+#xbtn:hover { background: rgba(210,210,210,0.3); }
+#xbtn svg { width:13px; height:13px; stroke:rgba(255,255,255,.85); fill:none; stroke-width:2; stroke-linecap:round; }
 
-/* ════════════════════════════════════════════
-   SLIDE 9 — FUTURE (songs to learn)
-════════════════════════════════════════════ */
-#s9 .slide-body { padding: 60px 22px 88px; }
-.learn-list { margin-top: 18px; display: flex; flex-direction: column; gap: 0; }
-.learn-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 0; border-bottom: 0.5px solid rgba(255,255,255,0.1);
-  opacity: 0; transform: translateX(-16px);
-  transition: opacity 0.38s ease, transform 0.38s var(--spring);
+/* ── bottom controls ── */
+#btns {
+  position: absolute; bottom: 16px; left: 14px; right: 14px;
+  display: flex; justify-content: space-between; z-index: 20;
 }
-.learn-row:last-child { border-bottom: none; }
-#s9.active .learn-row:nth-child(1)  { opacity:1;transform:none;transition-delay:0.08s; }
-#s9.active .learn-row:nth-child(2)  { opacity:1;transform:none;transition-delay:0.14s; }
-#s9.active .learn-row:nth-child(3)  { opacity:1;transform:none;transition-delay:0.20s; }
-#s9.active .learn-row:nth-child(4)  { opacity:1;transform:none;transition-delay:0.26s; }
-#s9.active .learn-row:nth-child(5)  { opacity:1;transform:none;transition-delay:0.32s; }
-#s9.active .learn-row:nth-child(6)  { opacity:1;transform:none;transition-delay:0.38s; }
-#s9.active .learn-row:nth-child(7)  { opacity:1;transform:none;transition-delay:0.44s; }
-#s9.active .learn-row:nth-child(8)  { opacity:1;transform:none;transition-delay:0.50s; }
-#s9.active .learn-row:nth-child(9)  { opacity:1;transform:none;transition-delay:0.56s; }
-#s9.active .learn-row:nth-child(10) { opacity:1;transform:none;transition-delay:0.62s; }
-.learn-bullet {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.3); flex-shrink: 0;
+.ctrl {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(0,0,0,0.28);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: none; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform .18s var(--spring), background .15s;
 }
-.learn-name { font-size: 16px; font-weight: 500; color: #fff; letter-spacing: -0.02em; flex: 1; }
-.learn-show { font-size: 12px; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+.ctrl:active { transform: scale(.88); }
+.ctrl svg { width:17px; height:17px; fill:white; }
 
-/* ════════════════════════════════════════════
-   SLIDE 10 — OUTRO
-════════════════════════════════════════════ */
-#s10 .slide-body { justify-content: center; }
-.outro-card {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 20px; padding: 22px 20px; margin-top: 24px;
-  cursor: pointer;
-  transition: transform 0.3s var(--spring), background 0.2s;
-}
-.outro-card:hover { background: rgba(255,255,255,0.17); }
-.outro-card:active { transform: scale(0.97); }
-.outro-card-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 6px; }
-.outro-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: #fff; margin-bottom: 3px; }
-.outro-card-sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
-.outro-btn-row { display: flex; gap: 10px; }
-.outro-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: white; color: #1C1C1E;
-  border: none; border-radius: 999px;
-  padding: 10px 20px; font-size: 14px; font-weight: 600;
-  font-family: var(--font); cursor: pointer; text-decoration: none;
-  transition: transform 0.2s var(--spring), opacity 0.15s;
-}
-.outro-btn:hover { opacity: 0.9; }
-.outro-btn:active { transform: scale(0.94); }
-.outro-btn.ghost {
-  background: rgba(255,255,255,0.14); color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-}
-.outro-home { margin-top: 16px; text-align: center; }
-.outro-home a { font-size: 14px; color: rgba(255,255,255,0.38); text-decoration: none; }
+/* ── tap zones ── */
+#tl, #tr { position:absolute; top:0; bottom:0; z-index:15; cursor:pointer; }
+#tl { left:0; width:32%; }
+#tr { right:0; width:68%; }
 
-/* ── REDUCED MOTION ── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+/* ── nav dots ── */
+#dots {
+  position:absolute; bottom:62px; left:50%; transform:translateX(-50%);
+  display:flex; gap:5px; z-index:20;
+}
+.dot {
+  width:4px; height:4px; border-radius:50%;
+  background:rgba(255,255,255,.28);
+  transition: all .3s var(--spring);
+}
+.dot.on { background:#fff; transform:scale(1.5); }
+
+/* ════════ SLIDES ════════ */
+.slide {
+  position:absolute; inset:0; overflow:hidden;
+  display:flex; flex-direction:column;
+  opacity:0; pointer-events:none;
+  transition: opacity .18s ease;
+}
+.slide.on { opacity:1; pointer-events:none; }
+
+/* gradient palette */
+/* TRUE APPLE REPLAY AMBER — warm golden yellow-orange */
+.bg-amber { background: linear-gradient(160deg, #F8B428 0%, #F09A10 40%, #E07800 70%, #C86000 100%); }
+/* green blob on amber slides */
+.blob::after {
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background: radial-gradient(ellipse 65% 55% at 82% 82%, rgba(38,185,85,0.52) 0%, transparent 58%);
+}
+.bg-dark  { background: linear-gradient(160deg, #1A0A30 0%, #2A1050 45%, #1A0830 100%); }
+.bg-teal  { background: linear-gradient(145deg, #1C6A54 0%, #2A8868 40%, #44AA80 80%, #66C090 100%); }
+.bg-silver{ background: linear-gradient(160deg, #484848 0%, #303030 50%, #1C1C1E 100%); }
+.bg-green { background: linear-gradient(160deg, #1E6840 0%, #2A8850 40%, #3AAA64 80%, #50C070 100%); }
+.bg-deep  { background: linear-gradient(160deg, #220A50 0%, #160838 50%, #0E0628 100%); }
+
+/* noise for silver slides */
+.noise::before {
+  content:''; position:absolute; inset:-200%; width:400%; height:400%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.04; pointer-events:none; z-index:0;
+  animation: ng .5s steps(1) infinite;
+}
+@keyframes ng {
+  0%  {transform:translate(0,0);} 20%{transform:translate(-2%,-3%);} 40%{transform:translate(3%,2%);}
+  60% {transform:translate(-1%,4%);} 80%{transform:translate(4%,-2%);} 100%{transform:translate(-2%,3%);}
+}
+
+/* slide body */
+.sb { position:relative; z-index:2; flex:1; display:flex; flex-direction:column; padding:52px 20px 72px; }
+
+/* entrance */
+.slide.on .u { animation: uin .55s var(--spring) both; }
+.slide.on .u:nth-child(2){animation-delay:.07s;}
+.slide.on .u:nth-child(3){animation-delay:.14s;}
+.slide.on .u:nth-child(4){animation-delay:.21s;}
+.slide.on .u:nth-child(5){animation-delay:.28s;}
+@keyframes uin { from{opacity:0;transform:translateY(24px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── type ── */
+.lbl  { font-size:15px; font-weight:400; color:rgba(255,255,255,.75); margin-bottom:4px; }
+.huge { font-size:clamp(48px,15vw,100px); font-weight:800; letter-spacing:-.045em; color:#fff; line-height:.9; }
+.stmt { font-size:clamp(36px,10.5vw,60px); font-weight:700; letter-spacing:-.035em; color:#fff; line-height:1.04; }
+.sub  { font-size:clamp(15px,3.5vw,20px); font-weight:400; color:rgba(255,255,255,.7); margin-top:8px; }
+.tiny { font-size:13px; color:rgba(255,255,255,.4); margin-top:4px; }
+
+/* ════════ SLIDE 1 — INTRO (blurry bg) ════════ */
+#s1 .sb { justify-content:flex-end; padding-bottom:88px; }
+.iblur {
+  position:absolute; inset:0; z-index:0;
+  background: radial-gradient(ellipse at 50% 38%, rgba(180,110,200,.55) 0%, transparent 58%),
+              radial-gradient(ellipse at 22% 68%, rgba(100,55,165,.6) 0%, transparent 50%),
+              radial-gradient(ellipse at 78% 58%, rgba(200,75,100,.32) 0%, transparent 46%);
+  filter:blur(32px); transform:scale(1.12);
+}
+.iname {
+  font-size:clamp(62px,20vw,148px); font-weight:800;
+  letter-spacing:-.05em; color:#fff; line-height:.88;
+}
+.itag { font-size:17px; font-weight:400; color:rgba(255,255,255,.5); margin-top:10px; }
+
+/* ════════ SLIDE 2 — STATEMENT ════════ */
+#s2 .sb { justify-content:flex-start; padding-top:58px; }
+
+/* ════════ SLIDE 3 — LET'S RUN IT BACK (right-aligned) ════════ */
+#s3 .sb { justify-content:center; align-items:flex-end; text-align:right; }
+
+/* ════════ SLIDE 4 — STAT + BLEED NUMBER ════════ */
+#s4 .sb { justify-content:flex-start; padding-top:58px; }
+.bwrap { margin-top:auto; overflow:hidden; }
+.bnum {
+  font-size:clamp(140px,42vw,300px); font-weight:800;
+  letter-spacing:-.055em; color:rgba(255,255,255,.95); line-height:.8;
+  margin-left:-8px;
+}
+
+/* ════════ SLIDE 5 — ALBUM GRID (edge-to-edge, no rounding) ════════ */
+#s5 .sb { padding:0; }
+.agrid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:2px; flex:1; align-content:start;
+  margin-top:52px; /* clear header */
+  /* NO padding — truly edge to edge */
+}
+.ac {
+  aspect-ratio:1; overflow:hidden;
+  background:rgba(255,255,255,.08);
+  /* NO border-radius — real Replay has none */
+  opacity:0; transform:scale(.9);
+  transition:opacity .32s ease, transform .32s var(--spring);
+}
+#s5.on .ac { opacity:1; transform:none; }
+#s5.on .ac:nth-child(1){transition-delay:.02s;} #s5.on .ac:nth-child(2){transition-delay:.06s;}
+#s5.on .ac:nth-child(3){transition-delay:.10s;} #s5.on .ac:nth-child(4){transition-delay:.14s;}
+#s5.on .ac:nth-child(5){transition-delay:.18s;} #s5.on .ac:nth-child(6){transition-delay:.22s;}
+#s5.on .ac:nth-child(7){transition-delay:.26s;} #s5.on .ac:nth-child(8){transition-delay:.30s;}
+#s5.on .ac:nth-child(9){transition-delay:.34s;}
+.ac img { width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s; }
+.ac img.loaded { opacity:1; }
+
+/* ════════ SLIDE 6 — MEGA SENTENCE ════════ */
+#s6 .sb { justify-content:center; }
+.mega {
+  font-size:clamp(48px,15vw,100px); font-weight:800;
+  letter-spacing:-.045em; color:#fff; line-height:.92;
+  /* intentionally bleeds right edge */
+}
+
+/* ════════ SLIDE 7 — SCATTERED CIRCLES (green, loyal) ════════ */
+#s7 .sb { padding-top:56px; }
+.loyal-txt { position:relative; z-index:3; }
+.cfield { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.sc {
+  position:absolute; border-radius:50%; overflow:hidden;
+  background:rgba(255,255,255,.1);
+  box-shadow:0 8px 28px rgba(0,0,0,.35), 0 0 0 2px rgba(255,255,255,.1);
+  opacity:0; transform:scale(.72);
+  transition:opacity .5s ease, transform .5s var(--spring);
+}
+#s7.on .sc { opacity:1; transform:scale(1); }
+#s7.on .sc.c1{transition-delay:.08s;} #s7.on .sc.c2{transition-delay:.2s;}
+#s7.on .sc.c3{transition-delay:.14s;} #s7.on .sc.c4{transition-delay:.28s;}
+.sc img { width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s; }
+.sc img.loaded { opacity:1; }
+/* scattered positions — mimic Apple Replay's organic scatter */
+.c1 { width:52%; aspect-ratio:1; top:10%; right:-8%; }
+.c2 { width:36%; aspect-ratio:1; top:44%; left:5%; }
+.c3 { width:44%; aspect-ratio:1; top:52%; right:7%; }
+.c4 { width:29%; aspect-ratio:1; bottom:9%; left:26%; }
+
+/* ════════ SLIDE 8 — TOP SHOW (teal + blurred full bg) ════════ */
+.art-bg {
+  position:absolute; inset:0; z-index:0; overflow:hidden;
+}
+.art-bg img {
+  width:110%;height:110%;object-fit:cover;margin:-5%;display:block;
+  filter:blur(40px) brightness(.42) saturate(.55);
+  opacity:0; transition:opacity .8s;
+}
+.art-bg img.loaded { opacity:1; }
+#s8 .sb { justify-content:flex-start; }
+.art-circle {
+  width:min(230px,62vw); height:min(230px,62vw);
+  border-radius:50%; overflow:hidden; margin-top:18px; flex-shrink:0;
+  box-shadow:0 16px 52px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.15);
+  background:rgba(255,255,255,.1);
+}
+.art-circle img { width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s; }
+.art-circle img.loaded { opacity:1; }
+
+/* ════════ SLIDE 9 — STACKED CIRCLES (text at bottom) ════════ */
+#s9 .sb { padding:52px 0 72px; }
+.skwrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.sk {
+  width:min(58vw,210px); height:min(58vw,210px); border-radius:50%;
+  overflow:hidden; flex-shrink:0; margin-top:-42px;
+  box-shadow:0 -14px 30px rgba(0,0,0,.4), 0 0 0 2.5px rgba(255,255,255,.1);
+  background:rgba(255,255,255,.1);
+  opacity:0; transform:translateY(36px) scale(.88);
+  transition:opacity .5s ease, transform .5s var(--spring);
+}
+.sk:first-child { margin-top:0; }
+#s9.on .sk:nth-child(1){opacity:1;transform:none;transition-delay:.08s;}
+#s9.on .sk:nth-child(2){opacity:1;transform:none;transition-delay:.2s;}
+#s9.on .sk:nth-child(3){opacity:1;transform:none;transition-delay:.32s;}
+.sk img { width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s; }
+.sk img.loaded { opacity:1; }
+.skcap {
+  padding:14px 20px 0; width:100%;
+  opacity:0; transform:translateY(10px);
+  transition:opacity .5s .5s ease, transform .5s .5s ease;
+}
+#s9.on .skcap { opacity:1; transform:none; }
+
+/* ════════ SLIDE 10 — ANTHEM (irregular pile, no rounding) ════════ */
+#s10 .sb { padding:52px 0 72px; }
+.pile { flex:1; position:relative; overflow:hidden; }
+.pc {
+  position:absolute; overflow:hidden;
+  background:rgba(255,255,255,.08);
+  /* NO border-radius — like real Replay */
+  opacity:0;
+  transition:opacity .38s ease;
+}
+#s10.on .pc { opacity:1; }
+/* irregular arrangement matching Apple Replay */
+.pc.p1 { width:55%;aspect-ratio:1; top:4%;  right:0;   transition-delay:.04s; }
+.pc.p2 { width:41%;aspect-ratio:1; top:4%;  left:0;    transition-delay:.10s; }
+.pc.p3 { width:46%;aspect-ratio:1; top:42%; left:2%;   transition-delay:.16s; }
+.pc.p4 { width:46%;aspect-ratio:1; top:42%; right:2%;  transition-delay:.07s; }
+.pc img { width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s; }
+.pc img.loaded { opacity:1; }
+.acap { padding:14px 20px 0; position:relative; z-index:2; }
+
+/* ════════ SLIDE 11 — TOP SONG DETAIL ════════ */
+#s11 .sb { padding:52px 0 72px; }
+.tsart { width:100%; height:52vh; max-height:360px; flex-shrink:0; position:relative; overflow:hidden; }
+.tsart img { width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .5s; }
+.tsart img.loaded { opacity:1; }
+.tsinfo { padding:18px 20px 0; }
+
+/* ════════ SLIDE 12 — OUTRO ════════ */
+#s12 .sb { justify-content:center; }
+.oglass {
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px; padding:20px 18px; margin-top:20px;
+}
+.oey { font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px; }
+.ot  { font-size:19px;font-weight:700;letter-spacing:-.03em;color:#fff;margin-bottom:2px; }
+.os  { font-size:14px;color:rgba(255,255,255,.48);margin-bottom:14px; }
+.obr { display:flex;gap:8px; }
+.ob {
+  display:inline-flex;align-items:center;gap:5px;
+  background:white;color:#1C1C1E;
+  border:none;border-radius:999px;padding:9px 18px;
+  font-size:14px;font-weight:600;font-family:var(--font);
+  cursor:pointer;text-decoration:none;
+  transition:transform .2s var(--spring),opacity .15s;
+}
+.ob:active { transform:scale(.94); }
+.ob.g { background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2); }
+.ohm { margin-top:14px;text-align:center; }
+.ohm a { font-size:14px;color:rgba(255,255,255,.32);text-decoration:none; }
+
+/* ripple */
+.rp {
+  position:fixed;border-radius:50%;width:54px;height:54px;
+  background:rgba(255,255,255,.14);pointer-events:none;z-index:30;
+  animation:rpout .45s ease forwards;
+}
+@keyframes rpout { 0%{transform:translate(-50%,-50%)scale(0);opacity:.7;} 100%{transform:translate(-50%,-50%)scale(1.8);opacity:0;} }
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
 }
 </style>
 </head>
 <body>
-
 <div id="story">
 
-  <!-- PROGRESS BAR -->
-  <div id="progress-bar"></div>
+  <div id="pb"></div>
 
-  <!-- HEADER -->
-  <div id="story-header">
-    <span class="hdr-label">aanya recapped.</span>
-    <span class="hdr-apple">
+  <div id="hdr">
+    <span class="hl">aanya recapped.</span>
+    <span class="hr">
       <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-37.3-149.3-81.1c-51.4-51.9-93.7-129.9-93.7-204.7 0-207.7 135.4-317 269.8-317 36.5 0 102.1 10.9 148.1 10.9 44.4 0 109.3-11.5 148.2-11.5 60.4 0 120.6 28.5 159.3 82.1zm-166.5-115.1c-5.1 36.3-27.7 77.9-60.3 103.2-29.7 23.3-63.7 44-120.2 44-6.4 0-12.8-.5-19.2-.5-5.1-34.9 11.8-81.1 40.7-109.5 30.8-30.8 76.1-53.6 119-53.6 6.4 0 12.8.5 39.5 16.4z"/></svg>
       Music
     </span>
   </div>
 
-  <!-- BOTTOM CONTROLS -->
-  <div id="story-controls">
-    <button class="ctrl-btn" id="vol-btn" aria-label="volume">
-      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-    </button>
-    <button class="ctrl-btn" id="share-btn" aria-label="share">
-      <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.50-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
-    </button>
+  <button id="xbtn" onclick="window.location.href='sidequests.html'">
+    <svg viewBox="0 0 14 14"><path d="M1 1l12 12M13 1L1 13"/></svg>
+  </button>
+
+  <div id="btns">
+    <button class="ctrl" id="vbtn"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
+    <button class="ctrl"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.50-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
   </div>
 
-  <!-- TAP ZONES -->
-  <div id="tap-left"></div>
-  <div id="tap-right"></div>
+  <div id="tl"></div>
+  <div id="tr"></div>
+  <div id="dots"></div>
 
-  <!-- NAV DOTS -->
-  <div id="nav-dots"></div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 1 — INTRO
-  ══════════════════════════════════════ -->
-  <div class="slide s-intro" id="s1">
-    <div class="slide-body">
-      <div class="anim-in intro-name">aanya<br>recapped.</div>
-      <div class="anim-in intro-tagline">a lifetime of singing, revisited.</div>
+  <!-- S1 INTRO -->
+  <div class="slide bg-dark" id="s1">
+    <div class="iblur"></div>
+    <div class="sb">
+      <div class="u iname">aanya<br>recapped.</div>
+      <div class="u itag">a lifetime of singing, revisited.</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 2 — ALBUM FAN COLLAGE
-  ══════════════════════════════════════ -->
-  <div class="slide s-amber" id="s2">
-    <div class="slide-body">
-      <div class="fan-header">
-        <div class="anim-in t-label">from the shows she performs</div>
-        <div class="anim-in t-large" style="font-size:clamp(28px,8vw,52px);">her repertoire.</div>
-      </div>
-      <div class="fan-stage">
-        <div class="fan-album"><img alt="Wicked"            data-search="Wicked Original Broadway Cast Recording"></div>
-        <div class="fan-album"><img alt="Les Misérables"    data-search="Les Misérables Original Cast Recording"></div>
-        <div class="fan-album"><img alt="My Fair Lady"      data-search="My Fair Lady Original Broadway Cast Recording"></div>
-        <div class="fan-album"><img alt="Sound of Music"    data-search="Sound of Music Original Cast Recording"></div>
-        <div class="fan-album"><img alt="Greatest Showman"  data-search="The Greatest Showman Soundtrack"></div>
-        <div class="fan-album"><img alt="Evita"             data-search="Evita Original Cast Broadway Recording"></div>
-        <div class="fan-album"><img alt="Waitress"          data-search="Waitress Musical Original Cast Recording"></div>
-        <div class="fan-album"><img alt="Adele 25"          data-search="Adele 25"></div>
-        <div class="fan-album"><img alt="A Star is Born"    data-search="A Star is Born 2018 Soundtrack"></div>
+  <!-- S2 STATEMENT -->
+  <div class="slide bg-amber blob" id="s2">
+    <div class="sb">
+      <div class="u stmt">A lot of<br>singing can<br>happen in<br>a lifetime.</div>
+    </div>
+  </div>
+
+  <!-- S3 LET'S RUN IT BACK -->
+  <div class="slide bg-amber blob" id="s3">
+    <div class="sb">
+      <div class="u stmt" style="text-align:right;">Let's run<br>it back.</div>
+    </div>
+  </div>
+
+  <!-- S4 STAT + BLEED -->
+  <div class="slide bg-amber blob" id="s4">
+    <div class="sb">
+      <div class="u stmt">and she's<br>performed<br>47 songs.</div>
+      <div class="bwrap">
+        <div class="u bnum">47</div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 3 — STATEMENT
-  ══════════════════════════════════════ -->
-  <div class="slide s-warm" id="s3">
-    <div class="slide-body">
-      <div class="anim-in t-statement">A lot of<br>singing can<br>happen in<br>a lifetime.</div>
+  <!-- S5 ALBUM GRID — edge-to-edge, no border-radius -->
+  <div class="slide bg-amber" id="s5">
+    <div class="sb">
+      <div class="agrid" id="agrid">
+        <div class="ac"><img data-s="Wicked Original Broadway Cast Recording"></div>
+        <div class="ac"><img data-s="Les Misérables Original Cast Recording"></div>
+        <div class="ac"><img data-s="My Fair Lady Original Broadway Cast Recording"></div>
+        <div class="ac"><img data-s="Sound of Music Original Cast Recording"></div>
+        <div class="ac"><img data-s="The Greatest Showman Soundtrack"></div>
+        <div class="ac"><img data-s="Evita Original Cast Broadway Recording"></div>
+        <div class="ac"><img data-s="Waitress Musical Original Cast Recording"></div>
+        <div class="ac"><img data-s="Adele 25"></div>
+        <div class="ac"><img data-s="A Star is Born 2018 Soundtrack"></div>
+      </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 4 — BIG NUMBER
-  ══════════════════════════════════════ -->
-  <div class="slide s-amber2" id="s4">
-    <div class="slide-body">
-      <div class="anim-in t-label">and she's performed</div>
-      <div class="anim-in bleed-num">47</div>
-      <div class="anim-in t-large" style="color:rgba(255,255,255,0.8);font-size:clamp(28px,8vw,56px);margin-top:2px;">songs. to date.</div>
-      <div class="anim-in t-small" style="margin-top:12px;">musical theater · classical · pop · traditional</div>
+  <!-- S6 MEGA SENTENCE -->
+  <div class="slide bg-amber blob" id="s6">
+    <div class="sb">
+      <div class="u mega">and from<br>18 musicals<br>total.</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 5 — TOP SHOW HERO (like Top Artist)
-  ══════════════════════════════════════ -->
-  <div class="slide s-teal" id="s5">
-    <div class="slide-body">
-      <div class="anim-in t-label">Top Musical</div>
-      <div class="anim-in t-huge">Wicked.</div>
-      <div class="anim-in t-stat">3 songs performed</div>
-      <div class="anim-in hero-circle-wrap">
-        <div class="circle-art" style="width:100%;height:100%;">
-          <img id="hero-wicked-img" alt="Wicked" data-search="Wicked Original Broadway Cast Recording">
+  <!-- S7 SCATTERED CIRCLES (loyal, green) -->
+  <div class="slide bg-green" id="s7">
+    <div class="cfield">
+      <div class="sc c1"><img data-s="Wicked Original Broadway Cast Recording"></div>
+      <div class="sc c2"><img data-s="Waitress Musical Original Cast Recording"></div>
+      <div class="sc c3"><img data-s="My Fair Lady Original Broadway Cast Recording"></div>
+      <div class="sc c4"><img data-s="Les Misérables Original Cast Recording"></div>
+    </div>
+    <div class="sb">
+      <div class="loyal-txt">
+        <div class="u stmt">She stayed<br>loyal to<br>this musical.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 TOP SHOW (teal + blurred bg) -->
+  <div class="slide bg-teal" id="s8">
+    <div class="art-bg"><img id="abg" data-s="Wicked Original Broadway Cast Recording"></div>
+    <div class="sb">
+      <div class="u lbl">Top Musical</div>
+      <div class="u huge">Wicked.</div>
+      <div class="u sub">3 songs performed</div>
+      <div class="u art-circle"><img id="acir" data-s="Wicked Original Broadway Cast Recording"></div>
+    </div>
+  </div>
+
+  <!-- S9 STACKED CIRCLES + text bottom -->
+  <div class="slide bg-silver noise" id="s9">
+    <div class="sb">
+      <div class="skwrap">
+        <div class="sk"><img data-s="Wicked Original Broadway Cast Recording"></div>
+        <div class="sk"><img data-s="My Fair Lady Original Broadway Cast Recording"></div>
+        <div class="sk"><img data-s="Waitress Musical Original Cast Recording"></div>
+      </div>
+      <div class="skcap">
+        <div class="stmt" style="font-size:clamp(26px,7vw,44px);">And these<br>shows were<br>by her side.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S10 ANTHEM irregular pile -->
+  <div class="slide bg-silver noise" id="s10">
+    <div class="sb">
+      <div class="pile">
+        <div class="pc p1"><img data-s="Waitress Musical Original Cast Recording"></div>
+        <div class="pc p2"><img data-s="Waitress Musical Original Cast Recording"></div>
+        <div class="pc p3"><img data-s="Waitress Musical Original Cast Recording"></div>
+        <div class="pc p4"><img data-s="Waitress Musical Original Cast Recording"></div>
+      </div>
+      <div class="acap">
+        <div class="u stmt" style="font-size:clamp(24px,6.5vw,42px);">One song became<br>her anthem.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S11 TOP SONG DETAIL -->
+  <div class="slide bg-silver noise" id="s11">
+    <div class="sb">
+      <div class="tsart"><img id="tsimg" data-s="Waitress Musical Original Cast Recording"></div>
+      <div class="tsinfo">
+        <div class="u lbl" style="margin-top:6px;">Top Song</div>
+        <div class="u huge" style="font-size:clamp(30px,8.5vw,58px);line-height:.95;">She Used to<br>Be Mine</div>
+        <div class="u sub" style="margin-top:4px;">Waitress · Sara Bareilles</div>
+        <div class="u tiny">First learned: 2023</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S12 OUTRO -->
+  <div class="slide bg-deep" id="s12">
+    <div class="sb">
+      <div class="u huge">Keep<br>performing.</div>
+      <div class="u sub" style="margin-top:10px;">47 songs down. so many more to go.</div>
+      <div class="u oglass">
+        <div class="oey">vocal portfolio</div>
+        <div class="ot">my full repertoire</div>
+        <div class="os">scores, recordings & performance notes</div>
+        <div class="obr">
+          <a href="music.html"           class="ob">explore →</a>
+          <a href="sounds-overview.html" class="ob g">overview</a>
         </div>
       </div>
+      <div class="u ohm"><a href="sidequests.html">← back to playground</a></div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 6 — STACKED CIRCLES
-  ══════════════════════════════════════ -->
-  <div class="slide s-silver noise" id="s6">
-    <div class="slide-body">
-      <div class="stacked-hdr">
-        <div class="anim-in t-statement" style="font-size:clamp(24px,7vw,44px);">Each show<br>brought new<br>stories.</div>
-      </div>
-      <div class="stacked-circles">
-        <div class="stack-circle"><img alt="Wicked"     id="sc1" data-search="Wicked Original Broadway Cast Recording"></div>
-        <div class="stack-circle"><img alt="My Fair Lady" id="sc2" data-search="My Fair Lady Original Broadway Cast Recording"></div>
-        <div class="stack-circle"><img alt="Waitress"   id="sc3" data-search="Waitress Musical Original Cast Recording"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 7 — REPEATED COVER ANTHEM
-  ══════════════════════════════════════ -->
-  <div class="slide s-silver noise" id="s7">
-    <div class="slide-body">
-      <div class="anthem-grid">
-        <div class="anthem-cell"><img alt="Waitress" id="ant1" data-search="Waitress Musical Original Cast Recording"></div>
-        <div class="anthem-cell"><img alt="Waitress" id="ant2" data-search="Waitress Musical Original Cast Recording"></div>
-        <div class="anthem-cell"><img alt="Waitress" id="ant3" data-search="Waitress Musical Original Cast Recording"></div>
-        <div class="anthem-cell"><img alt="Waitress" id="ant4" data-search="Waitress Musical Original Cast Recording"></div>
-        <div class="anthem-cell"><img alt="Waitress" id="ant5" data-search="Waitress Musical Original Cast Recording"></div>
-        <div class="anthem-cell"><img alt="Waitress" id="ant6" data-search="Waitress Musical Original Cast Recording"></div>
-      </div>
-      <div class="anthem-caption">
-        <div class="anim-in t-statement" style="font-size:clamp(22px,6vw,38px);">One song.<br>she just kept<br>coming back.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 8 — TOP SONG DETAIL
-  ══════════════════════════════════════ -->
-  <div class="slide s-silver noise" id="s8">
-    <div class="slide-body">
-      <div class="topsong-art">
-        <div class="topsong-art-placeholder">🥧</div>
-        <img id="topsong-img" alt="Waitress" data-search="Waitress Musical Original Cast Recording">
-      </div>
-      <div class="topsong-info">
-        <div class="anim-in t-label" style="margin-top:6px;">Top Song</div>
-        <div class="anim-in t-huge" style="font-size:clamp(34px,9vw,64px);line-height:0.95;">She Used to<br>Be Mine</div>
-        <div class="anim-in t-stat" style="margin-top:6px;">Waitress · Sara Bareilles</div>
-        <div class="anim-in t-small" style="margin-top:4px;">First learned: 2023</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 9 — SONGS TO LEARN
-  ══════════════════════════════════════ -->
-  <div class="slide s-deep" id="s9">
-    <div class="slide-body">
-      <div class="anim-in t-label">still on the list</div>
-      <div class="anim-in t-large" style="font-size:clamp(34px,10vw,64px);">She's still<br>not done.</div>
-      <div class="learn-list">
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Don't Rain on My Parade</span><span class="learn-show">Funny Girl</span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">The Wizard and I</span><span class="learn-show">Wicked</span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">What Is This Feeling?</span><span class="learn-show">Wicked</span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Popular</span><span class="learn-show">Wicked</span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">La Vie en Rose</span><span class="learn-show"></span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">The Girl in 14G</span><span class="learn-show"></span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Almost There</span><span class="learn-show">Princess and the Frog</span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">I'm Here</span><span class="learn-show">The Color Purple</span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Speechless</span><span class="learn-show"></span></div>
-        <div class="learn-row"><div class="learn-bullet"></div><span class="learn-name">Reflection</span><span class="learn-show">Mulan</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 10 — OUTRO
-  ══════════════════════════════════════ -->
-  <div class="slide s-amber" id="s10">
-    <div class="slide-body">
-      <div class="anim-in t-huge" style="font-size:clamp(56px,16vw,110px);">Keep<br>performing.</div>
-      <div class="anim-in t-body" style="margin-top:12px;">47 songs down. so many more to go.</div>
-
-      <div class="anim-in outro-card" onclick="window.location.href='music.html'">
-        <div class="outro-card-eyebrow">vocal portfolio</div>
-        <div class="outro-card-title">my full repertoire</div>
-        <div class="outro-card-sub">scores, recordings & performance notes</div>
-        <div class="outro-btn-row">
-          <a href="music.html" class="outro-btn">explore →</a>
-          <a href="sounds-overview.html" class="outro-btn ghost">overview</a>
-        </div>
-      </div>
-
-      <div class="outro-home anim-in">
-        <a href="aanya-portfolio-v14.html">← back to portfolio</a>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /#story -->
+</div>
 
 <script>
-const TOTAL = 10;
-let current = 0;
-let busy = false;
+const N = 12;
+let cur = 0, busy = false;
+const slides = document.querySelectorAll('.slide');
+const pbEl   = document.getElementById('pb');
+const dotsEl = document.getElementById('dots');
 
-const slides  = document.querySelectorAll('.slide');
-const bar     = document.getElementById('progress-bar');
-const dotsEl  = document.getElementById('nav-dots');
-
-// Build progress + dots
-for (let i = 0; i < TOTAL; i++) {
-  const s = document.createElement('div'); s.className = 'prog-seg'; bar.appendChild(s);
-  const d = document.createElement('div'); d.className = 'nav-dot'; d.dataset.i = i;
+for (let i = 0; i < N; i++) {
+  const s = document.createElement('div'); s.className = 'seg'; pbEl.appendChild(s);
+  const d = document.createElement('div'); d.className = 'dot'; d.dataset.i = i;
   d.addEventListener('click', e => { e.stopPropagation(); goTo(i); });
   dotsEl.appendChild(d);
 }
 
-function goTo(idx, _dir = 1) {
-  if (busy || idx === current || idx < 0 || idx >= TOTAL) return;
+function goTo(idx) {
+  if (busy || idx === cur || idx < 0 || idx >= N) return;
   busy = true;
-  slides[current].classList.remove('active');
-  current = idx;
-  const slide = slides[current];
-  // Reset animations
-  slide.querySelectorAll('.anim-in').forEach(el => { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
-  slide.classList.add('active');
-  updateUI();
+  slides[cur].classList.remove('on');
+  cur = idx;
+  const sl = slides[cur];
+  sl.querySelectorAll('.u').forEach(el => { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
+  sl.classList.add('on');
+  sync();
   setTimeout(() => busy = false, 200);
 }
+const next = () => goTo(cur + 1);
+const prev = () => goTo(cur - 1);
 
-function advance() { goTo(current + 1); }
-function back()    { goTo(current - 1); }
-
-function updateUI() {
-  document.querySelectorAll('.prog-seg').forEach((s, i) => {
-    s.classList.toggle('done',   i < current);
-    s.classList.toggle('active', i === current);
+function sync() {
+  document.querySelectorAll('.seg').forEach((s,i) => {
+    s.classList.toggle('done',   i < cur);
+    s.classList.toggle('active', i === cur);
   });
-  document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i === cur));
 }
 
-// Tap zones
-document.getElementById('tap-right').addEventListener('click', e => {
-  if (e.target.closest('a, button, .outro-card')) return;
-  ripple(e.clientX, e.clientY); advance();
+document.getElementById('tr').addEventListener('click', e => {
+  if (e.target.closest('a,button,.oglass')) return;
+  rp(e.clientX, e.clientY); next();
 });
-document.getElementById('tap-left').addEventListener('click', e => {
-  ripple(e.clientX, e.clientY); back();
+document.getElementById('tl').addEventListener('click', e => {
+  rp(e.clientX, e.clientY); prev();
 });
 
-// Ripple
-function ripple(x, y) {
+function rp(x, y) {
   const r = document.createElement('div');
-  Object.assign(r.style, {
-    position:'fixed', left:x+'px', top:y+'px',
-    width:'60px', height:'60px', borderRadius:'50%',
-    background:'rgba(255,255,255,0.16)', transform:'translate(-50%,-50%) scale(0)',
-    animation:'rp 0.45s ease forwards', pointerEvents:'none', zIndex:'30'
-  });
-  const style = document.createElement('style');
-  style.textContent = '@keyframes rp { to { transform:translate(-50%,-50%) scale(1.6); opacity:0; } }';
-  document.head.appendChild(style);
+  r.className = 'rp'; r.style.left = x + 'px'; r.style.top = y + 'px';
   document.body.appendChild(r);
-  r.addEventListener('animationend', () => { r.remove(); style.remove(); });
+  r.addEventListener('animationend', () => r.remove());
 }
 
-// Keyboard
 document.addEventListener('keydown', e => {
-  if (e.key==='ArrowRight'||e.key===' ') advance();
-  if (e.key==='ArrowLeft') back();
+  if (e.key === 'ArrowRight' || e.key === ' ') next();
+  if (e.key === 'ArrowLeft') prev();
 });
 
-// Touch swipe
-let tx0=0, ty0=0;
-document.addEventListener('touchstart', e => { tx0=e.touches[0].clientX; ty0=e.touches[0].clientY; }, {passive:true});
-document.addEventListener('touchend', e => {
-  const dx=e.changedTouches[0].clientX-tx0, dy=e.changedTouches[0].clientY-ty0;
-  if (Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40) dx<0?advance():back();
+let tx0 = 0;
+document.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend',   e => {
+  const dx = e.changedTouches[0].clientX - tx0;
+  if (Math.abs(dx) > 40) dx < 0 ? next() : prev();
 }, {passive:true});
 
-// Volume toggle
 let muted = false;
-document.getElementById('vol-btn').addEventListener('click', () => {
+document.getElementById('vbtn').addEventListener('click', () => {
   muted = !muted;
-  document.getElementById('vol-btn').style.opacity = muted ? '0.45' : '1';
+  document.getElementById('vbtn').style.opacity = muted ? '0.4' : '1';
 });
 
-// Init
-slides[0].classList.add('active');
-updateUI();
+slides[0].classList.add('on');
+sync();
 
-// ══ ARTWORK LOADING ══
-const artCache = {};
-
-async function fetchArt(search) {
-  if (artCache[search]) return artCache[search];
+/* ── ART LOADING ── */
+const cache = {};
+async function fetchArt(q) {
+  if (cache[q] !== undefined) return cache[q];
   try {
-    const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(search)}&entity=album&limit=3&country=us`);
+    const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=3&country=us`);
     const d = await r.json();
-    const hit = d.results.find(x => x.artworkUrl100) || d.results[0];
-    const url = hit?.artworkUrl100?.replace('100x100bb','600x600bb') || null;
-    artCache[search] = url;
-    return url;
-  } catch { return null; }
+    const h = d.results.find(x => x.artworkUrl100) || d.results[0];
+    cache[q] = h?.artworkUrl100?.replace('100x100bb','600x600bb') || null;
+  } catch { cache[q] = null; }
+  return cache[q];
 }
-
-function loadImg(img) {
-  const search = img.dataset.search;
-  if (!search) return;
-  fetchArt(search).then(url => {
-    if (!url) return;
-    img.src = url;
-    img.onload = () => img.classList.add('loaded');
-  });
+function setImg(img, url) {
+  if (!url || !img) return;
+  img.src = url;
+  img.onload = () => img.classList.add('loaded');
 }
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
-// Load all images — fan albums first (most visible), then others
-async function loadAllArt() {
-  // Fan albums (slide 2)
-  const fanImgs = document.querySelectorAll('.fan-album img');
-  for (const img of fanImgs) { loadImg(img); await new Promise(r => setTimeout(r, 60)); }
-
-  // Single circle images
-  const singles = [
-    { el: document.getElementById('hero-wicked-img'), search: 'Wicked Original Broadway Cast Recording' },
-    { el: document.getElementById('sc1'), search: 'Wicked Original Broadway Cast Recording' },
-    { el: document.getElementById('sc2'), search: 'My Fair Lady Original Broadway Cast Recording' },
-    { el: document.getElementById('sc3'), search: 'Waitress Musical Original Cast Recording' },
-  ];
-  for (const { el, search } of singles) {
-    if (!el) continue;
-    const url = await fetchArt(search);
-    if (url) { el.src = url; el.onload = () => el.classList.add('loaded'); }
-    await new Promise(r => setTimeout(r, 80));
+async function loadAll() {
+  // grid
+  for (const img of document.querySelectorAll('.ac img')) {
+    setImg(img, await fetchArt(img.dataset.s)); await wait(55);
   }
-
-  // Waitress anthem grid (all same image)
-  const waitressUrl = await fetchArt('Waitress Musical Original Cast Recording');
-  if (waitressUrl) {
-    ['ant1','ant2','ant3','ant4','ant5','ant6'].forEach(id => {
-      const img = document.getElementById(id);
-      if (!img) return;
-      img.src = waitressUrl;
-      img.onload = () => img.classList.add('loaded');
-    });
+  // scattered + stacked + pile (all cached by now)
+  for (const img of document.querySelectorAll('.sc img, .sk img, .pc img')) {
+    setImg(img, await fetchArt(img.dataset.s)); await wait(25);
   }
-
-  // Top song full image
-  const topsongImg = document.getElementById('topsong-img');
-  if (topsongImg && waitressUrl) {
-    topsongImg.src = waitressUrl;
-    topsongImg.onload = () => topsongImg.classList.add('loaded');
-  }
+  // singles
+  const w = await fetchArt('Wicked Original Broadway Cast Recording');
+  const wa = await fetchArt('Waitress Musical Original Cast Recording');
+  setImg(document.getElementById('abg'),   w);
+  setImg(document.getElementById('acir'),  w);
+  setImg(document.getElementById('tsimg'), wa);
 }
-
-loadAllArt();
+loadAll();
 </script>
 </body>
 </html>

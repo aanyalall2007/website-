@@ -3,454 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>aanya's repertoire · overview</title>
+<title>aanya's repertoire</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg:        #F2F2F7;
-  --bg-card:   #FFFFFF;
-  --label:     #1C1C1E;
-  --label-2:   rgba(60,60,67,0.6);
-  --label-3:   rgba(60,60,67,0.3);
-  --sep:       rgba(60,60,67,0.16);
-  --fill:      rgba(120,120,128,0.12);
-  --blue:      #007AFF;
-  --purple:    #AF52DE;
-  --pink:      #FF2D55;
-  --teal:      #32ADE6;
-  --orange:    #FF9500;
-  --green:     #34C759;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
-  --spring: linear(0,.006,.025,.056,.098,.15,.21,.27,.34,.41,.48,.55,.62,.69,.75,.81,.86,.91,.95,.98,1.004,1.015,1.022,1.025,1.024,1.021,1.015,1.008,1.002,.998,.996,.995,.996,.997,.999,1);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F2F2F7;--bg2:#fff;--label:#1C1C1E;--label2:rgba(60,60,67,0.6);
+  --label3:rgba(60,60,67,0.3);--sep:rgba(60,60,67,0.18);--fill:rgba(120,120,128,0.12);
+  --pink:#FF2D55;--purple:#AF52DE;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+  --spring:linear(0,0.006,0.025,0.056,0.098,0.15,0.21,0.27,0.34,0.41,0.48,0.55,0.62,0.69,0.75,0.81,0.86,0.91,0.95,0.98,1.004,1.015,1.022,1.025,1.024,1.021,1.015,1.008,1.002,0.998,0.996,0.995,0.996,0.997,0.999,1);
 }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--label);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-/* ── SCROLL PROGRESS ── */
-#scroll-progress {
-  position: fixed; top: 0; left: 0; height: 2.5px; width: 0%;
-  background: linear-gradient(90deg, #FF2D55, #AF52DE);
-  z-index: 9999; transition: width 0.06s linear;
-  border-radius: 0 2px 2px 0;
-}
-
-/* ── NAV ── */
-nav {
-  position: sticky; top: 0; z-index: 500;
-  height: 52px;
-  background: rgba(242,242,247,0.88);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 0.5px solid var(--sep);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 20px;
-}
-.nav-back {
-  font-size: 17px; color: var(--blue);
-  text-decoration: none; display: flex; align-items: center; gap: 4px;
-  font-weight: 400; transition: opacity 0.15s;
-}
-.nav-back:hover { opacity: 0.7; }
-.nav-back svg { width: 9px; height: 16px; }
-.nav-title {
-  font-size: 17px; font-weight: 600;
-  letter-spacing: -0.022em;
-}
-.nav-right { width: 80px; display: flex; justify-content: flex-end; }
-.nav-replay-link {
-  font-size: 14px; color: var(--blue);
-  text-decoration: none; transition: opacity 0.15s;
-}
-.nav-replay-link:hover { opacity: 0.7; }
-
-/* ── HERO ── */
-.overview-hero {
-  background: linear-gradient(160deg, #C85A00 0%, #7B2D8B 100%);
-  padding: 48px 24px 40px;
-  color: #fff;
-}
-.hero-eyebrow {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: rgba(255,255,255,0.6);
-  margin-bottom: 10px;
-}
-.hero-title {
-  font-size: clamp(36px, 8vw, 60px);
-  font-weight: 800; letter-spacing: -0.04em; line-height: 0.95;
-  margin-bottom: 12px;
-}
-.hero-sub {
-  font-size: 16px; color: rgba(255,255,255,0.65);
-  line-height: 1.5;
-}
-.hero-pill-row {
-  display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap;
-}
-.hero-pill {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 100px; padding: 6px 14px;
-  font-size: 13px; font-weight: 500; color: #fff;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* ── STATS STRIP ── */
-.stats-strip {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; padding: 20px;
-  background: var(--bg);
-}
-@media (max-width: 480px) { .stats-strip { grid-template-columns: repeat(2, 1fr); } }
-.stat-chip {
-  background: var(--bg-card); border-radius: 14px;
-  padding: 16px 14px;
-  box-shadow: 0 1px 0 var(--sep), 0 2px 8px rgba(0,0,0,0.04);
-  opacity: 0; transform: translateY(16px) scale(0.97);
-  transition: opacity 0.5s ease, transform 0.5s var(--spring);
-}
-.stat-chip.in { opacity: 1; transform: none; }
-.stat-chip:nth-child(2) { transition-delay: 0.06s; }
-.stat-chip:nth-child(3) { transition-delay: 0.12s; }
-.stat-chip:nth-child(4) { transition-delay: 0.06s; }
-.stat-chip:nth-child(5) { transition-delay: 0.12s; }
-.stat-chip:nth-child(6) { transition-delay: 0.18s; }
-.stat-icon { font-size: 18px; margin-bottom: 8px; }
-.stat-n { font-size: 28px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
-.stat-d { font-size: 11px; color: var(--label-2); margin-top: 3px; line-height: 1.35; }
-
-/* ── SECTION HEADER ── */
-.section-hdr {
-  padding: 28px 20px 0;
-  opacity: 0; transform: translateY(10px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-}
-.section-hdr.in { opacity: 1; transform: none; }
-.section-hdr-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--label-2);
-  margin-bottom: 4px;
-}
-.section-hdr-title {
-  font-size: 22px; font-weight: 700;
-  letter-spacing: -0.03em; color: var(--label);
-}
-
-/* ── IOS LIST CARD ── */
-.list-card {
-  margin: 14px 20px 0;
-  background: var(--bg-card);
-  border-radius: 16px; overflow: hidden;
-  box-shadow: 0 1px 0 var(--sep), 0 2px 12px rgba(0,0,0,0.04);
-}
-.song-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px;
-  border-bottom: 0.5px solid var(--sep);
-  opacity: 0; transform: translateX(-10px);
-  transition: opacity 0.38s ease, transform 0.38s var(--spring), background 0.12s;
-}
-.song-row:last-child { border-bottom: none; }
-.song-row.in { opacity: 1; transform: none; }
-.song-row:hover { background: var(--fill); }
-.song-num {
-  font-size: 13px; color: var(--label-3);
-  width: 20px; flex-shrink: 0; text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.song-art {
-  width: 38px; height: 38px; border-radius: 7px;
-  flex-shrink: 0; background: var(--fill);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; overflow: hidden;
-}
-.song-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.song-info { flex: 1; min-width: 0; }
-.song-name {
-  font-size: 15px; font-weight: 500;
-  letter-spacing: -0.01em; color: var(--label);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.song-source {
-  font-size: 12px; color: var(--label-2); margin-top: 1px;
-}
-.song-badge {
-  flex-shrink: 0;
-  font-size: 11px; font-weight: 500;
-  padding: 3px 9px; border-radius: 100px;
-  white-space: nowrap;
-}
-.b-musical   { background: rgba(175,82,222,0.12); color: var(--purple); }
-.b-classical { background: rgba(50,173,230,0.12);  color: var(--teal); }
-.b-pop       { background: rgba(255,45,85,0.12);   color: var(--pink); }
-.b-trad      { background: rgba(255,149,0,0.12);   color: var(--orange); }
-
-/* ── FAV HIGHLIGHT CARDS ── */
-.fav-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 10px; margin: 14px 20px 0;
-}
-.fav-card {
-  background: var(--bg-card); border-radius: 14px;
-  padding: 14px 14px;
-  box-shadow: 0 1px 0 var(--sep), 0 2px 8px rgba(0,0,0,0.04);
-  opacity: 0; transform: translateY(14px);
-  transition: opacity 0.45s ease, transform 0.45s var(--spring), background 0.15s;
-}
-.fav-card.in { opacity: 1; transform: none; }
-.fav-card:hover { background: #f7f7f7; }
-.fav-card-num { font-size: 11px; color: var(--label-3); margin-bottom: 5px; font-variant-numeric: tabular-nums; }
-.fav-card-name { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; color: var(--label); }
-.fav-card-show { font-size: 12px; color: var(--label-2); margin-top: 2px; }
-
-/* ── FUTURE SECTION ── */
-.future-card {
-  margin: 14px 20px 0;
-  background: var(--bg-card);
-  border-radius: 16px; overflow: hidden;
-  box-shadow: 0 1px 0 var(--sep), 0 2px 12px rgba(0,0,0,0.04);
-}
-.future-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 0.5px solid var(--sep);
-  opacity: 0; transform: translateX(-10px);
-  transition: opacity 0.38s ease, transform 0.38s var(--spring);
-}
-.future-row:last-child { border-bottom: none; }
-.future-row.in { opacity: 1; transform: none; }
-.future-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; opacity: 0.5; }
-.future-name { font-size: 15px; font-weight: 500; color: var(--label); letter-spacing: -0.01em; flex: 1; }
-.future-show { font-size: 12px; color: var(--label-2); flex-shrink: 0; }
-
-/* ── OUTRO ── */
-.overview-outro {
-  padding: 40px 20px 60px; text-align: center;
-  opacity: 0; transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s var(--spring);
-}
-.overview-outro.in { opacity: 1; transform: none; }
-.outro-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; }
-.outro-sub { font-size: 15px; color: var(--label-2); margin-bottom: 28px; }
-.replay-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--blue); color: #fff;
-  border: none; border-radius: 999px;
-  padding: 13px 28px;
-  font-size: 16px; font-weight: 600;
-  font-family: var(--font); cursor: pointer;
-  text-decoration: none;
-  transition: opacity 0.15s, transform 0.2s var(--spring);
-  box-shadow: 0 4px 16px rgba(0,122,255,0.35);
-}
-.replay-btn:hover { opacity: 0.9; }
-.replay-btn:active { transform: scale(0.95); }
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--label);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(242,242,247,0.88);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:0.5px solid var(--sep);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:200}
+.nav-back{font-size:17px;color:#007AFF;text-decoration:none;display:flex;align-items:center;gap:4px;transition:opacity 0.15s}
+.nav-back:hover{opacity:0.7}
+.nav-back svg{width:9px;height:15px}
+.nav-title{font-size:17px;font-weight:600;letter-spacing:-0.022em}
+.nav-right a{font-size:15px;color:#007AFF;text-decoration:none;transition:opacity 0.15s}
+.nav-right a:hover{opacity:0.7}
+.hero{padding:80px 0 8px;text-align:center}
+.hero-eye{font-size:13px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--label2);margin-bottom:16px}
+.hero-title{font-size:clamp(44px,8vw,72px);font-weight:700;letter-spacing:-0.04em;line-height:0.95}
+.hero-sub{margin-top:12px;font-size:17px;color:var(--label2)}
+.section{max-width:760px;margin:0 auto;padding:24px 16px 80px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px;margin-bottom:8px}
+.sec-label{font-size:13px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--label2)}
+.sec-count{font-size:13px;color:var(--label3)}
+.list-card{background:var(--bg2);border-radius:16px;overflow:hidden;box-shadow:0 1px 0 var(--sep),0 2px 16px rgba(0,0,0,0.04)}
+.song-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--sep);opacity:0;transform:translateY(12px);transition:opacity 0.4s ease,transform 0.4s var(--spring),background 0.12s;cursor:default}
+.song-row:last-child{border-bottom:none}
+.song-row.in{opacity:1;transform:none}
+.song-row:hover{background:var(--fill)}
+.song-num{font-size:15px;color:var(--label3);width:20px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.song-art{width:40px;height:40px;border-radius:6px;flex-shrink:0;background:var(--fill);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:17px}
+.song-art img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.3s;position:absolute;inset:0}
+.song-art img.loaded{opacity:1}
+.song-info{flex:1;min-width:0}
+.song-name{font-size:15px;font-weight:500;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-from{font-size:13px;color:var(--label2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.song-tag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:100px;flex-shrink:0;letter-spacing:0.02em}
+.tag-m{background:rgba(175,82,222,0.12);color:#AF52DE}
+.tag-c{background:rgba(50,173,230,0.12);color:#32ADE6}
+.tag-p{background:rgba(255,45,85,0.12);color:#FF2D55}
+.tag-t{background:rgba(255,149,0,0.12);color:#FF9500}
+.outro{text-align:center;padding:24px 24px 80px;color:var(--label2);font-size:14px}
+.outro a{color:#007AFF;text-decoration:none}
+.outro a:hover{text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.song-row{transition:none;opacity:1;transform:none}}
 </style>
 </head>
 <body>
-
-<div id="scroll-progress"></div>
-
-<!-- NAV -->
 <nav>
   <a href="sounds.html" class="nav-back">
-    <svg viewBox="0 0 9 16" fill="none"><path d="M8 1L1 8l7 7" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    replay
+    <svg viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5 8 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    my songs
   </a>
-  <span class="nav-title">overview</span>
-  <div class="nav-right">
-    <a href="index.html" class="nav-replay-link">home</a>
-  </div>
+  <span class="nav-title">repertoire</span>
+  <div class="nav-right"><a href="aanya-lall-music.pdf" target="_blank">full list ↗</a></div>
 </nav>
 
-<!-- HERO -->
-<div class="overview-hero">
-  <p class="hero-eyebrow">aanya lall · vocal portfolio</p>
-  <h1 class="hero-title">aanya<br>recapped.</h1>
-  <p class="hero-sub">every song she's ever performed, all in one place.</p>
-  <div class="hero-pill-row">
-    <span class="hero-pill">🎭 35 musical theater</span>
-    <span class="hero-pill">🎵 12 contemporary</span>
-    <span class="hero-pill">🎶 5 classical</span>
-    <span class="hero-pill">⭐ 47 total</span>
+<div class="hero">
+  <p class="hero-eye">aanya lall · vocal</p>
+  <h1 class="hero-title">repertoire</h1>
+  <p class="hero-sub">every song i've performed — since i was 13</p>
+</div>
+
+<div class="section">
+
+  <div class="sec-head"><span class="sec-label">musical theatre</span><span class="sec-count">18 songs</span></div>
+  <div class="list-card">
+    <div class="song-row" data-q="waitress musical broadway cast">
+      <span class="song-num">1</span><div class="song-art">🥧<img alt=""></div>
+      <div class="song-info"><div class="song-name">she used to be mine</div><div class="song-from">waitress</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="waitress musical broadway cast">
+      <span class="song-num">2</span><div class="song-art">🥧<img alt=""></div>
+      <div class="song-info"><div class="song-name">when he sees me</div><div class="song-from">waitress</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="wicked original broadway cast recording">
+      <span class="song-num">3</span><div class="song-art">🟢<img alt=""></div>
+      <div class="song-info"><div class="song-name">defying gravity</div><div class="song-from">wicked</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="wicked original broadway cast recording">
+      <span class="song-num">4</span><div class="song-art">🟢<img alt=""></div>
+      <div class="song-info"><div class="song-name">i'm not that girl</div><div class="song-from">wicked</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="wicked original broadway cast recording">
+      <span class="song-num">5</span><div class="song-art">🟢<img alt=""></div>
+      <div class="song-info"><div class="song-name">for good</div><div class="song-from">wicked</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="my fair lady cast recording broadway">
+      <span class="song-num">6</span><div class="song-art">🎩<img alt=""></div>
+      <div class="song-info"><div class="song-name">show me</div><div class="song-from">my fair lady</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="my fair lady cast recording broadway">
+      <span class="song-num">7</span><div class="song-art">🎩<img alt=""></div>
+      <div class="song-info"><div class="song-name">i could have danced all night</div><div class="song-from">my fair lady</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="les miserables original broadway cast">
+      <span class="song-num">8</span><div class="song-art">🎭<img alt=""></div>
+      <div class="song-info"><div class="song-name">i dreamed a dream</div><div class="song-from">les misérables</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="les miserables original broadway cast">
+      <span class="song-num">9</span><div class="song-art">🎭<img alt=""></div>
+      <div class="song-info"><div class="song-name">on my own</div><div class="song-from">les misérables</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="evita musical cast recording">
+      <span class="song-num">10</span><div class="song-art">🌹<img alt=""></div>
+      <div class="song-info"><div class="song-name">don't cry for me argentina</div><div class="song-from">evita</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="mamma mia musical cast">
+      <span class="song-num">11</span><div class="song-art">✨<img alt=""></div>
+      <div class="song-info"><div class="song-name">the winner takes it all</div><div class="song-from">mamma mia</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="the little mermaid broadway cast">
+      <span class="song-num">12</span><div class="song-art">🐚<img alt=""></div>
+      <div class="song-info"><div class="song-name">part of your world</div><div class="song-from">the little mermaid</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="west side story cast recording">
+      <span class="song-num">13</span><div class="song-art">🌆<img alt=""></div>
+      <div class="song-info"><div class="song-name">i feel pretty</div><div class="song-from">west side story</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="the greatest showman soundtrack">
+      <span class="song-num">14</span><div class="song-art">🎪<img alt=""></div>
+      <div class="song-info"><div class="song-name">never enough</div><div class="song-from">the greatest showman</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="the greatest showman soundtrack">
+      <span class="song-num">15</span><div class="song-art">🎪<img alt=""></div>
+      <div class="song-info"><div class="song-name">rewrite the stars</div><div class="song-from">the greatest showman</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="the lion king broadway cast">
+      <span class="song-num">16</span><div class="song-art">🦁<img alt=""></div>
+      <div class="song-info"><div class="song-name">can you feel the love tonight</div><div class="song-from">the lion king</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="moana soundtrack">
+      <span class="song-num">17</span><div class="song-art">🌊<img alt=""></div>
+      <div class="song-info"><div class="song-name">shiny</div><div class="song-from">moana</div></div>
+      <span class="song-tag tag-m">musical</span></div>
+    <div class="song-row" data-q="aladdin broadway cast recording">
+      <span class="song-num">18</span><div class="song-art">✨<img alt=""></div>
+      <div class="song-info"><div class="song-name">a whole new world</div><div class="song-from">aladdin</div></div>
+      <span class="song-tag tag-m">musical</span></div>
   </div>
+
+  <div class="sec-head" style="margin-top:32px"><span class="sec-label">classical</span><span class="sec-count">5 songs</span></div>
+  <div class="list-card">
+    <div class="song-row" data-q="caro mio ben soprano classical"><span class="song-num">1</span><div class="song-art">🎻<img alt=""></div><div class="song-info"><div class="song-name">caro mio ben</div><div class="song-from">giordani</div></div><span class="song-tag tag-c">classical</span></div>
+    <div class="song-row" data-q="handel ombra mai fu classical"><span class="song-num">2</span><div class="song-art">🎻<img alt=""></div><div class="song-info"><div class="song-name">ombra mai fu</div><div class="song-from">handel</div></div><span class="song-tag tag-c">classical</span></div>
+    <div class="song-row" data-q="franck panis angelicus"><span class="song-num">3</span><div class="song-art">🎻<img alt=""></div><div class="song-info"><div class="song-name">panis angelicus</div><div class="song-from">franck</div></div><span class="song-tag tag-c">classical</span></div>
+    <div class="song-row" data-q="schumann die lotosblume art song"><span class="song-num">4</span><div class="song-art">🎻<img alt=""></div><div class="song-info"><div class="song-name">die lotosblume</div><div class="song-from">schumann</div></div><span class="song-tag tag-c">classical</span></div>
+    <div class="song-row" data-q="schubert ave maria soprano"><span class="song-num">5</span><div class="song-art">🎻<img alt=""></div><div class="song-info"><div class="song-name">ave maria</div><div class="song-from">schubert</div></div><span class="song-tag tag-c">classical</span></div>
+  </div>
+
+  <div class="sec-head" style="margin-top:32px"><span class="sec-label">contemporary & pop</span><span class="sec-count">10 songs</span></div>
+  <div class="list-card">
+    <div class="song-row" data-q="a star is born 2018 soundtrack"><span class="song-num">1</span><div class="song-art">🎤<img alt=""></div><div class="song-info"><div class="song-name">shallow</div><div class="song-from">lady gaga</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="adele 25 album"><span class="song-num">2</span><div class="song-art">🎤<img alt=""></div><div class="song-info"><div class="song-name">when we were young</div><div class="song-from">adele</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="adele 25 album"><span class="song-num">3</span><div class="song-art">🎤<img alt=""></div><div class="song-info"><div class="song-name">all i ask</div><div class="song-from">adele</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="adele skyfall"><span class="song-num">4</span><div class="song-art">🎤<img alt=""></div><div class="song-info"><div class="song-name">skyfall</div><div class="song-from">adele</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="a star is born 2018 soundtrack"><span class="song-num">5</span><div class="song-art">🌟<img alt=""></div><div class="song-info"><div class="song-name">always remember us this way</div><div class="song-from">lady gaga</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="coldplay a rush of blood to the head"><span class="song-num">6</span><div class="song-art">🌌<img alt=""></div><div class="song-info"><div class="song-name">the scientist</div><div class="song-from">coldplay</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="bruno mars doo wops and hooligans"><span class="song-num">7</span><div class="song-art">🌙<img alt=""></div><div class="song-info"><div class="song-name">talking to the moon</div><div class="song-from">bruno mars</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="bruno mars unorthodox jukebox"><span class="song-num">8</span><div class="song-art">🎹<img alt=""></div><div class="song-info"><div class="song-name">when i was your man</div><div class="song-from">bruno mars</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="keane hopes and fears"><span class="song-num">9</span><div class="song-art">🌿<img alt=""></div><div class="song-info"><div class="song-name">somewhere only we know</div><div class="song-from">keane</div></div><span class="song-tag tag-p">pop</span></div>
+    <div class="song-row" data-q="radiohead pablo honey"><span class="song-num">10</span><div class="song-art">🎵<img alt=""></div><div class="song-info"><div class="song-name">creep</div><div class="song-from">radiohead</div></div><span class="song-tag tag-p">pop</span></div>
+  </div>
+
+  <div class="sec-head" style="margin-top:32px"><span class="sec-label">traditional & sacred</span><span class="sec-count">4 songs</span></div>
+  <div class="list-card">
+    <div class="song-row" data-q="o holy night christmas classical"><span class="song-num">1</span><div class="song-art">🌙<img alt=""></div><div class="song-info"><div class="song-name">o holy night</div><div class="song-from">traditional</div></div><span class="song-tag tag-t">traditional</span></div>
+    <div class="song-row" data-q="mary did you know christmas vocal"><span class="song-num">2</span><div class="song-art">⭐<img alt=""></div><div class="song-info"><div class="song-name">mary did you know</div><div class="song-from">traditional</div></div><span class="song-tag tag-t">traditional</span></div>
+    <div class="song-row" data-q="away in a manger christmas carol"><span class="song-num">3</span><div class="song-art">⭐<img alt=""></div><div class="song-info"><div class="song-name">away in a manger</div><div class="song-from">traditional</div></div><span class="song-tag tag-t">traditional</span></div>
+    <div class="song-row" data-q="gartan mothers lullaby irish folk"><span class="song-num">4</span><div class="song-art">🍀<img alt=""></div><div class="song-info"><div class="song-name">gartan mother's lullaby</div><div class="song-from">traditional</div></div><span class="song-tag tag-t">traditional</span></div>
+  </div>
+
 </div>
 
-<!-- STATS -->
-<div class="stats-strip" data-reveal-group>
-  <div class="stat-chip"><div class="stat-icon">🎭</div><div class="stat-n">35</div><div class="stat-d">musical theater pieces</div></div>
-  <div class="stat-chip"><div class="stat-icon">🎵</div><div class="stat-n">12</div><div class="stat-d">contemporary songs</div></div>
-  <div class="stat-chip"><div class="stat-icon">🎶</div><div class="stat-n">5</div><div class="stat-d">classical pieces</div></div>
-  <div class="stat-chip"><div class="stat-icon">🎼</div><div class="stat-n">18</div><div class="stat-d">musicals covered</div></div>
-  <div class="stat-chip"><div class="stat-icon">🟢</div><div class="stat-n">3</div><div class="stat-d">wicked songs alone</div></div>
-  <div class="stat-chip"><div class="stat-icon">🎤</div><div class="stat-n">3</div><div class="stat-d">adele songs performed</div></div>
-</div>
-
-<!-- FAVOURITES -->
-<div class="section-hdr" data-reveal>
-  <div class="section-hdr-label">her favourites to perform</div>
-  <div class="section-hdr-title">top 9</div>
-</div>
-<div class="fav-grid" data-reveal-fav>
-  <div class="fav-card"><div class="fav-card-num">01</div><div class="fav-card-name">she used to be mine</div><div class="fav-card-show">Waitress</div></div>
-  <div class="fav-card"><div class="fav-card-num">02</div><div class="fav-card-name">when he sees me</div><div class="fav-card-show">Waitress</div></div>
-  <div class="fav-card"><div class="fav-card-num">03</div><div class="fav-card-name">defying gravity</div><div class="fav-card-show">Wicked</div></div>
-  <div class="fav-card"><div class="fav-card-num">04</div><div class="fav-card-name">i'm not that girl</div><div class="fav-card-show">Wicked</div></div>
-  <div class="fav-card"><div class="fav-card-num">05</div><div class="fav-card-name">for good</div><div class="fav-card-show">Wicked</div></div>
-  <div class="fav-card"><div class="fav-card-num">06</div><div class="fav-card-name">don't cry for me argentina</div><div class="fav-card-show">Evita</div></div>
-  <div class="fav-card"><div class="fav-card-num">07</div><div class="fav-card-name">i dreamed a dream</div><div class="fav-card-show">Les Misérables</div></div>
-  <div class="fav-card"><div class="fav-card-num">08</div><div class="fav-card-name">the winner takes it all</div><div class="fav-card-show">Mamma Mia!</div></div>
-  <div class="fav-card"><div class="fav-card-num">09</div><div class="fav-card-name">show me!</div><div class="fav-card-show">My Fair Lady</div></div>
-</div>
-
-<!-- MUSICAL THEATER LIST -->
-<div class="section-hdr" data-reveal>
-  <div class="section-hdr-label">full repertoire</div>
-  <div class="section-hdr-title">musical theater · 35 songs</div>
-</div>
-<div class="list-card" data-reveal-list>
-  <div class="song-row"><span class="song-num">1</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">edelweiss</div><div class="song-source">The Sound of Music</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">2</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">my favourite things</div><div class="song-source">The Sound of Music</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">3</span><div class="song-art">🌹</div><div class="song-info"><div class="song-name">beauty and the beast</div><div class="song-source">Beauty and the Beast</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">4</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">where is love</div><div class="song-source">Oliver!</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">5</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">wouldn't it be luverly</div><div class="song-source">My Fair Lady</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">6</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">home</div><div class="song-source">Alice in Wonderland</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">7</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">farewell lad</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">8</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">chocolate</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">9</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">who will buy?</div><div class="song-source">Oliver!</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">10</span><div class="song-art">🐱</div><div class="song-info"><div class="song-name">cool cat</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">11</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">gartan mother's lullaby</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">12</span><div class="song-art">🥧</div><div class="song-info"><div class="song-name">she used to be mine</div><div class="song-source">The Waitress</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">13</span><div class="song-art">🎻</div><div class="song-info"><div class="song-name">caro mio ben</div><div class="song-source">Giordani</div></div><span class="song-badge b-classical">classical</span></div>
-  <div class="song-row"><span class="song-num">14</span><div class="song-art">✨</div><div class="song-info"><div class="song-name">shiny</div><div class="song-source">Moana</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">15</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">show me</div><div class="song-source">My Fair Lady</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">16</span><div class="song-art">⭐</div><div class="song-info"><div class="song-name">mary did you know?</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">17</span><div class="song-art">🌙</div><div class="song-info"><div class="song-name">o holy night</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">18</span><div class="song-art">🎻</div><div class="song-info"><div class="song-name">ombra mai fu</div><div class="song-source">Handel</div></div><span class="song-badge b-classical">classical</span></div>
-  <div class="song-row"><span class="song-num">19</span><div class="song-art">🎻</div><div class="song-info"><div class="song-name">die lotos blume</div><div class="song-source">Schumann</div></div><span class="song-badge b-classical">classical</span></div>
-  <div class="song-row"><span class="song-num">20</span><div class="song-art">🌟</div><div class="song-info"><div class="song-name">always remember us this way</div><div class="song-source">A Star is Born</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">21</span><div class="song-art">🥧</div><div class="song-info"><div class="song-name">when he sees me</div><div class="song-source">The Waitress</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">22</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">i could have danced all night</div><div class="song-source">My Fair Lady</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">23</span><div class="song-art">🎭</div><div class="song-info"><div class="song-name">on my own</div><div class="song-source">Les Misérables</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">24</span><div class="song-art">🎭</div><div class="song-info"><div class="song-name">i dreamed a dream</div><div class="song-source">Les Misérables</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">25</span><div class="song-art">🎻</div><div class="song-info"><div class="song-name">panis angelicus</div><div class="song-source">Franck</div></div><span class="song-badge b-classical">classical</span></div>
-  <div class="song-row"><span class="song-num">26</span><div class="song-art">🌹</div><div class="song-info"><div class="song-name">i feel pretty</div><div class="song-source">West Side Story</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">27</span><div class="song-art">🌹</div><div class="song-info"><div class="song-name">don't cry for me argentina</div><div class="song-source">Evita</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">28</span><div class="song-art">🟢</div><div class="song-info"><div class="song-name">defying gravity</div><div class="song-source">Wicked</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">29</span><div class="song-art">🟢</div><div class="song-info"><div class="song-name">i'm not that girl</div><div class="song-source">Wicked</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">30</span><div class="song-art">🟢</div><div class="song-info"><div class="song-name">for good</div><div class="song-source">Wicked</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">31</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">the winner takes it all</div><div class="song-source">Mamma Mia!</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">32</span><div class="song-art">🐚</div><div class="song-info"><div class="song-name">part of that world</div><div class="song-source">The Little Mermaid</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">33</span><div class="song-art">⭐</div><div class="song-info"><div class="song-name">away in a manger</div><div class="song-source">—</div></div><span class="song-badge b-trad">traditional</span></div>
-  <div class="song-row"><span class="song-num">34</span><div class="song-art">🦁</div><div class="song-info"><div class="song-name">can you feel the love tonight</div><div class="song-source">The Lion King</div></div><span class="song-badge b-musical">musical</span></div>
-  <div class="song-row"><span class="song-num">35</span><div class="song-art">🎪</div><div class="song-info"><div class="song-name">never enough</div><div class="song-source">The Greatest Showman</div></div><span class="song-badge b-musical">musical</span></div>
-</div>
-
-<!-- CONTEMPORARY LIST -->
-<div class="section-hdr" data-reveal>
-  <div class="section-hdr-label">full repertoire</div>
-  <div class="section-hdr-title">contemporary & pop · 12 songs</div>
-</div>
-<div class="list-card" data-reveal-list>
-  <div class="song-row"><span class="song-num">1</span><div class="song-art">🎤</div><div class="song-info"><div class="song-name">when we were young</div><div class="song-source">Adele</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">2</span><div class="song-art">🎤</div><div class="song-info"><div class="song-name">all i ask</div><div class="song-source">Adele</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">3</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">when i was your man</div><div class="song-source">Bruno Mars</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">4</span><div class="song-art">🌌</div><div class="song-info"><div class="song-name">the scientist</div><div class="song-source">Coldplay</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">5</span><div class="song-art">🎸</div><div class="song-info"><div class="song-name">shallow</div><div class="song-source">Lady Gaga / A Star is Born</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">6</span><div class="song-art">🌙</div><div class="song-info"><div class="song-name">talking to the moon</div><div class="song-source">Bruno Mars</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">7</span><div class="song-art">✨</div><div class="song-info"><div class="song-name">a whole new world</div><div class="song-source">Aladdin</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">8</span><div class="song-art">🎪</div><div class="song-info"><div class="song-name">rewrite the stars</div><div class="song-source">The Greatest Showman</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">9</span><div class="song-art">🎤</div><div class="song-info"><div class="song-name">skyfall</div><div class="song-source">Adele</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">10</span><div class="song-art">🌟</div><div class="song-info"><div class="song-name">always remember us this way</div><div class="song-source">A Star is Born</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">11</span><div class="song-art">🎵</div><div class="song-info"><div class="song-name">creep</div><div class="song-source">Radiohead</div></div><span class="song-badge b-pop">pop</span></div>
-  <div class="song-row"><span class="song-num">12</span><div class="song-art">🌿</div><div class="song-info"><div class="song-name">somewhere only we know</div><div class="song-source">Keane</div></div><span class="song-badge b-pop">pop</span></div>
-</div>
-
-<!-- SONGS TO LEARN -->
-<div class="section-hdr" data-reveal>
-  <div class="section-hdr-label">bucket list</div>
-  <div class="section-hdr-title">songs she wants to learn</div>
-</div>
-<div class="future-card" data-reveal-list>
-  <div class="future-row"><span class="future-icon">🎯</span><span class="future-name">Don't Rain on My Parade</span><span class="future-show">Funny Girl</span></div>
-  <div class="future-row"><span class="future-icon">🎯</span><span class="future-name">What More Do I Need</span><span class="future-show">Saturday Night</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">The Girl in 14G</span><span class="future-show"></span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">The Wizard and I</span><span class="future-show">Wicked</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">La Vie en Rose</span><span class="future-show"></span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">What Is This Feeling?</span><span class="future-show">Wicked</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">Popular</span><span class="future-show">Wicked</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">Gimme Gimme</span><span class="future-show">Thoroughly Modern Millie</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">Almost There</span><span class="future-show">Princess and the Frog</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">Speechless</span><span class="future-show"></span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">Reflection</span><span class="future-show">Mulan</span></div>
-  <div class="future-row"><span class="future-icon">🎵</span><span class="future-name">No Good Deed</span><span class="future-show">Wicked</span></div>
-</div>
-
-<!-- OUTRO -->
-<div class="overview-outro" data-reveal-outro>
-  <div class="outro-title">47 songs. counting.</div>
-  <div class="outro-sub">every performance, every stage, every story.</div>
-  <a href="sounds.html" class="replay-btn">← back to replay</a>
+<div class="outro">
+  <p>37 songs · <a href="aanya-lall-music.pdf" target="_blank">download full repertoire →</a></p>
 </div>
 
 <script>
-// Scroll progress
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
-  document.getElementById('scroll-progress').style.width = pct + '%';
-}, { passive: true });
-
-// Reveal engine
+const rows = document.querySelectorAll('.song-row');
+rows.forEach((r,i) => r.style.transitionDelay = (i % 18 * 28) + 'ms');
 const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const t = e.target;
-    t.classList.add('in');
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }});
+}, { threshold: 0.05 });
+rows.forEach(r => obs.observe(r));
 
-    if (t.dataset.revealGroup !== undefined) {
-      t.querySelectorAll('.stat-chip').forEach((c, i) => {
-        setTimeout(() => c.classList.add('in'), i * 65);
-      });
+const cache = {};
+async function loadArt(img, q) {
+  if (cache[q]) { apply(img, cache[q]); return; }
+  try {
+    const r = await fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(q) + '&entity=album&limit=1');
+    const d = await r.json();
+    if (d.results && d.results[0]) {
+      const url = d.results[0].artworkUrl100.replace('100x100bb','300x300bb');
+      cache[q] = url; apply(img, url);
     }
-    if (t.dataset.reveal !== undefined) { /* eyebrow handled via class */ }
-    if (t.dataset.revealFav !== undefined) {
-      t.querySelectorAll('.fav-card').forEach((c, i) => {
-        setTimeout(() => c.classList.add('in'), i * 55);
-      });
-    }
-    if (t.dataset.revealList !== undefined) {
-      t.querySelectorAll('.song-row, .future-row').forEach((r, i) => {
-        setTimeout(() => r.classList.add('in'), i * 28);
-      });
-    }
-    obs.unobserve(t);
-  });
-}, { threshold: 0.08 });
+  } catch(e) {}
+}
+function apply(img, url) { img.src = url; img.onload = () => img.classList.add('loaded'); }
 
-document.querySelectorAll('[data-reveal], [data-reveal-group], [data-reveal-fav], [data-reveal-list], [data-reveal-outro]').forEach(el => obs.observe(el));
-
-// Section headers also use .in
-document.querySelectorAll('.section-hdr[data-reveal]').forEach(el => {
-  const hObs = new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) { e.target.classList.add('in'); hObs.unobserve(e.target); }
-  }, { threshold: 0.4 });
-  hObs.observe(el);
-});
-document.querySelectorAll('[data-reveal-outro]').forEach(el => {
-  const oObs = new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) { e.target.classList.add('in'); oObs.unobserve(e.target); }
-  }, { threshold: 0.3 });
-  oObs.observe(el);
+let delay = 0;
+rows.forEach(row => {
+  const q = row.dataset.q; if (!q) return;
+  const img = row.querySelector('.song-art img');
+  setTimeout(() => loadArt(img, q), delay); delay += 80;
 });
 </script>
 </body>
