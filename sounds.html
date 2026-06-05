@@ -520,8 +520,6 @@ body {
     </span>
   </div>
 
-  <div id="tl"></div>
-  <div id="tr"></div>
   <div id="dots"></div>
 
   <!-- S1 INTRO -->
@@ -711,12 +709,16 @@ function sync() {
   document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i === cur));
 }
 
-document.getElementById('tr').addEventListener('click', e => {
-  if (e.target.closest('a,button,.oglass')) return;
-  rp(e.clientX, e.clientY); next();
-});
-document.getElementById('tl').addEventListener('click', e => {
-  rp(e.clientX, e.clientY); prev();
+// Single story-level click handler — no z-index battles
+document.getElementById('story').addEventListener('click', e => {
+  // ALWAYS let links, buttons, and glassmorphic panels handle their own clicks
+  if (e.target.closest('a, button, .oglass, .ob, .ohm')) return;
+  const story = document.getElementById('story');
+  const rect = story.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  rp(e.clientX, e.clientY);
+  if (x > rect.width * 0.32) next();
+  else prev();
 });
 
 function rp(x, y) {
@@ -737,16 +739,6 @@ document.addEventListener('touchend',   e => {
   const dx = e.changedTouches[0].clientX - tx0;
   if (Math.abs(dx) > 40) dx < 0 ? next() : prev();
 }, {passive:true});
-
-let muted = false;
-document.getElementById('vbtn').addEventListener('click', () => {
-  muted = !muted;
-  const vbtn = document.getElementById('vbtn');
-  vbtn.style.opacity = muted ? '0.45' : '1';
-  vbtn.title = muted ? 'unmute' : 'mute';
-  vbtn.querySelector('svg').style.filter = muted ? 'grayscale(1)' : '';
-});
-
 slides[0].classList.add('on');
 sync();
 
