@@ -161,42 +161,12 @@ body.show-work .zine-card { height: 320px; }
 
 /* ══ AVAIL SIGNAL ══ */
 .avail-signal {
-  position: absolute; bottom: 52px; left: 26px;
+  position: absolute; bottom: 28px; right: 26px;
   font-size: 11px; letter-spacing: 0.12em;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.35);
   display: flex; align-items: center; gap: 7px;
   pointer-events: none;
-  opacity: 0; transform: translateY(5px);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
-.work-side .side-label { pointer-events: auto; cursor: none; transition: color 0.3s ease; }
-.work-side .side-label:hover { color: rgba(255,255,255,0.5); }
-.work-side .side-label:hover ~ .avail-signal { opacity: 1; transform: translateY(0); }
-/* built-with-claude matcha footer (work side, bottom-right) */
-.work-matcha {
-  position: absolute; bottom: 30px; right: 26px; z-index: 6;
-  display: flex; align-items: center; gap: 0;
-  font-family: 'EB Garamond', serif; font-size: 11px; font-style: normal; letter-spacing: 0.04em;
-  color: rgba(255,255,255,0.4); text-decoration: none;
-  transition: color 0.3s ease;
-}
-.work-matcha:hover { color: rgba(255,255,255,0.75); }
-.wm-cup { position: relative; display: inline-flex; line-height: 0; margin-left: -8px; }
-.wm-cup img {
-  width: 80px; height: 80px; object-fit: contain; display: block;
-  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-}
-.work-matcha:hover .wm-cup img { transform: translateY(-2px) rotate(4deg); }
-.wm-arrow {
-  position: absolute; top: calc(100% - 14px); left: 50%;
-  font-style: italic; font-size: 11px; letter-spacing: 0.1em; white-space: nowrap;
-  color: rgba(255,255,255,0);
-  transform: translate(-50%, 4px) rotate(-4deg);
-  transition: color 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
-  pointer-events: none;
-}
-.work-matcha:hover .wm-arrow { color: rgba(255,255,255,0.78); transform: translate(-50%, 0) rotate(-4deg); }
-.work-matcha::after { display: none !important; }
 .avail-dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: #4ade80; box-shadow: 0 0 6px #4ade80;
@@ -551,7 +521,6 @@ body.intro-active .oval-wrap { opacity: 0 !important; pointer-events: none !impo
   <div class="work-side">
     <span class="side-label">work</span>
     <span class="avail-signal"><span class="avail-dot"></span>available · summer 2026</span>
-    <a class="work-matcha" href="https://www.rockysmatcha.com" target="_blank" rel="noopener">built with claude + lots of <span class="wm-cup"><img src="rockys.png" alt="matcha"><span class="wm-arrow">matcha ↗</span></span></a>
     <div class="img-pool" style="display:none;visibility:hidden" aria-hidden="true">
       <img id="wimg-designer" src="designer.png" alt="">
       <img id="wimg-founder" src="founder.png" alt="">
