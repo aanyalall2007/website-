@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>aanya — blog</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -14,6 +14,7 @@
   --gold: #8a7355;
   --muted: rgba(13,13,13,0.4);
   --border: rgba(13,13,13,0.1);
+  --mono: 'Space Mono', 'Courier New', monospace;
 }
 html { scroll-behavior: smooth; }
 body {
@@ -510,9 +511,208 @@ nav {
   user-select: none;
 }
 nav, .page { position: relative; z-index: 1; }
+
+/* ── SCROLL PROGRESS ── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+  background: var(--gold); z-index: 200;
+  transition: width 0.08s linear;
+}
+
+/* ── EDITORIAL META / SECTION LABELS ── */
+.feed-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.feed-eyebrow::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+/* ── FEED FILTER ── */
+.feed-filter {
+  max-width: 680px;
+  margin: 0 auto 8px;
+  padding: 0 24px;
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+}
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none; border: none;
+  cursor: pointer; padding: 4px 0;
+  position: relative;
+  transition: color 0.2s;
+}
+.filter-btn::after {
+  content: ''; position: absolute; left: 0; bottom: -2px;
+  width: 0; height: 1px; background: var(--gold);
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.filter-btn:hover { color: var(--ink); }
+.filter-btn.active { color: var(--ink); }
+.filter-btn.active::after { width: 100%; }
+.filter-count { font-size: 9px; opacity: 0.55; vertical-align: super; margin-left: 2px; }
+
+/* ── STAGGER REVEAL ── */
+.stagger-item { opacity: 0; transform: translateY(22px); }
+.stagger-item.in { opacity: 1; transform: translateY(0);
+  transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+
+/* ── EVAL FEED CARD ── */
+.eval-card {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  position: relative;
+}
+.eval-card::before {
+  content: ''; position: absolute; left: -24px; top: 0; bottom: 0;
+  width: 2px; background: var(--gold); opacity: 0; transform: scaleY(0.4);
+  transform-origin: top; transition: opacity 0.3s, transform 0.3s;
+}
+.eval-card:hover::before { opacity: 1; transform: scaleY(1); }
+
+.score-dial {
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(closest-side, var(--cream) 80%, transparent 81% 100%),
+    conic-gradient(var(--gold) calc(var(--score,0) * 1%), rgba(138,115,85,0.16) 0);
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.eval-card:hover .score-dial { transform: scale(1.08) rotate(-3deg); }
+.score-dial .score-num {
+  font-family: var(--mono);
+  font-size: 18px; font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.score-dial .score-den {
+  position: absolute; bottom: 9px;
+  font-family: var(--mono); font-size: 8px; color: var(--muted);
+}
+.eval-card-body { flex: 1; min-width: 0; }
+.eval-tag {
+  color: #fff !important;
+  background: var(--gold);
+  border-color: var(--gold) !important;
+}
+.eval-platform { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
+.eval-verdict {
+  font-size: 17px; font-style: italic;
+  color: var(--ink-soft); line-height: 1.55; margin-top: 4px;
+}
+
+/* ── EVAL VIEW PAGE ── */
+.eval-hero {
+  display: flex; gap: 26px; align-items: center;
+  margin-bottom: 6px;
+}
+.eval-hero .score-dial { width: 92px; height: 92px; }
+.eval-hero .score-dial .score-num { font-size: 28px; }
+.eval-hero .score-dial .score-den { bottom: 14px; font-size: 10px; }
+.eval-hero-meta { flex: 1; }
+.eval-product-name { font-size: clamp(28px,4vw,44px); font-weight: 500; line-height: 1.1; }
+.eval-product-sub { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: var(--muted); margin-top: 8px; text-transform: uppercase; }
+.eval-verdict-big {
+  font-size: clamp(20px,2.6vw,26px); font-style: italic;
+  color: var(--ink); line-height: 1.5; margin: 28px 0 8px;
+}
+.eval-verdict-big::before { content: '\201C'; color: var(--gold); }
+.eval-verdict-big::after { content: '\201D'; color: var(--gold); }
+
+.eval-columns {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px;
+  margin: 40px 0 8px;
+}
+@media (max-width: 600px) { .eval-columns { grid-template-columns: 1fr; gap: 28px; } }
+.eval-col-label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--border);
+}
+.eval-col.works .eval-col-label { color: #4a7c59; }
+.eval-col.broken .eval-col-label { color: #b0573f; }
+.eval-point {
+  display: flex; gap: 10px; font-size: 16px; line-height: 1.55;
+  color: var(--ink-soft); margin-bottom: 12px;
+}
+.eval-point .mark { font-family: var(--mono); font-weight: 700; flex-shrink: 0; }
+.eval-col.works .mark { color: #4a7c59; }
+.eval-col.broken .mark { color: #b0573f; }
+.eval-notes-label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--gold); margin: 40px 0 16px;
+}
+
+/* ── GLYPH DIVIDER ── */
+.glyph-divider {
+  text-align: center; color: var(--gold); opacity: 0.5;
+  font-size: 16px; letter-spacing: 0.4em; margin: 8px 0 28px;
+}
+
+/* ── WRITER: TYPE TOGGLE + EVAL FIELDS ── */
+.editor-type-toggle {
+  display: flex; gap: 6px; margin-bottom: 22px;
+  background: var(--cream); padding: 4px; border-radius: 999px;
+  border: 0.5px solid var(--border); width: fit-content;
+}
+.type-btn {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; border: none; background: none;
+  color: var(--muted); padding: 7px 18px; border-radius: 999px;
+  cursor: pointer; transition: all 0.2s;
+}
+.type-btn.active { background: var(--ink); color: var(--cream); }
+.eval-only { display: none; }
+body.writing-eval .eval-only { display: block; }
+
+.eval-score-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px; }
+.eval-score-row label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+.editor-field-score {
+  font-family: var(--mono); font-size: 22px; font-weight: 700;
+  width: 90px; border: none; border-bottom: 0.5px solid var(--border);
+  background: transparent; outline: none; color: var(--ink); padding: 4px 0;
+}
+.editor-field-verdict {
+  font-family: 'EB Garamond', serif; font-size: 18px; font-style: italic;
+  width: 100%; border: none; outline: none; background: transparent;
+  color: var(--ink-soft); margin-bottom: 20px; text-transform: lowercase;
+}
+.editor-field-verdict::placeholder { color: rgba(0,0,0,0.2); }
+.eval-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 22px; }
+@media (max-width: 600px) { .eval-lists { grid-template-columns: 1fr; } }
+.eval-list-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+.eval-list-label.works { color: #4a7c59; }
+.eval-list-label.broken { color: #b0573f; }
+.editor-field-list {
+  font-family: 'EB Garamond', serif; font-size: 16px; line-height: 1.6;
+  width: 100%; min-height: 110px; border: 0.5px solid var(--border);
+  border-radius: 4px; padding: 12px 14px; background: rgba(255,255,255,0.5);
+  outline: none; color: var(--ink-soft); resize: vertical; text-transform: lowercase;
+}
+.editor-field-list::placeholder { color: rgba(0,0,0,0.22); font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .stagger-item { opacity: 1; transform: none; }
+}
 </style>
 </head>
 <body>
+
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
 <div class="blog-scrapbook">
   <!-- LEFT SIDE — 5 images -->
@@ -542,8 +742,14 @@ nav, .page { position: relative; z-index: 1; }
 <!-- ── FEED PAGE ── -->
 <div class="page active" id="page-feed">
   <div class="feed-header">
-    <h1 class="feed-title">thoughts, unfiltered.<br><em>and everything in between.</em></h1>
-    <p class="feed-desc">no theme, no schedule, no audience in mind. just writing.</p>
+    <h1 class="feed-title">thoughts &amp; <em>teardowns.</em></h1>
+    <p class="feed-desc">half journal, half design notebook — unfiltered writing and the products i can't stop evaluating.</p>
+  </div>
+  <div class="glyph-divider">⁂ &nbsp; ⁂ &nbsp; ⁂</div>
+  <div class="feed-filter" id="feed-filter">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">all</button>
+    <button class="filter-btn" data-filter="writing" onclick="setFilter('writing')">writing<span class="filter-count" id="count-writing"></span></button>
+    <button class="filter-btn" data-filter="eval" onclick="setFilter('eval')">product evals<span class="filter-count" id="count-eval"></span></button>
   </div>
   <div class="feed" id="feed-list">
     <div class="feed-empty" id="feed-empty">
@@ -600,8 +806,33 @@ nav, .page { position: relative; z-index: 1; }
         <input class="editor-image-input" id="post-image" type="file" accept="image/*" onchange="insertImage(this)">
       </div>
       <div class="editor-fields">
+        <div class="editor-type-toggle">
+          <button class="type-btn active" data-type="writing" onclick="setEditorType('writing')">writing</button>
+          <button class="type-btn" data-type="eval" onclick="setEditorType('eval')">product eval</button>
+        </div>
         <input class="editor-field-title" id="post-title" placeholder="title" type="text">
         <input class="editor-field-tag" id="post-tag" placeholder="tag (e.g. on life, lately, rant)" type="text">
+
+        <!-- EVAL-ONLY FIELDS -->
+        <div class="eval-only">
+          <div class="eval-score-row">
+            <label for="post-score">score</label>
+            <input class="editor-field-score" id="post-score" type="number" min="0" max="10" step="0.1" placeholder="8.5">
+            <span style="font-family:var(--mono);font-size:13px;color:var(--muted);">/ 10</span>
+          </div>
+          <input class="editor-field-verdict" id="post-verdict" placeholder="one-line verdict — the gist of it" type="text">
+          <div class="eval-lists">
+            <div>
+              <div class="eval-list-label works">+ what works</div>
+              <textarea class="editor-field-list" id="post-works" placeholder="one point per line"></textarea>
+            </div>
+            <div>
+              <div class="eval-list-label broken">− what's broken</div>
+              <textarea class="editor-field-list" id="post-broken" placeholder="one point per line"></textarea>
+            </div>
+          </div>
+        </div>
+
         <div class="editor-divider"></div>
         <textarea class="editor-body" id="post-body" placeholder="write anything. no one's watching."></textarea>
         <div class="editor-images" id="editor-images"></div>
@@ -624,6 +855,8 @@ let editingId = null;
 let autoSaveTimer = null;
 let writeUnlocked = false;
 let currentImages = [];
+let currentType = 'writing';
+let currentFilter = 'all';
 
 // ── STORAGE ──
 const STORAGE_KEY = 'aanya-blog-posts';
@@ -723,45 +956,181 @@ function isWriteRoute() {
 function renderFeed() {
   const list = document.getElementById('feed-list');
   const empty = document.getElementById('feed-empty');
-  const published = posts.filter(p => p.published).sort((a,b) => b.date - a.date);
+  const allPublished = posts.filter(p => p.published).sort((a,b) => b.date - a.date);
+
+  // update filter counts
+  const writingCount = allPublished.filter(p => (p.type || 'writing') !== 'eval').length;
+  const evalCount = allPublished.filter(p => (p.type || 'writing') === 'eval').length;
+  const cw = document.getElementById('count-writing'); if (cw) cw.textContent = writingCount ? '(' + writingCount + ')' : '';
+  const ce = document.getElementById('count-eval'); if (ce) ce.textContent = evalCount ? '(' + evalCount + ')' : '';
+
+  const published = allPublished.filter(p => {
+    if (currentFilter === 'all') return true;
+    if (currentFilter === 'eval') return (p.type || 'writing') === 'eval';
+    return (p.type || 'writing') !== 'eval';
+  });
+
+  list.querySelectorAll('.post-card').forEach(c => c.remove());
 
   if (published.length === 0) {
     empty.style.display = 'block';
-    // remove any existing cards
-    list.querySelectorAll('.post-card').forEach(c => c.remove());
+    empty.innerHTML = allPublished.length === 0
+      ? 'nothing here yet.<br>go write something.'
+      : 'nothing in this lane yet.';
     return;
   }
-
   empty.style.display = 'none';
-  list.querySelectorAll('.post-card').forEach(c => c.remove());
 
-  published.forEach(post => {
+  published.forEach((post, i) => {
     const card = document.createElement('div');
-    card.className = 'post-card';
+    const isEval = (post.type || 'writing') === 'eval';
     card.onclick = () => openPost(post.id);
-    const preview = post.body.replace(/<[^>]+>/g,'').slice(0, 140);
-    card.innerHTML = `
-      <div class="post-meta">
-        ${post.tag ? `<span class="post-tag">${post.tag}</span>` : ''}
-        <span class="post-date">${formatDate(post.date)}</span>
-      </div>
-      <div class="post-title-feed">${post.title || 'untitled'}</div>
-      <div class="post-preview">${preview}${preview.length >= 140 ? '…' : ''}</div>
-      <div class="post-read-more">read →</div>
-    `;
+
+    if (isEval) {
+      card.className = 'post-card eval-card stagger-item';
+      const score = (post.score !== undefined && post.score !== null && post.score !== '') ? Number(post.score) : null;
+      card.innerHTML = `
+        ${score !== null ? `<div class="score-dial" style="--score:${(score/10*100).toFixed(0)}">
+          <span class="score-num" data-score="${score}">${score.toFixed(1)}</span>
+          <span class="score-den">/10</span>
+        </div>` : ''}
+        <div class="eval-card-body">
+          <div class="post-meta">
+            <span class="post-tag eval-tag">product eval</span>
+            ${post.tag ? `<span class="eval-platform">· ${post.tag}</span>` : ''}
+            <span class="post-date">${formatDate(post.date)}</span>
+          </div>
+          <div class="post-title-feed">${post.title || 'untitled product'}</div>
+          ${post.verdict ? `<div class="eval-verdict">${post.verdict}</div>` : ''}
+          <div class="post-read-more">read teardown →</div>
+        </div>
+      `;
+    } else {
+      card.className = 'post-card stagger-item';
+      const preview = post.body.replace(/<[^>]+>/g,'').slice(0, 140);
+      card.innerHTML = `
+        <div class="post-meta">
+          ${post.tag ? `<span class="post-tag">${post.tag}</span>` : ''}
+          <span class="post-date">${formatDate(post.date)}</span>
+        </div>
+        <div class="post-title-feed">${post.title || 'untitled'}</div>
+        <div class="post-preview">${preview}${preview.length >= 140 ? '…' : ''}</div>
+        <div class="post-read-more">read →</div>
+      `;
+    }
     list.appendChild(card);
   });
+
+  revealStagger();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderFeed();
+}
+
+let staggerObserver = null;
+function revealStagger() {
+  if (!staggerObserver) {
+    staggerObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          animateDial(e.target);
+          staggerObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+  }
+  const items = document.querySelectorAll('.feed .stagger-item:not(.in)');
+  items.forEach((item, i) => {
+    item.style.transitionDelay = (i * 70) + 'ms';
+    staggerObserver.observe(item);
+  });
+}
+
+function animateDial(scope) {
+  const num = scope.querySelector ? scope.querySelector('.score-num[data-score]') : null;
+  if (!num) return;
+  const target = parseFloat(num.dataset.score);
+  let cur = 0;
+  const steps = 26;
+  let i = 0;
+  const tick = () => {
+    i++;
+    cur = target * (i / steps);
+    num.textContent = cur.toFixed(1);
+    if (i < steps) requestAnimationFrame(tick);
+    else num.textContent = target.toFixed(1);
+  };
+  requestAnimationFrame(tick);
 }
 
 function openPost(id) {
   const post = posts.find(p => p.id === id);
   if (!post) return;
-  document.getElementById('view-title').textContent = post.title || 'untitled';
-  document.getElementById('view-date').textContent = formatDate(post.date);
-  document.getElementById('view-tag').textContent = post.tag || '';
-  document.getElementById('view-tag').style.display = post.tag ? '' : 'none';
-  document.getElementById('view-body').innerHTML = renderPostBody(post.body, post.images || []);
+  const isEval = (post.type || 'writing') === 'eval';
+  const titleEl = document.getElementById('view-title');
+  const dividerEl = document.querySelector('#page-post .post-divider');
+  const metaEl = document.querySelector('#page-post .post-header-meta');
+
+  if (isEval) {
+    metaEl.style.display = 'none';
+    titleEl.style.display = 'none';
+    dividerEl.style.display = 'none';
+    document.getElementById('view-body').innerHTML = renderEvalView(post);
+  } else {
+    metaEl.style.display = '';
+    titleEl.style.display = '';
+    dividerEl.style.display = '';
+    titleEl.textContent = post.title || 'untitled';
+    document.getElementById('view-date').textContent = formatDate(post.date);
+    document.getElementById('view-tag').textContent = post.tag || '';
+    document.getElementById('view-tag').style.display = post.tag ? '' : 'none';
+    document.getElementById('view-body').innerHTML = renderPostBody(post.body, post.images || []);
+  }
   showPage('post');
+  if (isEval) setTimeout(() => animateDial(document.getElementById('view-body')), 120);
+}
+
+function renderEvalView(post) {
+  const score = (post.score !== undefined && post.score !== null && post.score !== '') ? Number(post.score) : null;
+  const works = (post.works || '').split('\n').map(s => s.trim()).filter(Boolean);
+  const broken = (post.broken || '').split('\n').map(s => s.trim()).filter(Boolean);
+  const dial = score !== null ? `
+    <div class="score-dial" style="--score:${(score/10*100).toFixed(0)}">
+      <span class="score-num" data-score="${score}">0.0</span>
+      <span class="score-den">/10</span>
+    </div>` : '';
+  const columns = (works.length || broken.length) ? `
+    <div class="eval-columns">
+      <div class="eval-col works">
+        <div class="eval-col-label">+ what works</div>
+        ${works.map(w => `<div class="eval-point"><span class="mark">+</span><span>${w}</span></div>`).join('') || '<div class="eval-point" style="opacity:.4">—</div>'}
+      </div>
+      <div class="eval-col broken">
+        <div class="eval-col-label">− what's broken</div>
+        ${broken.map(b => `<div class="eval-point"><span class="mark">−</span><span>${b}</span></div>`).join('') || '<div class="eval-point" style="opacity:.4">—</div>'}
+      </div>
+    </div>` : '';
+  const notes = (post.body && post.body.trim()) ? `
+    <div class="eval-notes-label">⁂ the longer read</div>
+    ${renderPostBody(post.body, [])}` : '';
+  const images = (post.images && post.images.length) ? post.images.map(src => `<img src="${src}" alt="">`).join('') : '';
+  return `
+    <div class="eval-hero">
+      ${dial}
+      <div class="eval-hero-meta">
+        <div class="eval-product-name">${post.title || 'untitled product'}</div>
+        <div class="eval-product-sub">product eval${post.tag ? ' · ' + post.tag : ''} · ${formatDate(post.date)}</div>
+      </div>
+    </div>
+    ${post.verdict ? `<div class="eval-verdict-big">${post.verdict}</div>` : ''}
+    ${columns}
+    ${notes}
+    ${images}
+  `;
 }
 
 function renderPostBody(body, images = []) {
@@ -799,11 +1168,29 @@ function renderDraftList() {
   });
 }
 
+function setEditorType(t) {
+  currentType = t;
+  document.body.classList.toggle('writing-eval', t === 'eval');
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === t));
+  document.getElementById('post-title').placeholder = t === 'eval' ? 'product name' : 'title';
+  document.getElementById('post-tag').placeholder = t === 'eval' ? 'platform / category (e.g. ios · fintech)' : 'tag (e.g. on life, lately, rant)';
+  document.getElementById('post-body').placeholder = t === 'eval' ? 'optional longer read — context, deeper analysis, the story behind the score…' : "write anything. no one's watching.";
+}
+
+function clearEvalFields() {
+  document.getElementById('post-score').value = '';
+  document.getElementById('post-verdict').value = '';
+  document.getElementById('post-works').value = '';
+  document.getElementById('post-broken').value = '';
+}
+
 function newPost() {
   editingId = null;
   document.getElementById('post-title').value = '';
   document.getElementById('post-tag').value = '';
   document.getElementById('post-body').value = '';
+  clearEvalFields();
+  setEditorType('writing');
   currentImages = [];
   renderEditorImages();
   document.getElementById('editor-status').textContent = 'new post';
@@ -819,6 +1206,11 @@ function editPost(id) {
   document.getElementById('post-tag').value = post.tag || '';
   const normalized = extractBodyImages(post.body || '');
   document.getElementById('post-body').value = normalized.body;
+  setEditorType((post.type || 'writing') === 'eval' ? 'eval' : 'writing');
+  document.getElementById('post-score').value = (post.score !== undefined && post.score !== null) ? post.score : '';
+  document.getElementById('post-verdict').value = post.verdict || '';
+  document.getElementById('post-works').value = post.works || '';
+  document.getElementById('post-broken').value = post.broken || '';
   currentImages = [...(post.images || []), ...normalized.images];
   renderEditorImages();
   document.getElementById('editor-status').textContent = 'editing';
@@ -836,7 +1228,15 @@ async function savePost(publish) {
     renderEditorImages();
   }
 
-  if (!title && !body && currentImages.length === 0) { showToast('add a title, words, or an image first'); return; }
+  const type = currentType;
+  const scoreRaw = document.getElementById('post-score').value.trim();
+  const score = scoreRaw === '' ? null : Math.max(0, Math.min(10, parseFloat(scoreRaw)));
+  const verdict = document.getElementById('post-verdict').value.trim();
+  const works = document.getElementById('post-works').value.trim();
+  const broken = document.getElementById('post-broken').value.trim();
+
+  const hasEvalContent = type === 'eval' && (verdict || works || broken || score !== null);
+  if (!title && !body && currentImages.length === 0 && !hasEvalContent) { showToast('add a title, words, or an image first'); return; }
 
   if (editingId) {
     const idx = posts.findIndex(p => p.id === editingId);
@@ -846,6 +1246,11 @@ async function savePost(publish) {
       posts[idx].tag = tag;
       posts[idx].body = body;
       posts[idx].images = [...currentImages];
+      posts[idx].type = type;
+      posts[idx].score = score;
+      posts[idx].verdict = verdict;
+      posts[idx].works = works;
+      posts[idx].broken = broken;
       if (publish && !posts[idx].published) {
         posts[idx].date = Date.now(); // set publish date first time
       }
@@ -856,6 +1261,7 @@ async function savePost(publish) {
       id: Date.now().toString(),
       title, tag, body,
       images: [...currentImages],
+      type, score, verdict, works, broken,
       published: publish,
       date: Date.now()
     };
@@ -887,6 +1293,7 @@ async function deletePost(id) {
     document.getElementById('post-title').value = '';
     document.getElementById('post-tag').value = '';
     document.getElementById('post-body').value = '';
+    clearEvalFields();
     currentImages = [];
     renderEditorImages();
     document.getElementById('editor-status').textContent = 'deleted';
@@ -1023,6 +1430,14 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+// ── SCROLL PROGRESS ──
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = total > 0 ? (window.scrollY / total * 100) + '%' : '0%';
+}, { passive: true });
 </script>
 </body>
 </html>
