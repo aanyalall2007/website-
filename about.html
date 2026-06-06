@@ -455,13 +455,13 @@ footer {
 }
 .matcha-link:hover .matcha-cup { animation: matchaShake 0.45s ease-in-out infinite; }
 .matcha-arrow {
-  position: absolute; top: 22px; right: 8px;
+  position: absolute; top: calc(100% - 18px); left: 50%;
   font-family: 'EB Garamond', serif; font-size: 12px; font-style: italic; letter-spacing: 0.1em;
   color: rgba(138,115,85,0); white-space: nowrap;
-  transform: translate(-4px, 3px) rotate(-8deg); transition: color 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  transform: translate(-50%, 4px) rotate(-4deg); transition: color 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
   pointer-events: none;
 }
-.matcha-link:hover .matcha-arrow { color: rgba(138,115,85,0.75); transform: translate(0,0) rotate(-8deg); }
+.matcha-link:hover .matcha-arrow { color: rgba(138,115,85,0.78); transform: translate(-50%, 0) rotate(-4deg); }
 @keyframes matchaShake {
   0%,100% { transform: translate(0,0) rotate(-1.4deg); }
   50%     { transform: translate(0,-0.5px) rotate(1.4deg); }
@@ -873,7 +873,7 @@ footer {
   <p class="footer-note">built with claude + lots of
     <a class="matcha-link" href="https://www.rockysmatcha.com" target="_blank" rel="noopener" aria-label="rocky's matcha">
       <img class="matcha-cup" src="rockys.png" alt="rocky's matcha">
-      <span class="matcha-arrow">rocky's ↗</span>
+      <span class="matcha-arrow">matcha ↗</span>
     </a>
   </p>
   <p class="footer-copy">© aanya lall 2026</p>

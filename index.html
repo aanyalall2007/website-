@@ -161,12 +161,32 @@ body.show-work .zine-card { height: 320px; }
 
 /* ══ AVAIL SIGNAL ══ */
 .avail-signal {
-  position: absolute; bottom: 28px; right: 26px;
+  position: absolute; bottom: 52px; left: 26px;
   font-size: 11px; letter-spacing: 0.12em;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.4);
   display: flex; align-items: center; gap: 7px;
   pointer-events: none;
+  opacity: 0; transform: translateY(5px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
+.work-side .side-label { pointer-events: auto; cursor: none; transition: color 0.3s ease; }
+.work-side .side-label:hover { color: rgba(255,255,255,0.5); }
+.work-side .side-label:hover ~ .avail-signal { opacity: 1; transform: translateY(0); }
+/* built-with-claude matcha footer (work side, bottom-right) */
+.work-matcha {
+  position: absolute; bottom: 20px; right: 26px; z-index: 6;
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'EB Garamond', serif; font-size: 11px; font-style: italic; letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.4); text-decoration: none;
+  transition: color 0.3s ease;
+}
+.work-matcha img {
+  width: 32px; height: 32px; object-fit: contain; display: block;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.work-matcha:hover { color: rgba(255,255,255,0.75); }
+.work-matcha:hover img { transform: translateY(-2px) rotate(4deg); }
+.work-matcha::after { display: none !important; }
 .avail-dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: #4ade80; box-shadow: 0 0 6px #4ade80;
@@ -280,15 +300,15 @@ body.cursor-on-link #cursor-trail { width: 44px; height: 44px; border-color: rgb
 .oval-learn-tag::after { display: none !important; }
 
 /* ══ DRAW UNDERLINE ON HOVER ══ */
-a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag) {
+a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.work-matcha) {
   position: relative; text-decoration: none;
 }
-a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.connect-icon-btn)::after {
+a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.connect-icon-btn):not(.work-matcha)::after {
   content: ''; position: absolute; bottom: -1px; left: 0;
   width: 0; height: 1px; background: currentColor;
   transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
-a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.connect-icon-btn):hover::after { width: 100%; }
+a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.connect-icon-btn):not(.work-matcha):hover::after { width: 100%; }
 .dropdown a::after, .connect-icon-btn::after { display: none !important; }
 
 /* ══ OVAL SHOW/HIDE ══ */
@@ -521,6 +541,7 @@ body.intro-active .oval-wrap { opacity: 0 !important; pointer-events: none !impo
   <div class="work-side">
     <span class="side-label">work</span>
     <span class="avail-signal"><span class="avail-dot"></span>available · summer 2026</span>
+    <a class="work-matcha" href="https://www.rockysmatcha.com" target="_blank" rel="noopener">built with claude + lots of <img src="rockys.png" alt="matcha"></a>
     <div class="img-pool" style="display:none;visibility:hidden" aria-hidden="true">
       <img id="wimg-designer" src="designer.png" alt="">
       <img id="wimg-founder" src="founder.png" alt="">
