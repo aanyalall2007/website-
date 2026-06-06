@@ -66,8 +66,8 @@ html,body{height:100%;overflow:hidden;background:#0a0905;font-family:'EB Garamon
 /* ── NIGHT MODE ── */
 .night-veil{position:fixed;inset:0;pointer-events:none;z-index:300;
   background:rgba(10,5,0,0);transition:background 2.5s ease}
-body.night .night-veil{background:rgba(10,5,0,.38)}
-body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:filter 2s ease}
+body.night .night-veil{background:rgba(10,5,0,.16)}
+body.night .desk-bg{filter:brightness(.86) sepia(.12) saturate(1.05);transition:filter 2s ease}
 
 /* ── FAIRY LIGHTS (night mode only) ── */
 .fairy-wire{position:absolute;left:0;right:0;height:1px;
@@ -77,22 +77,40 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
   box-shadow:0 0 6px 3px rgba(255,200,60,.6),0 0 14px 6px rgba(255,180,30,.25);
   opacity:.7}
 
-/* ── HOTSPOT SYSTEM ── */
-/* Invisible — no hover glow. Only the tip label reveals clickability. */
-.hs{position:absolute;cursor:none;z-index:20}
-/* strip hotspot hidden until drawer opens */
-#hs-strip{opacity:0;pointer-events:none;transition:opacity .45s ease}
-.hs-tip{
-  position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;
-  font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.52);
-  background:rgba(0,0,0,.58);padding:2px 8px;border-radius:10px;backdrop-filter:blur(4px);
-  opacity:0;transition:opacity .18s ease;pointer-events:none}
-.hs:hover .hs-tip{opacity:1}
-/* tip above — for hotspots near the bottom edge */
-.hs.tip-above .hs-tip{bottom:auto;top:-22px}
-
-/* hotspot positions are set by JS (positionHotspots) so they
-   correctly account for object-fit:cover scaling at every viewport size */
+/* ── DESK ICONS (hand-drawn objects laid on the table) ── */
+/* positions set by JS (positionIcons) to track object-fit:cover scaling */
+.desk-icon{
+  position:absolute;cursor:none;z-index:20;
+  transform-origin:center bottom;
+  transition:transform .4s cubic-bezier(.16,1,.3,1),filter .4s ease;
+  animation:iconFloat var(--fd,6s) ease-in-out infinite;
+}
+.desk-icon img{
+  width:100%;height:auto;display:block;
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));
+  transition:filter .4s ease;
+  -webkit-user-drag:none;user-select:none;
+}
+.desk-icon:hover{transform:translateY(-10px) scale(1.06) rotate(var(--r,0deg));z-index:40}
+.desk-icon:hover img{filter:drop-shadow(0 26px 40px rgba(0,0,0,.6))}
+@keyframes iconFloat{
+  0%,100%{transform:translateY(0) rotate(var(--r,0deg))}
+  50%{transform:translateY(-4px) rotate(calc(var(--r,0deg) + .6deg))}
+}
+.desk-icon:hover{animation-play-state:paused}
+/* handwritten label, learn-more style */
+.icon-lbl{
+  position:absolute;top:calc(100% + 6px);left:50%;
+  font-family:'EB Garamond',serif;font-style:italic;font-size:13px;letter-spacing:.06em;
+  white-space:nowrap;color:rgba(255,255,255,0);
+  text-shadow:0 1px 8px rgba(0,0,0,.7);
+  transform:translate(-50%,4px) rotate(-4deg);
+  transition:color .35s ease,transform .35s cubic-bezier(.16,1,.3,1);
+  pointer-events:none;
+}
+.desk-icon.lbl-above .icon-lbl{top:auto;bottom:calc(100% + 6px);}
+.desk-icon:hover .icon-lbl{color:rgba(255,248,238,.92);transform:translate(-50%,0) rotate(-4deg);}
+@media (prefers-reduced-motion:reduce){.desk-icon{animation:none}}
 
 /* ── WATER DROPS ── */
 @keyframes dropFall{0%{transform:translateY(0) scale(1);opacity:.75}100%{transform:translateY(70px) scale(.4);opacity:0}}
@@ -248,7 +266,7 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
      LANDING VIEW — zoomout photo
 ══════════════════════════════════ -->
 <div class="view" id="v-landing">
-  <img class="desk-bg" src="sidequests/zoomout.png" alt="" draggable="false">
+  <img class="desk-bg" src="sidequests/zoom-out.png" alt="" draggable="false">
   <div class="land-overlay"></div>
   <div class="land-text">
     <span class="land-title">welcome to my desk</span>
@@ -262,53 +280,37 @@ body.night .desk-bg{filter:brightness(.6) sepia(.18) saturate(1.1);transition:fi
      DESK VIEW — zoomin photo + hotspots
 ══════════════════════════════════ -->
 <div class="view hidden" id="v-desk">
-  <!-- closed image (default) -->
   <img class="desk-bg" id="desk-closed" src="sidequests/zoomin.png" alt="" draggable="false">
-  <!-- open image (fades in when drawer is clicked) -->
-  <img class="desk-bg desk-layer-open" id="desk-open" src="sidequests/zoomin-open.png" alt="" draggable="false">
 
-  <!-- HOTSPOTS -->
-  <div class="hs" id="hs-dfa" onclick="openPop('dfa')">
-    <span class="hs-tip">dfa</span>
+  <!-- DESK ICONS (curated flat-lay; positions set by positionIcons) -->
+  <div class="desk-icon" id="ic-dfa" onclick="openPop('dfa')">
+    <img src="sidequests/table-icons/dfa.png" alt="design for america blueprint">
+    <span class="icon-lbl">design for america</span>
   </div>
 
-  <div class="hs" id="hs-email" onclick="openPop('email')">
-    <span class="hs-tip">open draft</span>
+  <div class="desk-icon" id="ic-playbill" onclick="location.href='playbill.html'">
+    <img src="sidequests/table-icons/playbill.png" alt="playbill stack">
+    <span class="icon-lbl">the playbill pile</span>
   </div>
 
-  <div class="hs" id="hs-after" onclick="openPop('afterhours')">
-    <span class="hs-tip">afterhours</span>
+  <div class="desk-icon" id="ic-breakfast" onclick="location.href='breakfast.html'">
+    <img src="sidequests/table-icons/breakgast.png" alt="breakfast receipt">
+    <span class="icon-lbl">make my breakfast</span>
   </div>
 
-  <div class="hs tip-above" id="hs-recipe" onclick="location.href='breakfast.html'">
-    <span class="hs-tip">make my breakfast</span>
+  <div class="desk-icon" id="ic-fortune" onclick="openPop('fortune')">
+    <img src="sidequests/table-icons/fortune.png" alt="fortune cookie">
+    <span class="icon-lbl">crack a fortune</span>
   </div>
 
-  <div class="hs" id="hs-cookie" onclick="openPop('fortune')">
-    <span class="hs-tip">fortune cookie</span>
+  <div class="desk-icon lbl-above" id="ic-photobooth" onclick="openPop('photobooth')">
+    <img src="sidequests/table-icons/photobooth-strip.png" alt="photobooth strip">
+    <span class="icon-lbl">photobooth strip</span>
   </div>
 
-  <div class="hs tip-above" id="hs-play" onclick="location.href='playbill.html'">
-    <span class="hs-tip">the playbill pile</span>
-  </div>
-
-  <div class="hs tip-above" id="hs-board" onclick="openPop('boarding')">
-    <span class="hs-tip">boarding pass</span>
-  </div>
-
-  <!-- Drawer hotspot (closed state — hidden once opened) -->
-  <div class="hs tip-above" id="hs-drawer" onclick="openDrawer()">
-    <span class="hs-tip">click for a surprise</span>
-  </div>
-
-  <!-- Photo strip hotspot (open state — hidden until drawer is opened) -->
-  <div class="hs tip-above" id="hs-strip" onclick="openPop('photobooth')">
-    <span class="hs-tip">photobooth strip</span>
-  </div>
-
-  <!-- Plant — water it -->
-  <div class="hs" id="hs-plant" onclick="waterPlant(event)">
-    <span class="hs-tip">water me 🌿</span>
+  <div class="desk-icon" id="ic-afterhours" onclick="openPop('afterhours')">
+    <img src="sidequests/table-icons/afterhours.png" alt="afterhours">
+    <span class="icon-lbl">afterhours</span>
   </div>
 </div>
 
@@ -344,37 +346,37 @@ function torchOff() { torch.style.opacity = '0'; }
    excess height is cropped from the bottom. Using viewport-% CSS would
    land hotspots at the wrong image position on non-matching viewports. */
 const IMG_W = 1536, IMG_H = 1024;
-const HOTSPOT_COORDS = [
-  // [id,       x,  y,   w,   h]  — all in % of source image
-  ['hs-dfa',    9,  8,   38,  29],  // DFA blueprint
-  ['hs-email',  57, 7,   29,  41],  // laptop / email
-  ['hs-after',  23, 42,  10,  11],  // afterhours matchbook
-  ['hs-recipe', 39, 44,  13,  34],  // receipt / breakfast
-  ['hs-cookie', 53, 51,  10,  13],  // fortune cookie plate
-  ['hs-play',   78, 37,  22,  53],  // playbill stack
-  ['hs-board',  54, 72,  36,  12],  // boarding pass (LAX→SYD)
-  ['hs-drawer', 0,  52,  23,  40],  // drawer front (closed state)
-  ['hs-strip',  14, 54,  13,  27],  // photo strip (inside open drawer)
-  ['hs-plant',  0,  0,   11,  30],  // plant / vase
+/* curated flat-lay on the desk surface.
+   x,y = centre of the object in % of the source image; w = width in % of image width.
+   r = resting tilt; fd = float duration (for gentle variety). */
+const ICONS = [
+  // id,            x,    y,    w,    r,    fd
+  ['ic-dfa',        42,   50,   29,  -4,   '6.5s'],  // blueprint laid flat, upper desk
+  ['ic-playbill',   71,   60,   17,   5,   '7.2s'],  // playbill stack, right of desk
+  ['ic-breakfast',  53,   55,   8.5, -6,   '5.6s'],  // erewhon receipt, propped
+  ['ic-fortune',    46,   72,   9.5, 7,    '6.0s'],  // fortune cookie, front centre
+  ['ic-photobooth', 40,   58,   7,   -7,   '6.8s'],  // photo strip, on the desk
+  ['ic-afterhours', 61,   74,   12,  3,    '5.9s'],  // afterhours napkins, front right
 ];
 
-function positionHotspots() {
+function positionIcons() {
   const vw = window.innerWidth, vh = window.innerHeight;
-  const scale  = Math.max(vw / IMG_W, vh / IMG_H); // cover behaviour
+  const scale = Math.max(vw / IMG_W, vh / IMG_H); // cover behaviour
   const rW = IMG_W * scale, rH = IMG_H * scale;
-  const oX = (vw - rW) / 2; // horizontal centre offset (negative = cropped)
-  // vertical: object-position top → offsetY = 0
-  HOTSPOT_COORDS.forEach(([id, x, y, w, h]) => {
+  const oX = (vw - rW) / 2;
+  ICONS.forEach(([id, x, y, w, r, fd]) => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.style.left   = (oX + x / 100 * rW) + 'px';
-    el.style.top    = (     y / 100 * rH) + 'px';
-    el.style.width  = (     w / 100 * rW) + 'px';
-    el.style.height = (     h / 100 * rH) + 'px';
+    const wPx = w / 100 * rW;
+    el.style.width = wPx + 'px';
+    el.style.left  = (oX + x / 100 * rW - wPx / 2) + 'px';
+    el.style.top   = (y / 100 * rH) + 'px';
+    el.style.setProperty('--r', r + 'deg');
+    el.style.setProperty('--fd', fd);
   });
 }
-positionHotspots();
-window.addEventListener('resize', positionHotspots);
+positionIcons();
+window.addEventListener('resize', positionIcons);
 
 /* ── night mode: auto after 8pm ── */
 const hr = new Date().getHours();
@@ -422,56 +424,19 @@ function enterDesk() {
   }, 750);
 }
 
-/* ── brief tip reveal: all labels pulse in then fade, teaching discoverability ── */
+/* ── brief label reveal on entry: teaches that the objects are clickable ── */
 function revealTips() {
-  const tips = document.querySelectorAll('.hs-tip');
-  tips.forEach(t => {
-    t.style.transition = 'opacity .5s ease';
-    t.style.opacity = '1';
+  const lbls = document.querySelectorAll('.icon-lbl');
+  lbls.forEach((t, i) => {
+    setTimeout(() => {
+      t.style.transition = 'color .5s ease, transform .5s ease';
+      t.style.color = 'rgba(255,248,238,.9)';
+      t.style.transform = 'translate(-50%,0) rotate(-4deg)';
+    }, i * 90);
   });
   setTimeout(() => {
-    tips.forEach(t => { t.style.opacity = ''; t.style.transition = 'opacity .18s ease'; });
-  }, 1800);
-}
-
-/* ── drawer: clean dissolve between the two photographs ── */
-let drawerIsOpen = false;
-function openDrawer() {
-  if (drawerIsOpen) return;
-  drawerIsOpen = true;
-
-  const closed   = document.getElementById('desk-closed');
-  const openImg  = document.getElementById('desk-open');
-  const drawerEl = document.getElementById('hs-drawer');
-
-  // Dissolve: open image fades in (CSS transition), closed fades out
-  openImg.style.opacity = '1';
-  closed.style.transition = 'opacity .48s ease';
-  closed.style.opacity    = '0';
-
-  // Drawer hotspot disappears immediately
-  drawerEl.style.transition    = 'opacity .2s ease';
-  drawerEl.style.opacity       = '0';
-  drawerEl.style.pointerEvents = 'none';
-
-  // Strip hotspot appears once dissolve settles
-  setTimeout(() => {
-    const strip = document.getElementById('hs-strip');
-    strip.style.opacity      = '1';
-    strip.style.pointerEvents = 'auto';
-  }, 520);
-}
-
-/* ── plant watering ── */
-function waterPlant(e) {
-  const rect = document.getElementById('hs-plant').getBoundingClientRect();
-  for (let i = 0; i < 9; i++) {
-    const d = document.createElement('div');
-    d.className = 'drop';
-    d.style.cssText = `left:${rect.left+Math.random()*rect.width}px;top:${rect.bottom-6}px;--d:${(.5+Math.random()*.5).toFixed(2)}s;--dl:${(Math.random()*.3).toFixed(2)}s`;
-    document.body.appendChild(d);
-    d.addEventListener('animationend', () => d.remove());
-  }
+    lbls.forEach(t => { t.style.color = ''; t.style.transform = ''; t.style.transition = ''; });
+  }, 2200);
 }
 
 /* ── popup engine ── */
