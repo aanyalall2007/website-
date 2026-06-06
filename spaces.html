@@ -156,16 +156,32 @@ nav {
   max-width: 1100px; margin: 0 auto; list-style: none;
 }
 .index-item {
+  position: relative; overflow: hidden;
   display: grid; grid-template-columns: 90px 1fr auto;
-  align-items: baseline; gap: 28px;
-  padding: 34px 12px; border-top: 1px solid var(--border);
+  align-items: center; gap: 28px;
+  padding: 34px 28px; border-top: 1px solid var(--border);
   cursor: none; text-decoration: none; color: var(--ink);
-  transition: opacity 0.3s ease, padding-left 0.4s cubic-bezier(0.16,1,0.3,1);
+  transition: opacity 0.3s ease, padding-left 0.45s cubic-bezier(0.16,1,0.3,1);
 }
 .index-list:last-child { border-bottom: 1px solid var(--border); }
 .index-item:last-child { border-bottom: 1px solid var(--border); }
-.index-list:hover .index-item { opacity: 0.32; }
-.index-list:hover .index-item:hover { opacity: 1; padding-left: 26px; }
+.index-list:hover .index-item { opacity: 0.3; }
+.index-list:hover .index-item:hover { opacity: 1; padding-left: 48px; }
+
+/* photo sweep fill */
+.index-fill {
+  position: absolute; inset: 0; z-index: 0;
+  background-size: cover; background-position: center 38%;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+.index-fill::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(13,13,13,0.72), rgba(13,13,13,0.35));
+}
+.index-item:hover .index-fill { transform: scaleX(1); }
+
+.index-item > span:not(.index-fill) { position: relative; z-index: 1; transition: color 0.4s ease; }
 .index-num {
   font-family: var(--mono); font-size: 14px; color: var(--gold);
   letter-spacing: 0.05em;
@@ -173,25 +189,23 @@ nav {
 .index-name {
   font-size: clamp(30px, 5vw, 62px); font-weight: 400; line-height: 1;
   letter-spacing: -0.01em;
+  transition: color 0.4s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1) !important;
 }
-.index-item:hover .index-name { font-style: italic; }
+.index-item:hover .index-name { font-style: italic; color: #fff; transform: translateX(6px); }
+.index-item:hover .index-num { color: var(--cream); }
+.index-item:hover .index-meta { color: rgba(255,255,255,0.7); }
+.index-arrow {
+  position: absolute; right: 28px; top: 50%; z-index: 1;
+  transform: translateY(-50%) translateX(20px); opacity: 0;
+  font-size: 30px; color: #fff;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.index-item:hover .index-arrow { opacity: 1; transform: translateY(-50%) translateX(0); }
 .index-meta {
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--muted); text-align: right;
-  white-space: nowrap;
+  white-space: nowrap; padding-right: 44px;
 }
-
-/* floating preview that follows cursor */
-.index-preview {
-  position: fixed; top: 0; left: 0; z-index: 400;
-  width: 340px; height: 250px; pointer-events: none;
-  opacity: 0; transform: translate(-50%,-50%) scale(0.9) rotate(-4deg);
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
-  border-radius: 4px; overflow: hidden;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.28);
-}
-.index-preview.show { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(-4deg); }
-.index-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ─── MARQUEE DIVIDER ─── */
 .marquee {
@@ -347,24 +361,29 @@ nav {
 <section class="index">
   <p class="index-label">⁂ &nbsp; the index &nbsp; ⁂</p>
   <ul class="index-list">
-    <a class="index-item" href="#case-nigeria" data-img="spaces-photos/nigeria/1.png">
+    <a class="index-item" href="#case-nigeria">
+      <span class="index-fill" style="background-image:url('spaces-photos/nigeria/1.png')"></span>
       <span class="index-num">(01)</span>
       <span class="index-name">nigeria day</span>
       <span class="index-meta">cultural exhibition · '23</span>
+      <span class="index-arrow">→</span>
     </a>
-    <a class="index-item" href="#case-khel" data-img="spaces-photos/khel/1.png">
+    <a class="index-item" href="#case-khel">
+      <span class="index-fill" style="background-image:url('spaces-photos/khel/1.png')"></span>
       <span class="index-num">(02)</span>
       <span class="index-name">khel khel mein</span>
       <span class="index-meta">sport initiative · '23—24</span>
+      <span class="index-arrow">→</span>
     </a>
-    <a class="index-item" href="#case-matches" data-img="spaces-photos/matches/1.png">
+    <a class="index-item" href="#case-matches">
+      <span class="index-fill" style="background-image:url('spaces-photos/matches/1.png')"></span>
       <span class="index-num">(03)</span>
       <span class="index-name">intragrade matches</span>
       <span class="index-meta">recreation · '24</span>
+      <span class="index-arrow">→</span>
     </a>
   </ul>
 </section>
-<div class="index-preview" id="index-preview"><img src="" alt=""></div>
 
 <!-- marquee -->
 <div class="marquee" aria-hidden="true">
@@ -488,27 +507,6 @@ document.querySelectorAll('[data-split]').forEach(el => {
               : '<span class="char" style="--i:'+i+'" aria-hidden="true">'+c+'</span>'
   ).join('');
 });
-
-/* ── INDEX IMAGE-FOLLOW PREVIEW ── */
-const preview = document.getElementById('index-preview');
-const previewImg = preview.querySelector('img');
-let px = window.innerWidth/2, py = window.innerHeight/2;
-let activeImg = null;
-document.querySelectorAll('.index-item').forEach(item => {
-  item.addEventListener('mouseenter', () => {
-    activeImg = item.dataset.img;
-    previewImg.src = activeImg;
-    preview.classList.add('show');
-  });
-  item.addEventListener('mouseleave', () => preview.classList.remove('show'));
-});
-(function follow(){
-  px += (mx - px) * 0.12;
-  py += (my - py) * 0.12;
-  preview.style.left = px + 'px';
-  preview.style.top  = py + 'px';
-  requestAnimationFrame(follow);
-})();
 
 /* ── SCROLL REVEAL ── */
 const revObs = new IntersectionObserver(entries => {
