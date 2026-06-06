@@ -283,12 +283,13 @@ body.cursor-on-link #cursor-trail { width: 44px; height: 44px; border-color: rgb
 a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag) {
   position: relative; text-decoration: none;
 }
-a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag)::after {
+a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.connect-icon-btn)::after {
   content: ''; position: absolute; bottom: -1px; left: 0;
   width: 0; height: 1px; background: currentColor;
   transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
-a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):hover::after { width: 100%; }
+a:not(.oval-btn):not(.work-entry):not(.nav-logo):not(.icon-pin a):not(.oval-learn-tag):not(.connect-icon-btn):hover::after { width: 100%; }
+.dropdown a::after, .connect-icon-btn::after { display: none !important; }
 
 /* ══ OVAL SHOW/HIDE ══ */
 body.show-craft .oval-wrap,
