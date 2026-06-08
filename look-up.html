@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya · look up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f4efe4;
+  --cream-2:#efe9dc;
+  --ink:#0d0d0d;
+  --ink-soft:rgba(13,13,13,0.55);
+  --muted:rgba(13,13,13,0.4);
+  --gold:#8a7355;
+  --sep:rgba(13,13,13,0.1);
+  --stage:#171310;
+  --serif:'EB Garamond',serif;
+  --grotesk:'Hanken Grotesk',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--serif);
+  text-transform:lowercase;font-style:normal;
+  background:var(--cream);color:var(--ink);
+  line-height:1.6;overflow-x:hidden;cursor:none;
+}
+img{display:block;max-width:100%;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(to right,rgba(0,0,0,0.022) 0,rgba(0,0,0,0.022) 1px,transparent 1px,transparent 64px);}
+#cursor{position:fixed;width:9px;height:9px;background:#fff;border-radius:50%;pointer-events:none;mix-blend-mode:difference;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#cursor.big{width:46px;height:46px;}
+@media(pointer:coarse){#cursor{display:none;}body{cursor:auto;}}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--ink);z-index:10000;}
+#pageout{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none;z-index:9500;transition:opacity .45s ease;}
+
+nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(244,239,228,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:0.5px solid var(--sep);}
+.nav-back{font-family:var(--serif);font-size:16px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--ink);}
+.nav-label{font-family:var(--grotesk);font-weight:700;font-size:11px;letter-spacing:0.16em;color:var(--gold);}
+main{position:relative;z-index:1;}
+
+.kicker{font-family:var(--grotesk);font-weight:800;font-size:12px;letter-spacing:0.06em;color:var(--ink);margin-bottom:16px;}
+.eyebrow{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.12em;color:var(--gold);display:block;}
+.caption{font-family:var(--grotesk);font-weight:500;font-size:12px;letter-spacing:0.02em;color:var(--muted);margin-top:12px;text-align:center;}
+
+.stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 28px 40px;position:relative;}
+.stage .eyebrow{margin-bottom:24px;}
+.wordmark{font-family:var(--grotesk);font-weight:800;font-size:clamp(64px,16vw,200px);line-height:0.84;letter-spacing:-0.04em;color:var(--ink);}
+.stage .tag{font-family:var(--serif);font-size:clamp(19px,2.4vw,26px);color:var(--ink-soft);max-width:620px;margin-top:26px;line-height:1.5;}
+.scroll-cue{font-family:var(--grotesk);font-weight:700;font-size:12px;letter-spacing:0.14em;color:var(--muted);position:absolute;bottom:26px;left:50%;transform:translateX(-50%);animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.meta{max-width:880px;margin:64px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;border-top:0.5px solid var(--sep);border-bottom:0.5px solid var(--sep);}
+.meta>div{padding:22px 0;}
+.meta dt{font-family:var(--grotesk);font-weight:800;font-size:10px;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;}
+.meta dd{font-family:var(--serif);font-size:17px;}
+@media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);}}
+
+/* ===== 3D MODEL STAGE ===== */
+.model{background:var(--stage);margin-top:90px;padding:64px 28px 40px;}
+.model-head{max-width:920px;margin:0 auto 26px;text-align:center;}
+.model .kicker{color:#d9c08a;}
+.model h2{font-family:var(--serif);color:#f4efe4;font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:-0.02em;}
+#viewer{max-width:1000px;margin:0 auto;height:min(72vh,640px);border-radius:16px;position:relative;overflow:hidden;background:radial-gradient(120% 120% at 50% 20%,#fbf7ee 0%,#efe7d6 60%,#e6dcc6 100%);box-shadow:0 30px 80px rgba(0,0,0,0.45);cursor:grab;}
+#viewer.grabbing{cursor:grabbing;}
+#viewer canvas{display:block;}
+.viewer-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-family:var(--grotesk);font-weight:600;font-size:11px;letter-spacing:0.08em;color:rgba(13,13,13,0.5);pointer-events:none;white-space:nowrap;}
+.viewer-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--grotesk);font-weight:700;font-size:12px;letter-spacing:0.1em;color:var(--muted);}
+.model .caption{color:rgba(255,255,255,0.45);margin-top:18px;}
+
+section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
+.block h2{font-family:var(--serif);font-size:clamp(30px,4.4vw,46px);font-weight:500;letter-spacing:-0.02em;line-height:1.04;margin-bottom:22px;}
+.block p{font-size:19px;color:var(--ink-soft);margin-bottom:18px;max-width:62ch;}
+.block p strong{color:var(--ink);font-weight:600;}
+.block .lead{font-size:22px;color:var(--ink);}
+.accent{font-family:var(--grotesk)!important;font-weight:700!important;font-size:0.94em;letter-spacing:-0.01em;color:inherit;}
+
+.pullquote{max-width:880px;margin:90px auto 0;padding:0 28px;text-align:center;}
+.pullquote p{font-family:var(--serif);font-size:clamp(28px,4.5vw,52px);font-weight:500;line-height:1.1;letter-spacing:-0.02em;}
+
+.gallery{max-width:1040px;margin:48px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.gallery figure{margin:0;}
+.gallery img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,0.14);transition:transform .4s ease;}
+.gallery img:hover{transform:translateY(-6px);}
+.gallery figcaption{font-family:var(--grotesk);font-weight:500;font-size:11px;letter-spacing:0.02em;color:var(--muted);margin-top:10px;}
+@media(max-width:680px){.gallery{grid-template-columns:1fr;}}
+
+.deck-link{max-width:760px;margin:40px auto 0;padding:0 28px;}
+.deck-link a{font-family:var(--grotesk);font-weight:700;font-size:15px;letter-spacing:0.02em;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--gold);padding-bottom:2px;transition:opacity .2s;}
+.deck-link a:hover{opacity:0.6;}
+
+.outcome{max-width:760px;margin:90px auto 0;padding:48px 44px;background:var(--cream-2);border-radius:18px;border:0.5px solid var(--sep);}
+.outcome .grade{font-family:var(--grotesk);font-weight:800;font-size:72px;letter-spacing:-0.04em;color:var(--ink);line-height:1;margin:6px 0 18px;}
+.outcome p{font-size:18px;color:var(--ink-soft);margin-bottom:14px;}
+.outcome .quote{font-size:21px;color:var(--ink);border-left:2px solid var(--gold);padding-left:20px;margin:22px 0;}
+
+.nextp{max-width:760px;margin:96px auto 0;padding:0 28px 110px;border-top:0.5px solid var(--sep);}
+.nextp a{display:flex;align-items:baseline;justify-content:space-between;padding-top:34px;text-decoration:none;color:var(--ink);}
+.nextp .nl{font-family:var(--grotesk);font-weight:800;font-size:11px;letter-spacing:0.08em;color:var(--muted);}
+.nextp .nt{font-family:var(--grotesk);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-0.03em;transition:color .25s;}
+.nextp a:hover .nt{color:var(--gold);}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,1,.3,1);}
+.reveal.in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.scroll-cue{animation:none;}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="cursor"></div>
+<div class="progress" id="progress"></div>
+<div id="pageout"></div>
+
+<nav>
+  <a href="work.html" class="nav-back">← work</a>
+  <span class="nav-label">case study · 02</span>
+</nav>
+
+<main>
+  <!-- STAGE -->
+  <header class="stage">
+    <span class="eyebrow">the practice of design · usc · 2026</span>
+    <div class="wordmark">look up</div>
+    <p class="tag">a deliberately absurd wearable that lets you keep scrolling while you walk — a chindōgu built to make a point about how far we'll go not to put the phone down.</p>
+    <div class="scroll-cue">scroll ↓</div>
+  </header>
+
+  <dl class="meta reveal">
+    <div><dt>role</dt><dd>concept, industrial prototype, critique</dd></div>
+    <div><dt>discipline</dt><dd>chindōgu · speculative design</dd></div>
+    <div><dt>timeline</dt><dd>the practice of design · 2026</dd></div>
+    <div><dt>medium</dt><dd>worn rig · cardboard, strap, elastic</dd></div>
+  </dl>
+
+  <!-- 3D MODEL -->
+  <section class="model">
+    <div class="model-head reveal">
+      <p class="kicker">explore the rig</p>
+      <h2>turn it over. it's as ridiculous as it sounds.</h2>
+    </div>
+    <div id="viewer" class="reveal">
+      <div class="viewer-loading" id="vload">loading model…</div>
+      <div class="viewer-hint">drag to rotate · scroll to zoom</div>
+    </div>
+    <p class="caption">a 3d study of the look-up rig — phone cradle, shoulder sling + forearm cuff</p>
+  </section>
+
+  <!-- PREMISE -->
+  <section class="block reveal">
+    <p class="kicker">the premise</p>
+    <h2>what if you never had to look up at all?</h2>
+    <p class="lead">Look Up is a <strong>chindōgu</strong> — a Japanese tradition of inventions that are technically functional but socially absurd.</p>
+    <p>The rig slings your arm into a fixed, raised position so your phone stays parked in your forward sightline. You get to keep scrolling while you walk — without ever tilting your head down. It "solves" walking-while-distracted by doubling down on the distraction.</p>
+  </section>
+
+  <!-- CRITIQUE -->
+  <section class="block reveal">
+    <p class="kicker">the critique</p>
+    <h2>make the habit <span class="accent">external</span>, and it stops looking normal.</h2>
+    <p>Phone addiction is invisible because it's so ordinary — everyone's head is already down. By moving the habit out of the body and onto it — strapped, rigid, awkward — the absurdity becomes impossible to ignore.</p>
+    <p>The device asks one quiet question: we'll engineer an elaborate contraption to keep scrolling safely… so why not just <strong>stop</strong>? The lengths are the point.</p>
+  </section>
+
+  <div class="pullquote reveal">
+    <p>"we'd rather wear the problem than break the habit."</p>
+  </div>
+
+  <!-- PROCESS -->
+  <section class="block reveal">
+    <p class="kicker">the prototype</p>
+    <h2>built rough, on purpose.</h2>
+    <p>The first working rig is cardboard, packing tape, a shoulder strap and an elastic forearm cuff — the crudeness is part of the argument. It holds a real phone at eye level and genuinely works when worn.</p>
+  </section>
+  <div class="gallery reveal">
+    <figure><img src="look-up/Screenshot 2026-06-08 at 9.09.03 PM.png" alt="look up cardboard phone cradle prototype with strap"><figcaption>the phone cradle — cardboard + tape</figcaption></figure>
+    <figure><img src="look-up/Screenshot 2026-06-08 at 9.08.57 PM.png" alt="look up rig worn cross-body, arm raised"><figcaption>worn — the sling fixes the arm raised</figcaption></figure>
+    <figure><img src="look-up/Screenshot 2026-06-08 at 9.08.52 PM.png" alt="detail of the look up rig housing and strap"><figcaption>detail — housing + shoulder strap</figcaption></figure>
+  </div>
+  <div class="deck-link reveal">
+    <a href="https://www.canva.com/design/DAHCYF_JRV4/ftoFnoYrVlPJXZ4FrGU8PA/view" target="_blank" rel="noopener">view the full pitch ↗</a>
+  </div>
+
+  <!-- OUTCOME -->
+  <div class="outcome reveal">
+    <p class="kicker">outcome</p>
+    <div class="grade">100%</div>
+    <p>Presented to the class as a working worn prototype. The room laughed — and then immediately got the point. The absurdity did exactly its job: it made an invisible habit visible enough to argue about.</p>
+    <p class="quote">"everyone laughed, and everyone understood what we were getting at."</p>
+  </div>
+
+  <!-- NEXT -->
+  <div class="nextp reveal">
+    <a href="work.html">
+      <div>
+        <div class="nl">next</div>
+        <div class="nt">back to work →</div>
+      </div>
+    </a>
+  </div>
+</main>
+
+<script>
+// cursor + progress + reveal + transition
+const cur=document.getElementById('cursor');
+addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('a,img,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('big'));el.addEventListener('mouseleave',()=>cur.classList.remove('big'));});
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{const t=document.documentElement.scrollHeight-innerHeight;bar.style.width=(scrollY/t*100)+'%';});
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const po=document.getElementById('pageout');
+document.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('mailto'))return;a.addEventListener('click',e=>{e.preventDefault();po.style.pointerEvents='all';po.style.opacity='1';setTimeout(()=>location.href=h,440);});});
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const mount=document.getElementById('viewer');
+const load=document.getElementById('vload');
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(38, mount.clientWidth/mount.clientHeight, 0.1, 100);
+camera.position.set(3.4,1.6,5.2);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(mount.clientWidth,mount.clientHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+mount.appendChild(renderer.domElement);
+load.remove();
+
+// lights
+scene.add(new THREE.HemisphereLight(0xfff6e6,0xcdbfa6,1.1));
+const key=new THREE.DirectionalLight(0xffffff,1.7);
+key.position.set(4,7,5);key.castShadow=true;
+key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=1;key.shadow.camera.far=25;
+key.shadow.camera.left=-6;key.shadow.camera.right=6;key.shadow.camera.top=6;key.shadow.camera.bottom=-6;
+scene.add(key);
+const fill=new THREE.DirectionalLight(0xffffff,0.5);fill.position.set(-5,2,-3);scene.add(fill);
+
+// ground shadow catcher
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.ShadowMaterial({opacity:0.16}));
+ground.rotation.x=-Math.PI/2;ground.position.y=-2.6;ground.receiveShadow=true;scene.add(ground);
+
+// ===== the rig =====
+const rig=new THREE.Group();scene.add(rig);
+
+const cardboard=new THREE.MeshStandardMaterial({color:0xc7a474,roughness:0.95,metalness:0});
+const tape=new THREE.MeshStandardMaterial({color:0xf3eee2,roughness:0.6});
+const black=new THREE.MeshStandardMaterial({color:0x18181a,roughness:0.7});
+const phoneBody=new THREE.MeshStandardMaterial({color:0x0c0c0e,roughness:0.4,metalness:0.3});
+const screenMat=new THREE.MeshStandardMaterial({color:0xbfe0ff,emissive:0x6fa8d6,emissiveIntensity:0.9,roughness:0.2});
+
+// phone cradle (cardboard box)
+const cradle=new THREE.Mesh(new THREE.BoxGeometry(1.5,2.6,0.7),cardboard);
+cradle.castShadow=true;rig.add(cradle);
+// tape stripes
+for(const t of [[-0.3,0.6,28],[0.35,-0.2,-22],[0,1.0,12]]){
+  const s=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.28,0.02),tape);
+  s.position.set(t[0],t[1],0.36);s.rotation.z=t[2]*Math.PI/180;s.castShadow=true;rig.add(s);
+}
+// phone slotted in front
+const phone=new THREE.Mesh(new THREE.BoxGeometry(1.15,2.1,0.1),phoneBody);
+phone.position.set(0,0.15,0.42);phone.castShadow=true;rig.add(phone);
+const screen=new THREE.Mesh(new THREE.PlaneGeometry(1.0,1.92),screenMat);
+screen.position.set(0,0.15,0.48);rig.add(screen);
+
+// shoulder sling — tube along a curve looping up from the cradle
+const slingCurve=new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-0.6,1.2,0.1),
+  new THREE.Vector3(-1.7,2.6,-0.2),
+  new THREE.Vector3(-1.2,3.4,-0.6),
+  new THREE.Vector3(0.6,3.1,-0.9),
+  new THREE.Vector3(1.4,1.7,-0.5),
+  new THREE.Vector3(0.7,1.1,0.0)
+]);
+const sling=new THREE.Mesh(new THREE.TubeGeometry(slingCurve,80,0.12,12,false),black);
+sling.castShadow=true;rig.add(sling);
+
+// forearm cuff — torus below
+const cuff=new THREE.Mesh(new THREE.TorusGeometry(0.62,0.13,16,40),black);
+cuff.position.set(0.1,-1.7,0.15);cuff.rotation.x=Math.PI/2.3;cuff.castShadow=true;rig.add(cuff);
+// little connector strap from cradle to cuff
+const conn=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.0,0.06),black);
+conn.position.set(0.3,-1.0,0.2);conn.rotation.z=-0.18;conn.castShadow=true;rig.add(conn);
+
+rig.position.y=0.2;
+
+// controls
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.08;
+controls.enablePan=false;controls.minDistance=3.4;controls.maxDistance=9;
+controls.autoRotate=true;controls.autoRotateSpeed=1.1;
+controls.minPolarAngle=0.5;controls.maxPolarAngle=Math.PI/1.7;
+controls.target.set(0,0.2,0);
+mount.addEventListener('pointerdown',()=>{controls.autoRotate=false;mount.classList.add('grabbing');});
+addEventListener('pointerup',()=>mount.classList.remove('grabbing'));
+
+function resize(){
+  const w=mount.clientWidth,h=mount.clientHeight;
+  camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
+}
+addEventListener('resize',resize);
+
+(function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
+</script>
+</body>
+</html>
