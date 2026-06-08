@@ -117,7 +117,30 @@
       nav { padding: 16px 24px; }
     }
   </style>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style id="type-system">
+/* ===== unified type system ===== */
+/* EB Garamond = voice (body + headings); Hanken Grotesk = structure + accents; zero italics */
+body{font-family:'EB Garamond',serif;}
+*{font-style:normal !important;}
+/* emphasis: serif word -> bold sans, no color */
+em,i,.accent,.italic{
+  font-family:'Hanken Grotesk',sans-serif !important;
+  font-weight:700 !important;
+  font-style:normal !important;
+  font-size:0.94em;
+  letter-spacing:-0.01em;
+  color:inherit !important;
+}
+/* structural labels -> grotesk */
+.eyebrow,.kicker,.label,.nav-label,.section-label,.section-eyebrow,.hero-eyebrow,
+.room-tag,.card-meta,.meta dt,.leadership-label,.footer-copy,.caption,.mono,
+[class*="mono"],[class*="eyebrow"],[class*="-label"],[class*="-tag"]{
+  font-family:'Hanken Grotesk',sans-serif !important;
+}
+</style>
 </head>
+
 <body>
 
   <div id="cursor" style="width:9px;height:9px;background:white;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;mix-blend-mode:difference;transform:translate(-50%,-50%)"></div>
