@@ -724,6 +724,7 @@ nav {
           <!-- troy eats — popup down -->
           <div class="project-card glass-card"
             data-popup="down"
+            data-href="troy-eats.html"
             data-title="troy eats"
             data-meta="2026 · practice of design, usc"
             data-body="Led end-to-end redesign of the USC campus dining system — UX research, service prototyping, visual identity, brand strategy. Developed the Troy Eats brand including naming and a cohesive design system.">
@@ -1072,6 +1073,14 @@ function closeSheet() {
 
 document.querySelectorAll('.project-card').forEach(card => {
   card.addEventListener('click', () => {
+    const href = card.dataset.href;
+    if (href) {
+      const ov = document.getElementById('page-transition');
+      ov.style.opacity = '1';
+      ov.style.pointerEvents = 'all';
+      setTimeout(() => { window.location.href = href; }, 400);
+      return;
+    }
     openSheet(card.dataset.title, card.dataset.meta, card.dataset.body);
   });
 });

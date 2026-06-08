@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya · troy eats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f4efe4;
+  --cream-2:#efe9dc;
+  --ink:#0d0d0d;
+  --ink-soft:rgba(13,13,13,0.55);
+  --muted:rgba(13,13,13,0.4);
+  --gold:#8a7355;
+  --sep:rgba(13,13,13,0.1);
+  --cardinal:#9d1b22;
+  --stage:#171310;            /* cinematic dark */
+  --serif:'EB Garamond',serif;          /* body copy + section headings */
+  --grotesk:'Hanken Grotesk',sans-serif;/* wordmark + labels + display */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--serif);
+  text-transform:lowercase;
+  font-style:normal;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.6;
+  overflow-x:hidden;
+  cursor:none;
+}
+img{display:block;max-width:100%;}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(to right,rgba(0,0,0,0.022) 0,rgba(0,0,0,0.022) 1px,transparent 1px,transparent 64px);
+}
+
+#cursor{
+  position:fixed;width:9px;height:9px;background:#fff;border-radius:50%;
+  pointer-events:none;mix-blend-mode:difference;z-index:9999;
+  transform:translate(-50%,-50%);transition:width .25s,height .25s;
+}
+#cursor.big{width:46px;height:46px;}
+@media(pointer:coarse){#cursor{display:none;}body{cursor:auto;}}
+
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--cardinal);z-index:10000;}
+#pageout{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none;z-index:9500;transition:opacity .45s ease;}
+
+nav{
+  position:fixed;top:0;left:0;right:0;height:54px;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  background:rgba(244,239,228,0.82);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:0.5px solid var(--sep);
+}
+.nav-back{font-family:var(--serif);font-size:16px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--ink);}
+.nav-label{font-family:var(--grotesk);font-weight:700;font-size:11px;letter-spacing:0.16em;color:var(--gold);}
+
+main{position:relative;z-index:1;}
+
+/* labels / kickers — rocky's matcha grotesque */
+.kicker{font-family:var(--grotesk);font-weight:800;font-size:12px;letter-spacing:0.06em;color:var(--cardinal);margin-bottom:16px;}
+.eyebrow{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.12em;color:var(--gold);display:block;}
+.caption{font-family:var(--grotesk);font-weight:500;font-size:12px;letter-spacing:0.02em;color:var(--muted);margin-top:12px;text-align:center;}
+
+/* ===== CINEMATIC STAGE ===== */
+.stage{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:80px 28px 40px;position:relative;
+}
+.stage .logo{width:88px;height:auto;margin-bottom:30px;border-radius:20px;
+  box-shadow:0 12px 34px rgba(157,27,34,0.28);
+  animation:floaty 6s ease-in-out infinite;}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.stage .eyebrow{margin-bottom:24px;}
+.wordmark{
+  font-family:var(--grotesk);font-weight:800;
+  font-size:clamp(64px,16vw,200px);line-height:0.84;letter-spacing:-0.04em;
+  color:var(--ink);
+}
+.stage .tag{
+  font-family:var(--serif);font-size:clamp(19px,2.4vw,26px);
+  color:var(--ink-soft);max-width:600px;margin-top:26px;line-height:1.5;
+}
+.scroll-cue{font-family:var(--grotesk);font-weight:700;font-size:12px;letter-spacing:0.14em;
+  color:var(--muted);position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ===== POSTER MARQUEE ===== */
+.poster-marquee{overflow:hidden;white-space:nowrap;padding:8px 0;background:var(--stage);}
+.poster-track{display:inline-flex;gap:18px;padding:0 9px;animation:marq 38s linear infinite;}
+.poster-marquee:hover .poster-track{animation-play-state:paused;}
+.poster-track img{height:300px;width:auto;border-radius:8px;flex:none;}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:680px){.poster-track img{height:180px;}}
+
+/* meta strip */
+.meta{
+  max-width:880px;margin:64px auto 0;padding:0 28px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  border-top:0.5px solid var(--sep);border-bottom:0.5px solid var(--sep);
+}
+.meta>div{padding:22px 0;}
+.meta dt{font-family:var(--grotesk);font-weight:800;font-size:10px;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;}
+.meta dd{font-family:var(--serif);font-size:17px;}
+@media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);}}
+
+/* ===== VIDEO REEL (cinematic dark) ===== */
+.reel{background:var(--stage);margin-top:90px;padding:70px 28px;}
+.reel-inner{max-width:920px;margin:0 auto;text-align:center;}
+.reel .kicker{color:#e7b14d;}
+.reel h2{font-family:var(--serif);color:#f4efe4;font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:-0.02em;margin-bottom:30px;}
+.reel h2 .accent{color:#e7b14d;}
+.video-wrap{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.5);}
+.video-wrap video{width:100%;display:block;}
+.reel .caption{color:rgba(255,255,255,0.45);}
+
+/* section */
+section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
+.block h2{font-family:var(--serif);font-size:clamp(30px,4.4vw,46px);font-weight:500;letter-spacing:-0.02em;line-height:1.04;margin-bottom:22px;}
+.block h2 .accent{color:var(--gold);}
+.block p{font-size:19px;color:var(--ink-soft);margin-bottom:18px;max-width:62ch;}
+.block p strong{color:var(--ink);font-weight:600;}
+.block .lead{font-size:22px;color:var(--ink);}
+
+.probs{list-style:none;margin:26px 0 0;}
+.probs li{display:flex;gap:16px;align-items:baseline;padding:16px 0;border-top:0.5px solid var(--sep);font-size:18px;color:var(--ink-soft);}
+.probs li:last-child{border-bottom:0.5px solid var(--sep);}
+.probs .n{font-family:var(--grotesk);font-weight:800;font-size:12px;color:var(--cardinal);flex-shrink:0;}
+.probs li b{color:var(--ink);font-weight:600;}
+
+.research-imgs{max-width:1000px;margin:34px auto 0;padding:0 28px;display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.research-imgs figure{margin:0;}
+.research-imgs img{width:100%;border-radius:8px;border:1px solid var(--sep);}
+.research-imgs figcaption{font-family:var(--grotesk);font-weight:500;font-size:11px;letter-spacing:0.02em;color:var(--muted);margin-top:10px;}
+@media(max-width:680px){.research-imgs{grid-template-columns:1fr;}}
+
+.feature{max-width:1040px;margin:64px auto 0;padding:0 28px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+.feature.flip .feat-text{order:2;}
+.feature .feat-shot{display:flex;justify-content:center;}
+.feature .feat-shot img{width:100%;max-width:330px;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,0.15);transition:transform .5s cubic-bezier(.2,1,.3,1);}
+.feature .feat-shot img:hover{transform:translateY(-8px) scale(1.015);}
+.feat-text h3{font-family:var(--serif);font-size:clamp(24px,3vw,32px);font-weight:500;letter-spacing:-0.015em;line-height:1.1;margin-bottom:14px;}
+.feat-text h3 .accent{color:var(--gold);}
+.feat-text p{font-size:17px;color:var(--ink-soft);}
+@media(max-width:760px){.feature{grid-template-columns:1fr;gap:26px;}.feature.flip .feat-text{order:0;}}
+
+.gallery{max-width:1100px;margin:70px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.gallery img{width:100%;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:transform .4s ease;}
+.gallery img:hover{transform:translateY(-6px);}
+@media(max-width:680px){.gallery{grid-template-columns:1fr;}}
+
+.billboard{max-width:1100px;margin:64px auto 0;padding:0 28px;}
+.billboard img{width:100%;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,0.16);}
+
+.outcome{max-width:760px;margin:90px auto 0;padding:48px 44px;background:var(--cream-2);border-radius:18px;border:0.5px solid var(--sep);}
+.outcome .grade{font-family:var(--grotesk);font-weight:800;font-size:72px;letter-spacing:-0.04em;color:var(--cardinal);line-height:1;margin:6px 0 18px;}
+.outcome p{font-size:18px;color:var(--ink-soft);margin-bottom:14px;}
+.outcome .quote{font-size:21px;color:var(--ink);border-left:2px solid var(--gold);padding-left:20px;margin:22px 0;}
+
+.honest{max-width:760px;margin:40px auto 0;padding:0 28px;}
+.honest p{font-size:18px;color:var(--ink-soft);}
+
+.nextp{max-width:760px;margin:96px auto 0;padding:0 28px 110px;border-top:0.5px solid var(--sep);}
+.nextp a{display:flex;align-items:baseline;justify-content:space-between;padding-top:34px;text-decoration:none;color:var(--ink);}
+.nextp .nl{font-family:var(--grotesk);font-weight:800;font-size:11px;letter-spacing:0.08em;color:var(--muted);}
+.nextp .nt{font-family:var(--grotesk);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-0.03em;transition:color .25s;}
+.nextp a:hover .nt{color:var(--gold);}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,1,.3,1);}
+.reveal.in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.poster-track,.stage .logo,.scroll-cue{animation:none;}}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div class="progress" id="progress"></div>
+<div id="pageout"></div>
+
+<nav>
+  <a href="work.html" class="nav-back">← work</a>
+  <span class="nav-label">case study · 01</span>
+</nav>
+
+<main>
+  <!-- CINEMATIC STAGE -->
+  <header class="stage">
+    <img class="logo" src="troy-eats/img/logo.png" alt="troy eats logo">
+    <span class="eyebrow">usc dining · practice of design · 2026</span>
+    <div class="wordmark">troy eats</div>
+    <p class="tag">a ground-up redesign of how 20,000 students eat on campus — one app instead of three, built around your schedule and your wallet.</p>
+    <div class="scroll-cue">scroll ↓</div>
+  </header>
+
+  <!-- POSTER MARQUEE -->
+  <div class="poster-marquee">
+    <div class="poster-track">
+      <img src="troy-eats/img/billboard.jpeg" alt="troy eats billboard">
+      <img src="troy-eats/img/mascot.jpeg" alt="troy eats campaign">
+      <img src="troy-eats/img/billboard.jpeg" alt="">
+      <img src="troy-eats/img/mascot.jpeg" alt="">
+    </div>
+  </div>
+
+  <dl class="meta reveal">
+    <div><dt>role</dt><dd>ux research, product design, brand</dd></div>
+    <div><dt>team</dt><dd>practice of design, usc</dd></div>
+    <div><dt>timeline</dt><dd>8 weeks · 2026</dd></div>
+    <div><dt>deliverables</dt><dd>app · brand system · pitch deck</dd></div>
+  </dl>
+
+  <!-- VIDEO REEL -->
+  <section class="reel">
+    <div class="reel-inner reveal">
+      <p class="kicker">the pitch, in motion</p>
+      <h2>get <span class="accent">anything</span> on campus.</h2>
+      <div class="video-wrap">
+        <video src="troy-eats/img/promo.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+      </div>
+      <p class="caption">troy eats — promo reel from the final pitch</p>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="block reveal">
+    <p class="kicker">the problem</p>
+    <h2>eating on campus took <span class="accent">three apps</span> and a lot of guessing.</h2>
+    <p class="lead">USC dining was scattered across USC Card Services, a separate mobile-ordering app, and static dining-hall menu pages — none of which talked to each other.</p>
+    <p>The result was constant decision fatigue: redundant screens (a rewards tab that did nothing), no photos, no sense of community, and no single answer to the only question students actually ask — <strong>"where should i eat right now?"</strong></p>
+    <ul class="probs">
+      <li><span class="n">01</span><span><b>fragmented tools.</b> card balance, ordering, and menus lived in three different places.</span></li>
+      <li><span class="n">02</span><span><b>decision fatigue.</b> too many redundant pages and buttons, no guidance.</span></li>
+      <li><span class="n">03</span><span><b>no community.</b> no reviews, no photos, no connection between students and chefs.</span></li>
+      <li><span class="n">04</span><span><b>blind wait times.</b> you found out a station was slammed only once you got there.</span></li>
+    </ul>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="block reveal">
+    <p class="kicker">research</p>
+    <h2>we started where the <span class="accent">frustration</span> was — our own.</h2>
+    <p>We interviewed the people who actually live in these apps: USC students, our own friends, and ran an Instagram-stories questionnaire to widen the sample. We also catalogued every pain point we hit ourselves, mapping the redundant flows on a wall.</p>
+    <p>One pattern kept surfacing: people didn't want <strong>more</strong> features — they wanted the existing ones to make a decision for them.</p>
+  </section>
+  <div class="research-imgs reveal">
+    <figure><img src="troy-eats/img/whiteboard1.png" alt="research whiteboard — meal swipe and coffee pain points"><figcaption>synthesis — meal-swipe + customization pain points</figcaption></figure>
+    <figure><img src="troy-eats/img/whiteboard2.png" alt="research whiteboard — mobile ordering problems mapped"><figcaption>problem map — mobile ordering, wait times, dead rewards tab</figcaption></figure>
+  </div>
+
+  <!-- SOLUTION INTRO -->
+  <section class="block reveal">
+    <p class="kicker">the solution</p>
+    <h2>one app that knows where you are, where you're headed, and what you love.</h2>
+    <p>Troy Eats folds balances, ordering, menus, and community into a single surface — then puts an assistant on top of it that reads your day and removes the choosing.</p>
+  </section>
+
+  <!-- FEATURE 1 -->
+  <div class="feature reveal">
+    <div class="feat-text">
+      <p class="kicker">signature feature</p>
+      <h3>an assistant that <span class="accent">plans your day's eating</span> for you.</h3>
+      <p>The home screen learns from your class schedule, your current location, where you have to be next, your order history, and your favourites — then ranks spots by what's closest, open, and uncrowded right now. No more hopping between three apps to decide.</p>
+    </div>
+    <div class="feat-shot"><img src="troy-eats/img/home.png" alt="troy eats AI home dashboard with ranked recommendations"></div>
+  </div>
+
+  <!-- FEATURE 2 -->
+  <div class="feature flip reveal">
+    <div class="feat-text">
+      <p class="kicker">time-aware ordering</p>
+      <h3>"<span class="accent">start walking in 2:53</span>" — order timed to your route.</h3>
+      <p>Because it knows your location and the live queue, Troy Eats tells you exactly when to leave so you arrive as your food is ready — and lets you schedule orders around class slots instead of waiting in line.</p>
+    </div>
+    <div class="feat-shot"><img src="troy-eats/img/tracking.png" alt="order tracking telling user when to start walking"></div>
+  </div>
+
+  <!-- FEATURE 3 -->
+  <div class="feature reveal">
+    <div class="feat-text">
+      <p class="kicker">community</p>
+      <h3>a feedback loop between students <span class="accent">and chefs</span>.</h3>
+      <p>A community tab lets students post reviews with photos — and chefs reply directly as verified staff. It builds a connection that never existed before, and turns reviews into a living, trusted menu.</p>
+    </div>
+    <div class="feat-shot"><img src="troy-eats/img/community.png" alt="community feed with student reviews and verified chef replies"></div>
+  </div>
+
+  <!-- KEY DECISION: rewards -->
+  <section class="block reveal">
+    <p class="kicker">key decision</p>
+    <h2>we turned the dead rewards tab into the <span class="accent">engine</span>.</h2>
+    <p>The old rewards page had no function. We rebuilt it into the loop that drives healthier, more affordable habits: points for eating breakfast, for posting photo reviews, for joining school-wide challenges like trying a new dish.</p>
+    <p>Those points unlock <strong>tier status</strong> — and higher tiers get <strong>priority during rush hours</strong>. Engagement, affordability, and crowd-balancing all solved with one mechanic.</p>
+  </section>
+
+  <div class="gallery reveal">
+    <img src="troy-eats/img/waits.png" alt="live wait times by station">
+    <img src="troy-eats/img/order.png" alt="ordering screen for slice shop">
+    <img src="troy-eats/img/account.png" alt="dining account — dollars and meal swipes">
+  </div>
+
+  <!-- service redesign -->
+  <section class="block reveal">
+    <p class="kicker">service redesign</p>
+    <h2>nudging toward <span class="accent">healthier, cheaper</span> choices.</h2>
+    <p>Beyond the app, we redesigned the service itself: meal-swipe transparency so dining dollars actually last, allergen + dietary filters built into every menu, and small nudges — like swapping a fountain drink for a healthier option, free.</p>
+  </section>
+  <div class="gallery reveal">
+    <img src="troy-eats/img/dietary.png" alt="dietary filters and allergen warnings">
+    <img src="troy-eats/img/drink.png" alt="add a drink — swap fountain for healthier free">
+    <img src="troy-eats/img/schedule.png" alt="schedule an order for a later time slot">
+  </div>
+
+  <!-- BRAND -->
+  <section class="block reveal">
+    <p class="kicker">brand</p>
+    <h2>a name and a face the campus already <span class="accent">roots for</span>.</h2>
+    <p>We built the full Troy Eats identity — naming, the cardinal-and-gold mark, and a Tommy-Trojan-led campaign — so the product felt like USC, not a generic delivery clone.</p>
+  </section>
+  <div class="billboard reveal">
+    <img src="troy-eats/img/mascot.jpeg" alt="troy eats brand campaign with tommy trojan mascot">
+    <p class="caption">campaign hero — troy eats, the trojan way to eat on campus</p>
+  </div>
+
+  <!-- OUTCOME -->
+  <div class="outcome reveal">
+    <p class="kicker">outcome</p>
+    <div class="grade">A−</div>
+    <p>The final app and pitch deck combined every fragmented tool into one seamless surface. Reviewers agreed it was well-made and that the features worked together cohesively.</p>
+    <p class="quote">"it combines all the features seamlessly into one platform."</p>
+  </div>
+
+  <div class="honest reveal">
+    <p>honest reflection — the biggest open risk is the learning curve. consolidating three tools into one powerful app means new patterns to learn; the next iteration would focus on onboarding and progressive disclosure so the power doesn't overwhelm a first-time user.</p>
+  </div>
+
+  <!-- NEXT -->
+  <div class="nextp reveal">
+    <a href="look-up.html">
+      <div>
+        <div class="nl">next project</div>
+        <div class="nt">look up →</div>
+      </div>
+    </a>
+  </div>
+</main>
+
+<script>
+const cur=document.getElementById('cursor');
+addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('a,img,button,video').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('big'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
+});
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{const t=document.documentElement.scrollHeight-innerHeight;bar.style.width=(scrollY/t*100)+'%';});
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const po=document.getElementById('pageout');
+document.querySelectorAll('a[href]').forEach(a=>{
+  const h=a.getAttribute('href');
+  if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('mailto'))return;
+  a.addEventListener('click',e=>{e.preventDefault();po.style.pointerEvents='all';po.style.opacity='1';setTimeout(()=>location.href=h,440);});
+});
+</script>
+</body>
+</html>
