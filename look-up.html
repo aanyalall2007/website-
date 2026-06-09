@@ -9,40 +9,25 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --cream:#f4efe4;
-  --cream-2:#efe9dc;
-  --ink:#0d0d0d;
-  --ink-soft:rgba(13,13,13,0.55);
-  --muted:rgba(13,13,13,0.4);
-  --gold:#8a7355;
-  --sep:rgba(13,13,13,0.1);
-  --stage:#171310;
-  --serif:'EB Garamond',serif;
-  --grotesk:'Hanken Grotesk',sans-serif;
+  --cream:#f4efe4;--cream-2:#efe9dc;--ink:#0d0d0d;--ink-soft:rgba(13,13,13,0.55);
+  --muted:rgba(13,13,13,0.4);--gold:#8a7355;--sep:rgba(13,13,13,0.1);--stage:#171310;
+  --serif:'EB Garamond',serif;--grotesk:'Hanken Grotesk',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{
-  font-family:var(--serif);
-  text-transform:lowercase;font-style:normal;
-  background:var(--cream);color:var(--ink);
-  line-height:1.6;overflow-x:hidden;cursor:none;
-}
+body{font-family:var(--serif);text-transform:lowercase;font-style:normal;background:var(--cream);color:var(--ink);line-height:1.6;overflow-x:hidden;cursor:none;}
 img{display:block;max-width:100%;}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:repeating-linear-gradient(to right,rgba(0,0,0,0.022) 0,rgba(0,0,0,0.022) 1px,transparent 1px,transparent 64px);}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(to right,rgba(0,0,0,0.022) 0,rgba(0,0,0,0.022) 1px,transparent 1px,transparent 64px);}
 #cursor{position:fixed;width:9px;height:9px;background:#fff;border-radius:50%;pointer-events:none;mix-blend-mode:difference;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
 #cursor.big{width:46px;height:46px;}
 @media(pointer:coarse){#cursor{display:none;}body{cursor:auto;}}
 .progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--ink);z-index:10000;}
 #pageout{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none;z-index:9500;transition:opacity .45s ease;}
-
 nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(244,239,228,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:0.5px solid var(--sep);}
 .nav-back{font-family:var(--serif);font-size:16px;color:var(--muted);text-decoration:none;transition:color .2s;}
 .nav-back:hover{color:var(--ink);}
 .nav-label{font-family:var(--grotesk);font-weight:700;font-size:11px;letter-spacing:0.16em;color:var(--gold);}
 main{position:relative;z-index:1;}
-
 .kicker{font-family:var(--grotesk);font-weight:800;font-size:12px;letter-spacing:0.06em;color:var(--ink);margin-bottom:16px;}
 .eyebrow{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.12em;color:var(--gold);display:block;}
 .caption{font-family:var(--grotesk);font-weight:500;font-size:12px;letter-spacing:0.02em;color:var(--muted);margin-top:12px;text-align:center;}
@@ -50,7 +35,7 @@ main{position:relative;z-index:1;}
 .stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 28px 40px;position:relative;}
 .stage .eyebrow{margin-bottom:24px;}
 .wordmark{font-family:var(--grotesk);font-weight:800;font-size:clamp(64px,16vw,200px);line-height:0.84;letter-spacing:-0.04em;color:var(--ink);}
-.stage .tag{font-family:var(--serif);font-size:clamp(19px,2.4vw,26px);color:var(--ink-soft);max-width:620px;margin-top:26px;line-height:1.5;}
+.stage .tag{font-family:var(--serif);font-size:clamp(19px,2.4vw,26px);color:var(--ink-soft);max-width:640px;margin-top:26px;line-height:1.5;}
 .scroll-cue{font-family:var(--grotesk);font-weight:700;font-size:12px;letter-spacing:0.14em;color:var(--muted);position:absolute;bottom:26px;left:50%;transform:translateX(-50%);animation:bob 1.8s ease-in-out infinite;}
 @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
 
@@ -60,12 +45,11 @@ main{position:relative;z-index:1;}
 .meta dd{font-family:var(--serif);font-size:17px;}
 @media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);}}
 
-/* ===== 3D MODEL STAGE ===== */
 .model{background:var(--stage);margin-top:90px;padding:64px 28px 40px;}
 .model-head{max-width:920px;margin:0 auto 26px;text-align:center;}
 .model .kicker{color:#d9c08a;}
 .model h2{font-family:var(--serif);color:#f4efe4;font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:-0.02em;}
-#viewer{max-width:1000px;margin:0 auto;height:min(72vh,640px);border-radius:16px;position:relative;overflow:hidden;background:radial-gradient(120% 120% at 50% 20%,#fbf7ee 0%,#efe7d6 60%,#e6dcc6 100%);box-shadow:0 30px 80px rgba(0,0,0,0.45);cursor:grab;}
+#viewer{max-width:1000px;margin:0 auto;height:min(74vh,660px);border-radius:16px;position:relative;overflow:hidden;background:radial-gradient(120% 120% at 50% 18%,#fbf7ee 0%,#efe7d6 60%,#e4d9c2 100%);box-shadow:0 30px 80px rgba(0,0,0,0.45);cursor:grab;}
 #viewer.grabbing{cursor:grabbing;}
 #viewer canvas{display:block;}
 .viewer-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-family:var(--grotesk);font-weight:600;font-size:11px;letter-spacing:0.08em;color:rgba(13,13,13,0.5);pointer-events:none;white-space:nowrap;}
@@ -81,6 +65,13 @@ section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
 
 .pullquote{max-width:880px;margin:90px auto 0;padding:0 28px;text-align:center;}
 .pullquote p{font-family:var(--serif);font-size:clamp(28px,4.5vw,52px);font-weight:500;line-height:1.1;letter-spacing:-0.02em;}
+
+/* satirical posters */
+.posters{max-width:1040px;margin:48px auto 0;padding:0 28px;display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;}
+.posters figure{margin:0;}
+.posters img{width:100%;border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,0.16);background:#fff;}
+.posters figcaption{font-family:var(--grotesk);font-weight:600;font-size:12px;letter-spacing:0.02em;color:var(--muted);margin-top:12px;text-align:center;}
+@media(max-width:680px){.posters{grid-template-columns:1fr;gap:34px;}}
 
 .gallery{max-width:1040px;margin:48px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
 .gallery figure{margin:0;}
@@ -123,19 +114,18 @@ section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
 </nav>
 
 <main>
-  <!-- STAGE -->
   <header class="stage">
     <span class="eyebrow">the practice of design · usc · 2026</span>
     <div class="wordmark">look up</div>
-    <p class="tag">a deliberately absurd wearable that lets you keep scrolling while you walk — a chindōgu built to make a point about how far we'll go not to put the phone down.</p>
+    <p class="tag">an ergonomic brace — branded <strong>verticalis</strong> — that holds your phone in your sightline so you never look down. a chindōgu that asks how far we'll go to keep scrolling. "reclaim your horizon."</p>
     <div class="scroll-cue">scroll ↓</div>
   </header>
 
   <dl class="meta reveal">
     <div><dt>role</dt><dd>concept, industrial prototype, critique</dd></div>
     <div><dt>discipline</dt><dd>chindōgu · speculative design</dd></div>
-    <div><dt>timeline</dt><dd>the practice of design · 2026</dd></div>
-    <div><dt>medium</dt><dd>worn rig · cardboard, strap, elastic</dd></div>
+    <div><dt>brand</dt><dd>verticalis — "keep your head up"</dd></div>
+    <div><dt>medium</dt><dd>worn arm brace · strap · phone mount</dd></div>
   </dl>
 
   <!-- 3D MODEL -->
@@ -148,18 +138,16 @@ section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
       <div class="viewer-loading" id="vload">loading model…</div>
       <div class="viewer-hint">drag to rotate · scroll to zoom</div>
     </div>
-    <p class="caption">a 3d study of the look-up rig — phone cradle, shoulder sling + forearm cuff</p>
+    <p class="caption">a 3d study of the verticalis brace — ergonomic forearm shell, adjustable straps, phone mount + shoulder sling</p>
   </section>
 
-  <!-- PREMISE -->
   <section class="block reveal">
     <p class="kicker">the premise</p>
     <h2>what if you never had to look up at all?</h2>
     <p class="lead">Look Up is a <strong>chindōgu</strong> — a Japanese tradition of inventions that are technically functional but socially absurd.</p>
-    <p>The rig slings your arm into a fixed, raised position so your phone stays parked in your forward sightline. You get to keep scrolling while you walk — without ever tilting your head down. It "solves" walking-while-distracted by doubling down on the distraction.</p>
+    <p>The brace locks your forearm in a fixed, raised position and mounts your phone right in your forward sightline. A shoulder strap takes the weight. You get to keep scrolling while you walk — without ever tilting your head down. It "solves" walking-while-distracted by perfecting the distraction.</p>
   </section>
 
-  <!-- CRITIQUE -->
   <section class="block reveal">
     <p class="kicker">the critique</p>
     <h2>make the habit <span class="accent">external</span>, and it stops looking normal.</h2>
@@ -171,30 +159,39 @@ section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
     <p>"we'd rather wear the problem than break the habit."</p>
   </div>
 
-  <!-- PROCESS -->
+  <!-- PRODUCT VISION + WARNING (satirical artefacts) -->
+  <section class="block reveal">
+    <p class="kicker">selling the joke</p>
+    <h2>we packaged it like a <span class="accent">real product</span>.</h2>
+    <p>To push the satire all the way, we art-directed Look Up as a straight-faced consumer brand — Verticalis — with a glossy ergonomic ad and a deadpan safety label. The more sincere the packaging, the sharper the critique.</p>
+  </section>
+  <div class="posters reveal">
+    <figure><img src="look-up/concept-design.png" alt="verticalis product ad — keep your head up, ergonomic arm brace"><figcaption>the product ad — "reclaim your horizon"</figcaption></figure>
+    <figure><img src="look-up/warning.png" alt="satirical warning label for look up"><figcaption>the fine print — a deadpan warning label</figcaption></figure>
+  </div>
+
+  <!-- PROTOTYPE -->
   <section class="block reveal">
     <p class="kicker">the prototype</p>
     <h2>built rough, on purpose.</h2>
-    <p>The first working rig is cardboard, packing tape, a shoulder strap and an elastic forearm cuff — the crudeness is part of the argument. It holds a real phone at eye level and genuinely works when worn.</p>
+    <p>Before the glossy render, the working rig is cardboard, packing tape, a shoulder strap and an elastic forearm cuff — the crudeness is part of the argument. It holds a real phone at eye level and genuinely works when worn.</p>
   </section>
   <div class="gallery reveal">
-    <figure><img src="look-up/Screenshot 2026-06-08 at 9.09.03 PM.png" alt="look up cardboard phone cradle prototype with strap"><figcaption>the phone cradle — cardboard + tape</figcaption></figure>
-    <figure><img src="look-up/Screenshot 2026-06-08 at 9.08.57 PM.png" alt="look up rig worn cross-body, arm raised"><figcaption>worn — the sling fixes the arm raised</figcaption></figure>
-    <figure><img src="look-up/Screenshot 2026-06-08 at 9.08.52 PM.png" alt="detail of the look up rig housing and strap"><figcaption>detail — housing + shoulder strap</figcaption></figure>
+    <figure><img src="look-up/lookup-demo.png" alt="look up rig worn cross-body, forearm raised"><figcaption>worn — the sling fixes the forearm raised</figcaption></figure>
+    <figure><img src="look-up/lookup-angle-1.png" alt="cardboard phone cradle prototype with strap"><figcaption>the cradle — cardboard + tape</figcaption></figure>
+    <figure><img src="look-up/lookup-angle-2.png" alt="detail of the look up rig housing and strap"><figcaption>detail — housing + shoulder strap</figcaption></figure>
   </div>
   <div class="deck-link reveal">
     <a href="https://www.canva.com/design/DAHCYF_JRV4/ftoFnoYrVlPJXZ4FrGU8PA/view" target="_blank" rel="noopener">view the full pitch ↗</a>
   </div>
 
-  <!-- OUTCOME -->
   <div class="outcome reveal">
     <p class="kicker">outcome</p>
     <div class="grade">100%</div>
-    <p>Presented to the class as a working worn prototype. The room laughed — and then immediately got the point. The absurdity did exactly its job: it made an invisible habit visible enough to argue about.</p>
+    <p>Presented to the class as a working worn prototype with full product branding. The room laughed — and then immediately got the point. The absurdity did exactly its job: it made an invisible habit visible enough to argue about.</p>
     <p class="quote">"everyone laughed, and everyone understood what we were getting at."</p>
   </div>
 
-  <!-- NEXT -->
   <div class="nextp reveal">
     <a href="work.html">
       <div>
@@ -206,7 +203,6 @@ section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
 </main>
 
 <script>
-// cursor + progress + reveal + transition
 const cur=document.getElementById('cursor');
 addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
 document.querySelectorAll('a,img,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('big'));el.addEventListener('mouseleave',()=>cur.classList.remove('big'));});
@@ -226,90 +222,98 @@ const mount=document.getElementById('viewer');
 const load=document.getElementById('vload');
 
 const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(38, mount.clientWidth/mount.clientHeight, 0.1, 100);
-camera.position.set(3.4,1.6,5.2);
+const camera=new THREE.PerspectiveCamera(40, mount.clientWidth/mount.clientHeight, 0.1, 100);
+camera.position.set(3.4,1.2,5.2);
 
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.setSize(mount.clientWidth,mount.clientHeight);
-renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 mount.appendChild(renderer.domElement);
 load.remove();
 
-// lights
-scene.add(new THREE.HemisphereLight(0xfff6e6,0xcdbfa6,1.1));
+scene.add(new THREE.HemisphereLight(0xfff6e6,0xcdbfa6,1.05));
 const key=new THREE.DirectionalLight(0xffffff,1.7);
-key.position.set(4,7,5);key.castShadow=true;
-key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=1;key.shadow.camera.far=25;
-key.shadow.camera.left=-6;key.shadow.camera.right=6;key.shadow.camera.top=6;key.shadow.camera.bottom=-6;
-scene.add(key);
-const fill=new THREE.DirectionalLight(0xffffff,0.5);fill.position.set(-5,2,-3);scene.add(fill);
+key.position.set(4,8,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);
+key.shadow.camera.near=1;key.shadow.camera.far=30;
+key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;
+key.shadow.bias=-0.0004;scene.add(key);
+const fill=new THREE.DirectionalLight(0xffffff,0.45);fill.position.set(-5,2,-4);scene.add(fill);
 
-// ground shadow catcher
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.ShadowMaterial({opacity:0.16}));
-ground.rotation.x=-Math.PI/2;ground.position.y=-2.6;ground.receiveShadow=true;scene.add(ground);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(50,50),new THREE.ShadowMaterial({opacity:0.15}));
+ground.rotation.x=-Math.PI/2;ground.position.y=-2.7;ground.receiveShadow=true;scene.add(ground);
 
-// ===== the rig =====
+// materials
+const skin=new THREE.MeshStandardMaterial({color:0xd8ccba,roughness:0.85});      // neutral mannequin
+const brace=new THREE.MeshStandardMaterial({color:0x2c3542,roughness:0.45,metalness:0.25});
+const teal=new THREE.MeshStandardMaterial({color:0x2f8f86,roughness:0.4,metalness:0.2});
+const strapMat=new THREE.MeshStandardMaterial({color:0x161719,roughness:0.7});
+const phoneBody=new THREE.MeshStandardMaterial({color:0x0c0c0e,roughness:0.4,metalness:0.3});
+const screenMat=new THREE.MeshStandardMaterial({color:0xbfe0ff,emissive:0x6fa8d6,emissiveIntensity:0.95,roughness:0.2});
+
 const rig=new THREE.Group();scene.add(rig);
 
-const cardboard=new THREE.MeshStandardMaterial({color:0xc7a474,roughness:0.95,metalness:0});
-const tape=new THREE.MeshStandardMaterial({color:0xf3eee2,roughness:0.6});
-const black=new THREE.MeshStandardMaterial({color:0x18181a,roughness:0.7});
-const phoneBody=new THREE.MeshStandardMaterial({color:0x0c0c0e,roughness:0.4,metalness:0.3});
-const screenMat=new THREE.MeshStandardMaterial({color:0xbfe0ff,emissive:0x6fa8d6,emissiveIntensity:0.9,roughness:0.2});
+// ===== standalone ergonomic brace (product render, no arm) =====
+// brace shell: a sleek flattened capsule running the length of the forearm
+const shell=new THREE.Mesh(new THREE.CapsuleGeometry(0.55,2.2,18,32),brace);
+shell.castShadow=true;shell.scale.set(1.0,1,0.52);   // flatten front-to-back into a shell
+rig.add(shell);
+// inner channel hint (where the arm slides in) — darker recessed capsule on the back
+const channel=new THREE.Mesh(new THREE.CapsuleGeometry(0.40,2.1,12,24),strapMat);
+channel.scale.set(1,1,0.4);channel.position.z=-0.18;rig.add(channel);
 
-// phone cradle (cardboard box)
-const cradle=new THREE.Mesh(new THREE.BoxGeometry(1.5,2.6,0.7),cardboard);
-cradle.castShadow=true;rig.add(cradle);
-// tape stripes
-for(const t of [[-0.3,0.6,28],[0.35,-0.2,-22],[0,1.0,12]]){
-  const s=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.28,0.02),tape);
-  s.position.set(t[0],t[1],0.36);s.rotation.z=t[2]*Math.PI/180;s.castShadow=true;rig.add(s);
+// teal accent stripe + button on the front face
+const stripe=new THREE.Mesh(new THREE.BoxGeometry(0.10,2.4,0.04),teal);
+stripe.position.set(0.0,0.1,0.30);rig.add(stripe);
+const btn=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.06,24),teal);
+btn.rotation.x=Math.PI/2;btn.position.set(0.0,-0.7,0.31);rig.add(btn);
+
+// two adjustable straps — rings wrapping the shell
+function strap(y){
+  const m=new THREE.Mesh(new THREE.TorusGeometry(0.56,0.07,14,40),strapMat);
+  m.castShadow=true;m.rotation.x=Math.PI/2;m.scale.set(1,0.55,1);m.position.set(0,y,0);
+  rig.add(m);
+  const buckle=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.12,0.1),teal);
+  buckle.position.set(0,y,0.32);rig.add(buckle);
 }
-// phone slotted in front
-const phone=new THREE.Mesh(new THREE.BoxGeometry(1.15,2.1,0.1),phoneBody);
-phone.position.set(0,0.15,0.42);phone.castShadow=true;rig.add(phone);
-const screen=new THREE.Mesh(new THREE.PlaneGeometry(1.0,1.92),screenMat);
-screen.position.set(0,0.15,0.48);rig.add(screen);
+strap(0.75);strap(-0.55);
 
-// shoulder sling — tube along a curve looping up from the cradle
+// phone mount + phone at the top, tilted toward the viewer's face
+const phoneMount=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.18,0.4),brace);
+phoneMount.castShadow=true;phoneMount.position.set(0,1.65,0.12);rig.add(phoneMount);
+const phone=new THREE.Mesh(new THREE.BoxGeometry(0.95,1.8,0.08),phoneBody);
+phone.castShadow=true;phone.position.set(0,2.35,0.34);phone.rotation.x=-0.42;rig.add(phone);
+const screen=new THREE.Mesh(new THREE.PlaneGeometry(0.82,1.62),screenMat);
+screen.position.set(0,2.36,0.39);screen.rotation.x=-0.42;rig.add(screen);
+
+// shoulder sling — a long strap loop coming off the elbow end
 const slingCurve=new THREE.CatmullRomCurve3([
-  new THREE.Vector3(-0.6,1.2,0.1),
-  new THREE.Vector3(-1.7,2.6,-0.2),
-  new THREE.Vector3(-1.2,3.4,-0.6),
-  new THREE.Vector3(0.6,3.1,-0.9),
-  new THREE.Vector3(1.4,1.7,-0.5),
-  new THREE.Vector3(0.7,1.1,0.0)
+  new THREE.Vector3(0.0,-1.45,0.05),
+  new THREE.Vector3(1.3,-1.0,-0.2),
+  new THREE.Vector3(1.9,0.4,-0.5),
+  new THREE.Vector3(1.2,1.9,-0.7),
+  new THREE.Vector3(-0.2,2.2,-0.6),
+  new THREE.Vector3(-1.1,1.2,-0.4),
+  new THREE.Vector3(-0.9,-0.2,-0.15),
+  new THREE.Vector3(0.0,-1.45,0.05)
 ]);
-const sling=new THREE.Mesh(new THREE.TubeGeometry(slingCurve,80,0.12,12,false),black);
+const sling=new THREE.Mesh(new THREE.TubeGeometry(slingCurve,120,0.075,12,true),strapMat);
 sling.castShadow=true;rig.add(sling);
 
-// forearm cuff — torus below
-const cuff=new THREE.Mesh(new THREE.TorusGeometry(0.62,0.13,16,40),black);
-cuff.position.set(0.1,-1.7,0.15);cuff.rotation.x=Math.PI/2.3;cuff.castShadow=true;rig.add(cuff);
-// little connector strap from cradle to cuff
-const conn=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.0,0.06),black);
-conn.position.set(0.3,-1.0,0.2);conn.rotation.z=-0.18;conn.castShadow=true;rig.add(conn);
+rig.rotation.z=0.12;          // slight dynamic tilt
+rig.position.y=0.05;
 
-rig.position.y=0.2;
-
-// controls
 const controls=new OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true;controls.dampingFactor=0.08;
-controls.enablePan=false;controls.minDistance=3.4;controls.maxDistance=9;
-controls.autoRotate=true;controls.autoRotateSpeed=1.1;
-controls.minPolarAngle=0.5;controls.maxPolarAngle=Math.PI/1.7;
-controls.target.set(0,0.2,0);
+controls.enableDamping=true;controls.dampingFactor=0.08;controls.enablePan=false;
+controls.minDistance=3.4;controls.maxDistance=9.5;
+controls.autoRotate=true;controls.autoRotateSpeed=1.0;
+controls.minPolarAngle=0.45;controls.maxPolarAngle=Math.PI/1.75;
+controls.target.set(0,0.55,0.1);
 mount.addEventListener('pointerdown',()=>{controls.autoRotate=false;mount.classList.add('grabbing');});
 addEventListener('pointerup',()=>mount.classList.remove('grabbing'));
 
-function resize(){
-  const w=mount.clientWidth,h=mount.clientHeight;
-  camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
-}
+function resize(){const w=mount.clientWidth,h=mount.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}
 addEventListener('resize',resize);
-
 (function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
 </script>
 </body>
