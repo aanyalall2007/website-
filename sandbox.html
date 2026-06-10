@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya · sandbox sc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f4efe4;--cream-2:#efe9dc;--ink:#0d0d0d;--ink-soft:rgba(13,13,13,0.55);
+  --muted:rgba(13,13,13,0.4);--gold:#8a7355;--sep:rgba(13,13,13,0.1);
+  --serif:'EB Garamond',serif;--grotesk:'Hanken Grotesk',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--serif);text-transform:lowercase;font-style:normal;background:var(--cream);color:var(--ink);line-height:1.6;overflow-x:hidden;cursor:none;}
+img{display:block;max-width:100%;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(to right,rgba(0,0,0,0.022) 0,rgba(0,0,0,0.022) 1px,transparent 1px,transparent 64px);}
+#cursor{position:fixed;width:9px;height:9px;background:#fff;border-radius:50%;pointer-events:none;mix-blend-mode:difference;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#cursor.big{width:46px;height:46px;}
+@media(pointer:coarse){#cursor{display:none;}body{cursor:auto;}}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--ink);z-index:10000;}
+#pageout{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none;z-index:9500;transition:opacity .45s ease;}
+nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(244,239,228,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:0.5px solid var(--sep);}
+.nav-back{font-family:var(--serif);font-size:16px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--ink);}
+.nav-label{font-family:var(--grotesk);font-weight:700;font-size:11px;letter-spacing:0.16em;color:var(--gold);}
+main{position:relative;z-index:1;}
+.kicker{font-family:var(--grotesk);font-weight:800;font-size:12px;letter-spacing:0.06em;color:var(--ink);margin-bottom:16px;}
+.eyebrow{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.12em;color:var(--gold);display:block;}
+.caption{font-family:var(--grotesk);font-weight:500;font-size:12px;letter-spacing:0.02em;color:var(--muted);margin-top:12px;text-align:center;}
+
+/* ===== PLAYFUL SANDBOX HERO ===== */
+.sandbox-hero{position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 24px 40px;}
+.sandbox-center{position:relative;z-index:5;pointer-events:none;max-width:640px;}
+.sandbox-center .logo{width:84px;height:84px;border-radius:20px;margin:0 auto 22px;box-shadow:0 12px 30px rgba(0,0,0,0.25);}
+.sandbox-center .eyebrow{margin-bottom:18px;}
+.wordmark{font-family:var(--grotesk);font-weight:800;font-size:clamp(56px,13vw,150px);line-height:0.86;letter-spacing:-0.04em;color:var(--ink);}
+.sandbox-center .tag{font-family:var(--serif);font-size:clamp(18px,2.2vw,24px);color:var(--ink-soft);margin-top:18px;line-height:1.5;}
+.block{position:absolute;z-index:3;display:flex;align-items:center;justify-content:center;font-family:var(--grotesk);font-weight:800;font-size:15px;letter-spacing:-0.01em;color:#f4efe4;border-radius:14px;cursor:grab;user-select:none;touch-action:none;box-shadow:0 8px 22px rgba(0,0,0,0.16);transition:box-shadow .2s;}
+.block.hex{border-radius:0;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);}
+.block:active{cursor:grabbing;}
+.block.grab{box-shadow:0 18px 44px rgba(0,0,0,0.28);}
+.sand-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:6;font-family:var(--grotesk);font-weight:700;font-size:12px;letter-spacing:0.1em;color:var(--muted);pointer-events:none;}
+
+.meta{max-width:880px;margin:64px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;border-top:0.5px solid var(--sep);border-bottom:0.5px solid var(--sep);}
+.meta>div{padding:22px 0;}
+.meta dt{font-family:var(--grotesk);font-weight:800;font-size:10px;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;}
+.meta dd{font-family:var(--serif);font-size:17px;}
+@media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);}}
+
+section.block-sec{max-width:760px;margin:0 auto;padding:90px 28px 0;}
+.block-sec h2{font-family:var(--serif);font-size:clamp(30px,4.4vw,46px);font-weight:500;letter-spacing:-0.02em;line-height:1.04;margin-bottom:22px;}
+.block-sec p{font-size:19px;color:var(--ink-soft);margin-bottom:18px;max-width:62ch;}
+.block-sec p strong{color:var(--ink);font-weight:600;}
+.block-sec .lead{font-size:22px;color:var(--ink);}
+.accent{font-family:var(--grotesk)!important;font-weight:700!important;font-size:0.94em;letter-spacing:-0.01em;color:inherit;}
+
+.partners{max-width:760px;margin:30px auto 0;padding:0 28px;display:flex;flex-wrap:wrap;gap:10px;}
+.partners span{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.02em;color:var(--ink-soft);border:1px solid var(--sep);border-radius:30px;padding:7px 16px;}
+
+.pullquote{max-width:900px;margin:90px auto 0;padding:0 28px;text-align:center;}
+.pullquote p{font-family:var(--serif);font-size:clamp(26px,4.2vw,46px);font-weight:500;line-height:1.14;letter-spacing:-0.02em;}
+.pullquote .by{font-family:var(--grotesk);font-weight:600;font-size:13px;letter-spacing:0.04em;color:var(--muted);margin-top:20px;}
+
+.note{max-width:760px;margin:40px auto 0;padding:0 28px;}
+.note p{font-size:16px;color:var(--muted);}
+
+.linkrow{max-width:760px;margin:40px auto 0;padding:0 28px;display:flex;gap:24px;flex-wrap:wrap;}
+.linkrow a{font-family:var(--grotesk);font-weight:700;font-size:14px;letter-spacing:0.02em;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--gold);padding-bottom:2px;transition:opacity .2s;}
+.linkrow a:hover{opacity:0.6;}
+
+.nextp{max-width:760px;margin:96px auto 0;padding:0 28px 110px;border-top:0.5px solid var(--sep);}
+.nextp a{display:flex;align-items:baseline;justify-content:space-between;padding-top:34px;text-decoration:none;color:var(--ink);}
+.nextp .nl{font-family:var(--grotesk);font-weight:800;font-size:11px;letter-spacing:0.08em;color:var(--muted);}
+.nextp .nt{font-family:var(--grotesk);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-0.03em;transition:color .25s;}
+.nextp a:hover .nt{color:var(--gold);}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,1,.3,1);}
+.reveal.in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div class="progress" id="progress"></div>
+<div id="pageout"></div>
+
+<nav>
+  <a href="work.html" class="nav-back">← work</a>
+  <span class="nav-label">case study · 05</span>
+</nav>
+
+<main>
+  <!-- PLAYFUL HERO -->
+  <header class="sandbox-hero" id="shero">
+    <div class="sandbox-center">
+      <img class="logo" src="design-icons/sandbox.png" alt="sandbox sc logo">
+      <span class="eyebrow">usc · ai-native builder community · 2026</span>
+      <div class="wordmark">sandbox</div>
+      <p class="tag">an ai-native builder community at usc — where the distance from idea to a made thing is as small as possible. (go on — drag the blocks.)</p>
+    </div>
+    <div class="sand-hint">it's a sandbox — move things around ✦</div>
+  </header>
+
+  <dl class="meta reveal">
+    <div><dt>role</dt><dd>e-board — media + events</dd></div>
+    <div><dt>org</dt><dd>sandbox sc · usc</dd></div>
+    <div><dt>year</dt><dd>2024 – present</dd></div>
+    <div><dt>partners</dt><dd>claude · openai · vercel · figma</dd></div>
+  </dl>
+
+  <!-- WHAT IT IS -->
+  <section class="block-sec reveal">
+    <p class="kicker">what it is</p>
+    <h2>a place to go from idea to <span class="accent">something real</span>.</h2>
+    <p class="lead">Sandbox SC is an AI-native builder community at USC — open to any major, any skill level, no prerequisites.</p>
+    <p>It runs on a cohort model: students join each semester and <strong>ship</strong> projects through build nights, standups, mini-sprints, AI workshops, and demo days — backed by real tools (API credits, pro licenses) and mentorship from operators at top companies. AI has collapsed the distance between concept and product; Sandbox is built around that shift.</p>
+  </section>
+  <div class="partners reveal">
+    <span>claude</span><span>openai</span><span>vercel</span><span>figma</span>
+  </div>
+
+  <!-- MY ROLE -->
+  <section class="block-sec reveal">
+    <p class="kicker">my role</p>
+    <h2>media + events for a community that <span class="accent">builds</span>.</h2>
+    <p>As an e-board member on <strong>media + events</strong>, I help shape how Sandbox shows up — its content and social presence, and the programming that brings student founders and builders together, from build nights to its flagship makeathon.</p>
+  </section>
+
+  <!-- MAKEATHON -->
+  <section class="block-sec reveal">
+    <p class="kicker">flagship event</p>
+    <h2>the rêve <span class="accent">makeathon</span>.</h2>
+    <p>A one-day creative sprint with Rêve (April 2026) — deliberately small, craft-first, and anti-pitch-deck. Students got full access to Rêve's AI creative tool and on-site mentorship, and <strong>kept full ownership</strong> of whatever they made that day.</p>
+    <p>It wasn't about chasing flashy innovation metrics. It was about shipping a finished, tangible thing in an afternoon — the whole Sandbox thesis, compressed into three hours.</p>
+  </section>
+
+  <div class="pullquote reveal">
+    <p>"the distance between an idea and a made thing should be as small as possible."</p>
+    <p class="by">— sandbox sc × rêve</p>
+  </div>
+
+  <div class="linkrow reveal">
+    <a href="https://sandboxsc.org/" target="_blank" rel="noopener">sandboxsc.org ↗</a>
+    <a href="https://sandboxsc.org/blog-reve-makeathon" target="_blank" rel="noopener">the rêve makeathon ↗</a>
+    <a href="https://www.instagram.com/sandboxusc/" target="_blank" rel="noopener">@sandboxusc ↗</a>
+  </div>
+
+  <div class="note reveal">
+    <p>↳ drop your figma exports (brand boards, event graphics, social) into <strong>sandbox/</strong> and i'll build out a visual gallery here.</p>
+  </div>
+
+  <!-- NEXT -->
+  <div class="nextp reveal">
+    <a href="work.html">
+      <div>
+        <div class="nl">next</div>
+        <div class="nt">back to work →</div>
+      </div>
+    </a>
+  </div>
+</main>
+
+<script>
+const cur=document.getElementById('cursor');
+addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('a,img,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('big'));el.addEventListener('mouseleave',()=>cur.classList.remove('big'));});
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{const t=document.documentElement.scrollHeight-innerHeight;bar.style.width=(scrollY/t*100)+'%';});
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const po=document.getElementById('pageout');
+document.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('mailto'))return;a.addEventListener('click',e=>{e.preventDefault();po.style.pointerEvents='all';po.style.opacity='1';setTimeout(()=>location.href=h,440);});});
+
+/* playful draggable blocks */
+(function(){
+  const hero=document.getElementById('shero');
+  const palette=['#0d0d0d','#8a7355','#2c5f7c','#b8553f','#6f7d5a','#0d0d0d','#8a7355','#2c5f7c'];
+  const words=['idea','build','ship','iterate','prototype','demo','make','vibe'];
+  const placed=[];
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function layout(){
+    hero.querySelectorAll('.block').forEach(b=>b.remove());placed.length=0;
+    const W=hero.clientWidth,H=hero.clientHeight;
+    const cx=W/2,cy=H/2,safeW=Math.min(680,W*0.8),safeH=360;
+    words.forEach((w,i)=>{
+      const el=document.createElement('div');
+      el.className='block'+(i%3===0?' hex':'');
+      const sz=rnd(74,104);
+      el.style.width=sz+'px';el.style.height=sz+'px';
+      el.style.background=palette[i%palette.length];
+      el.textContent=w;
+      el.style.fontSize=(sz>92?16:14)+'px';
+      // place around the central text, avoiding the safe box
+      let x,y,tries=0;
+      do{ x=rnd(20,W-sz-20); y=rnd(110,H-sz-70); tries++; }
+      while(tries<40 && Math.abs(x+sz/2-cx)<safeW/2+10 && Math.abs(y+sz/2-cy)<safeH/2+10);
+      el.style.left=x+'px';el.style.top=y+'px';
+      el.style.transform='rotate('+rnd(-9,9)+'deg)';
+      hero.appendChild(el);drag(el);
+    });
+  }
+  function drag(el){
+    let ox=0,oy=0,on=false,zTop=10;
+    el.addEventListener('pointerdown',e=>{
+      e.preventDefault();on=true;el.setPointerCapture(e.pointerId);
+      el.classList.add('grab');el.style.zIndex=(++zTop);
+      const r=hero.getBoundingClientRect();
+      ox=e.clientX-r.left-parseFloat(el.style.left);
+      oy=e.clientY-r.top-parseFloat(el.style.top);
+      el.style.transition='transform .15s';el.style.transform=el.style.transform.replace(/rotate\([^)]*\)/,'rotate(0deg)')+' scale(1.08)';
+    });
+    el.addEventListener('pointermove',e=>{
+      if(!on)return;const r=hero.getBoundingClientRect();
+      let nx=e.clientX-r.left-ox, ny=e.clientY-r.top-oy;
+      nx=Math.max(-20,Math.min(hero.clientWidth-40,nx));
+      ny=Math.max(60,Math.min(hero.clientHeight-40,ny));
+      el.style.left=nx+'px';el.style.top=ny+'px';
+    });
+    el.addEventListener('pointerup',()=>{on=false;el.classList.remove('grab');el.style.transform=el.style.transform.replace(' scale(1.08)','');});
+  }
+  layout();
+  let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(layout,250);});
+})();
+</script>
+</body>
+</html>
