@@ -294,13 +294,12 @@ accent.position.add(up.clone().multiplyScalar(0.30));rig.add(accent);
   buckle.position.copy(p).add(up.clone().multiplyScalar(0.36));rig.add(buckle);
 });
 
-// phone mount + phone above the wrist, angled toward the face
-const mountArm=limb(W.clone(), W.clone().add(up.clone().multiplyScalar(0.5)),0.05,0.05,brace);rig.add(mountArm);
+// phone HELD IN THE HAND (not attached to the brace) — screen angled toward the face
 const phoneGroup=new THREE.Group();
-phoneGroup.position.copy(W).add(up.clone().multiplyScalar(0.95)).add(fdir.clone().multiplyScalar(0.05));
+phoneGroup.position.copy(hand.position).add(fdir.clone().multiplyScalar(0.16)).add(up.clone().multiplyScalar(0.14));
 rig.add(phoneGroup);
-const phone=new THREE.Mesh(new THREE.BoxGeometry(0.88,1.62,0.07),phoneBody);phone.castShadow=true;phoneGroup.add(phone);
-const screen=new THREE.Mesh(new THREE.PlaneGeometry(0.74,1.48),screenMat);screen.position.z=0.05;phoneGroup.add(screen);
+const phone=new THREE.Mesh(new THREE.BoxGeometry(0.82,1.55,0.07),phoneBody);phone.castShadow=true;phoneGroup.add(phone);
+const screen=new THREE.Mesh(new THREE.PlaneGeometry(0.7,1.42),screenMat);screen.position.z=0.05;phoneGroup.add(screen);
 phoneGroup.lookAt(S.clone().add(new THREE.Vector3(-0.4,0.9,1.4)));  // tilt screen up toward the face
 
 // shoulder sling — support strap from forearm up to the shoulder
