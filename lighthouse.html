@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aanya · lighthouse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f4efe4;--cream-2:#efe9dc;--ink:#0d0d0d;--ink-soft:rgba(13,13,13,0.55);
+  --muted:rgba(13,13,13,0.4);--gold:#8a7355;--sep:rgba(13,13,13,0.1);
+  --serif:'EB Garamond',serif;--grotesk:'Hanken Grotesk',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--serif);text-transform:lowercase;font-style:normal;background:var(--cream);color:var(--ink);line-height:1.6;overflow-x:hidden;cursor:none;}
+img{display:block;max-width:100%;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(to right,rgba(0,0,0,0.022) 0,rgba(0,0,0,0.022) 1px,transparent 1px,transparent 64px);}
+#cursor{position:fixed;width:9px;height:9px;background:#fff;border-radius:50%;pointer-events:none;mix-blend-mode:difference;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#cursor.big{width:46px;height:46px;}
+@media(pointer:coarse){#cursor{display:none;}body{cursor:auto;}}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--gold);z-index:10000;}
+#pageout{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none;z-index:9500;transition:opacity .45s ease;}
+nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(244,239,228,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:0.5px solid var(--sep);}
+.nav-back{font-family:var(--serif);font-size:16px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--ink);}
+.nav-label{font-family:var(--grotesk);font-weight:700;font-size:11px;letter-spacing:0.16em;color:var(--gold);}
+main{position:relative;z-index:1;}
+.kicker{font-family:var(--grotesk);font-weight:800;font-size:12px;letter-spacing:0.06em;color:var(--ink);margin-bottom:16px;}
+.eyebrow{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.12em;color:var(--gold);display:block;}
+.caption{font-family:var(--grotesk);font-weight:500;font-size:12px;letter-spacing:0.02em;color:var(--muted);margin-top:12px;text-align:center;}
+
+.stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 28px 40px;position:relative;}
+.stage .eyebrow{margin-bottom:24px;}
+.wordmark{font-family:var(--grotesk);font-weight:800;font-size:clamp(52px,12vw,150px);line-height:0.88;letter-spacing:-0.04em;color:var(--ink);}
+.stage .tag{font-family:var(--serif);font-size:clamp(19px,2.4vw,26px);color:var(--ink-soft);max-width:640px;margin-top:26px;line-height:1.5;}
+.scroll-cue{font-family:var(--grotesk);font-weight:700;font-size:12px;letter-spacing:0.14em;color:var(--muted);position:absolute;bottom:26px;left:50%;transform:translateX(-50%);animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.meta{max-width:880px;margin:64px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;border-top:0.5px solid var(--sep);border-bottom:0.5px solid var(--sep);}
+.meta>div{padding:22px 0;}
+.meta dt{font-family:var(--grotesk);font-weight:800;font-size:10px;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;}
+.meta dd{font-family:var(--serif);font-size:17px;}
+@media(max-width:680px){.meta{grid-template-columns:repeat(2,1fr);}}
+
+/* ===== INTERACTIVE PUZZLE ===== */
+.puzzle-sec{margin-top:90px;padding:70px 28px;background:linear-gradient(180deg,var(--cream-2),#f0eadc 60%,var(--cream));}
+.puzzle-head{max-width:760px;margin:0 auto 30px;text-align:center;}
+.puzzle-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:-0.02em;}
+.puzzle-head p{font-size:18px;color:var(--ink-soft);margin-top:12px;}
+.puzzle-wrap{position:relative;margin:0 auto;touch-action:none;}
+.puzzle-board{position:absolute;inset:0;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(13,13,13,0.08);}
+.puzzle-ghost{position:absolute;inset:0;background-size:cover;opacity:0.12;filter:saturate(0.8);}
+.piece{position:absolute;background-repeat:no-repeat;border-radius:4px;cursor:grab;box-shadow:0 6px 16px rgba(0,0,0,0.18);transition:box-shadow .2s;will-change:left,top;}
+.piece:active{cursor:grabbing;}
+.piece.locked{box-shadow:none;cursor:default;border-radius:0;}
+.piece.snap{animation:pop .25s ease;}
+@keyframes pop{0%{transform:scale(1.06)}100%{transform:scale(1)}}
+.puzzle-tools{max-width:560px;margin:26px auto 0;display:flex;align-items:center;justify-content:center;gap:18px;}
+.puzzle-tools button{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.04em;text-transform:lowercase;background:none;border:1.5px solid var(--gold);color:var(--ink);border-radius:40px;padding:9px 20px;cursor:pointer;transition:background .2s,color .2s;}
+.puzzle-tools button:hover{background:var(--gold);color:#fff;}
+.puzzle-done{font-family:var(--serif);font-size:19px;color:var(--gold);opacity:0;transition:opacity .5s;height:0;}
+.puzzle-done.show{opacity:1;height:auto;}
+
+section.block{max-width:760px;margin:0 auto;padding:90px 28px 0;}
+.block h2{font-family:var(--serif);font-size:clamp(30px,4.4vw,46px);font-weight:500;letter-spacing:-0.02em;line-height:1.04;margin-bottom:22px;}
+.block p{font-size:19px;color:var(--ink-soft);margin-bottom:18px;max-width:62ch;}
+.block p strong{color:var(--ink);font-weight:600;}
+.block .lead{font-size:22px;color:var(--ink);}
+.accent{font-family:var(--grotesk)!important;font-weight:700!important;font-size:0.94em;letter-spacing:-0.01em;color:inherit;}
+
+.pullquote{max-width:900px;margin:90px auto 0;padding:0 28px;text-align:center;}
+.pullquote p{font-family:var(--serif);font-size:clamp(28px,4.5vw,50px);font-weight:500;line-height:1.12;letter-spacing:-0.02em;}
+.pullquote .by{font-family:var(--grotesk);font-weight:600;font-size:13px;letter-spacing:0.04em;color:var(--muted);margin-top:22px;}
+
+.gallery{max-width:1080px;margin:48px auto 0;padding:0 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.gallery figure{margin:0;}
+.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,0.14);transition:transform .4s ease;}
+.gallery img:hover{transform:translateY(-6px);}
+.gallery figcaption{font-family:var(--grotesk);font-weight:500;font-size:11px;letter-spacing:0.02em;color:var(--muted);margin-top:10px;}
+@media(max-width:680px){.gallery{grid-template-columns:1fr;}}
+
+.deck-link{max-width:760px;margin:40px auto 0;padding:0 28px;}
+.deck-link a{font-family:var(--grotesk);font-weight:700;font-size:15px;letter-spacing:0.02em;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--gold);padding-bottom:2px;transition:opacity .2s;}
+.deck-link a:hover{opacity:0.6;}
+
+.outcome{max-width:760px;margin:90px auto 0;padding:48px 44px;background:var(--cream-2);border-radius:18px;border:0.5px solid var(--sep);}
+.outcome .kicker{color:var(--gold);}
+.outcome p{font-size:18px;color:var(--ink-soft);margin-bottom:14px;}
+.outcome .quote{font-size:21px;color:var(--ink);border-left:2px solid var(--gold);padding-left:20px;margin:22px 0;}
+
+.nextp{max-width:760px;margin:96px auto 0;padding:0 28px 110px;border-top:0.5px solid var(--sep);}
+.nextp a{display:flex;align-items:baseline;justify-content:space-between;padding-top:34px;text-decoration:none;color:var(--ink);}
+.nextp .nl{font-family:var(--grotesk);font-weight:800;font-size:11px;letter-spacing:0.08em;color:var(--muted);}
+.nextp .nt{font-family:var(--grotesk);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-0.03em;transition:color .25s;}
+.nextp a:hover .nt{color:var(--gold);}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,1,.3,1);}
+.reveal.in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}.scroll-cue{animation:none;}}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div class="progress" id="progress"></div>
+<div id="pageout"></div>
+
+<nav>
+  <a href="work.html" class="nav-back">← work</a>
+  <span class="nav-label">case study · 03</span>
+</nav>
+
+<main>
+  <header class="stage">
+    <span class="eyebrow">lighthouse health solutions · 2025</span>
+    <div class="wordmark">lighthouse</div>
+    <p class="tag">designing therapeutic tools for dementia care that treat the person as an <strong>adult</strong> — not a child. puzzles, materials, and a family tree that helped someone recognise her own family.</p>
+    <div class="scroll-cue">scroll ↓</div>
+  </header>
+
+  <dl class="meta reveal">
+    <div><dt>role</dt><dd>product design intern — the first intern</dd></div>
+    <div><dt>timeline</dt><dd>nov – dec 2025</dd></div>
+    <div><dt>designed for</dt><dd>dementia patients + their caregivers</dd></div>
+    <div><dt>focus</dt><dd>therapeutic puzzles · a tactile family tree</dd></div>
+  </dl>
+
+  <!-- INTERACTIVE PUZZLE -->
+  <section class="puzzle-sec">
+    <div class="puzzle-head reveal">
+      <p class="kicker" style="text-align:center;color:var(--gold)">try it</p>
+      <h2>fewer pieces. a real image. a satisfying click.</h2>
+      <p>assemble the flower puzzle — the same principles i designed for: large, dignified pieces, a calm picture, and the click patients loved.</p>
+    </div>
+    <div class="puzzle-wrap reveal" id="pwrap"></div>
+    <div class="puzzle-tools reveal">
+      <button id="pshuffle">shuffle again</button>
+      <span class="puzzle-done" id="pdone">lovely — that's the feeling we designed for.</span>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="block reveal">
+    <p class="kicker">the problem</p>
+    <h2>the market treated adults with dementia like <span class="accent">children</span>.</h2>
+    <p class="lead">My first task was to redesign packaging and products — like puzzles — for people with dementia. Almost everything on the market was kid-oriented, down to the cartoon images on the pieces.</p>
+    <p>But the person living with dementia is still an <strong>adult</strong>. Behind the products was a deeper failure: family disconnection, a lack of understanding and empathy, a system that didn't really see the patient. The design problem was really a dignity problem.</p>
+  </section>
+
+  <!-- WHAT I DESIGNED -->
+  <section class="block reveal">
+    <p class="kicker">what i designed</p>
+    <h2>puzzles made to spark <span class="accent">memory</span>, not pass time.</h2>
+    <p>I designed a line of therapeutic puzzles with grown-up imagery. A calm <strong>flower</strong> set to encourage happiness. A vintage <strong>bicycle</strong> — chosen deliberately, because I thought it could spark memory and conversation. And an <strong>abstract</strong> set built around colour and shape for later-stage engagement.</p>
+    <p>I worked across materials and found something small but powerful: patients really loved the <strong>click</strong> of a piece dropping into place. So I capitalised on it — designing the pieces and the click-placement around that moment of satisfaction.</p>
+    <p>The work travelled, too: a 3D-printed transparent variant grew out of feedback from <strong>Instituto Não Me Esqueças</strong> in Brazil, and caregivers' notes reshaped the piece count and the placement mechanics.</p>
+  </section>
+
+  <div class="gallery reveal">
+    <figure><img src="lighthouse/bicycle.png" alt="vintage bicycle therapeutic puzzle"><figcaption>bicycle — to spark memory + conversation</figcaption></figure>
+    <figure><img src="lighthouse/flowers.png" alt="vibrant flower therapeutic puzzle"><figcaption>flowers — to encourage happiness</figcaption></figure>
+    <figure><img src="lighthouse/abstract.png" alt="abstract colour-block therapeutic puzzle"><figcaption>abstract — colour + shape engagement</figcaption></figure>
+  </div>
+
+  <!-- FAMILY TREE — emotional core -->
+  <section class="block reveal">
+    <p class="kicker">the family tree</p>
+    <h2>the moment that made all of it <span class="accent">worth it</span>.</h2>
+    <p>Beyond the puzzles, I prototyped a <strong>tactile family tree</strong> — a paper demo customised to one patient, with <strong>velcro</strong> family members you stick onto the branches, so the act of remembering becomes something you do with your hands.</p>
+    <p>When we tested it, the patient recognised her family members and placed each one. Watching something that simple go that far was the most rewarding moment of the whole internship.</p>
+  </section>
+
+  <div class="pullquote reveal">
+    <p>"she recognised her family, and placed each one. something that simple, going that far."</p>
+    <p class="by">— the family-tree test</p>
+  </div>
+
+  <!-- OUTCOME -->
+  <div class="outcome reveal">
+    <p class="kicker">outcome + what i learned</p>
+    <p>Lighthouse Health Solutions shared the work publicly and invited people to request samples. As their first intern, I helped shape how the team approached design for dementia — starting from empathy and dignity.</p>
+    <p class="quote">"i learned the art of iteration — not to be let down by something that doesn't work, but to just try again."</p>
+  </div>
+  <div class="deck-link reveal">
+    <a href="https://www.linkedin.com/feed/update/urn:li:activity:7406196979720048640/" target="_blank" rel="noopener">see lighthouse's post on the work ↗</a>
+  </div>
+
+  <!-- NEXT -->
+  <div class="nextp reveal">
+    <a href="work.html">
+      <div>
+        <div class="nl">next</div>
+        <div class="nt">back to work →</div>
+      </div>
+    </a>
+  </div>
+</main>
+
+<script>
+const cur=document.getElementById('cursor');
+addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('a,img,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('big'));el.addEventListener('mouseleave',()=>cur.classList.remove('big'));});
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{const t=document.documentElement.scrollHeight-innerHeight;bar.style.width=(scrollY/t*100)+'%';});
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const po=document.getElementById('pageout');
+document.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('mailto'))return;a.addEventListener('click',e=>{e.preventDefault();po.style.pointerEvents='all';po.style.opacity='1';setTimeout(()=>location.href=h,440);});});
+
+/* ===== interactive puzzle ===== */
+(function(){
+  const IMG='lighthouse/flowers.png', COLS=3, ROWS=2;
+  const wrap=document.getElementById('pwrap');
+  const done=document.getElementById('pdone');
+  let BW,BH,PW,PH,pieces=[],lockedCount=0,actx;
+
+  function size(){
+    const max=Math.min(560, wrap.parentElement.clientWidth-12);
+    BW=max; BH=Math.round(max*2/3); PW=BW/COLS; PH=BH/ROWS;
+    wrap.style.width=BW+'px'; wrap.style.height=BH+'px';
+  }
+  function clickSound(){
+    try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+      const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+      o.type='triangle';o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(280,t+0.08);
+      g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.22,t+0.005);g.gain.exponentialRampToValueAtTime(0.0001,t+0.13);
+      o.connect(g).connect(actx.destination);o.start(t);o.stop(t+0.14);
+    }catch(e){}
+  }
+  function build(){
+    size(); wrap.innerHTML=''; pieces=[]; lockedCount=0; done.classList.remove('show');
+    const board=document.createElement('div');board.className='puzzle-board';
+    const ghost=document.createElement('div');ghost.className='puzzle-ghost';ghost.style.backgroundImage=`url(${IMG})`;
+    board.appendChild(ghost);wrap.appendChild(board);
+    // slots
+    const slots=[];
+    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)slots.push({c,r,x:c*PW,y:r*PH});
+    // shuffled start positions (derangement-ish)
+    const start=slots.map(s=>({x:s.x,y:s.y}));
+    for(let i=start.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[start[i],start[j]]=[start[j],start[i]];}
+    slots.forEach((s,i)=>{
+      const p=document.createElement('div');p.className='piece';
+      p.style.width=PW+'px';p.style.height=PH+'px';
+      p.style.backgroundImage=`url(${IMG})`;p.style.backgroundSize=`${BW}px ${BH}px`;
+      p.style.backgroundPosition=`${-s.x}px ${-s.y}px`;
+      let sx=start[i].x, sy=start[i].y;
+      if(sx===s.x&&sy===s.y){sx=(s.x+PW)%BW;} // avoid starting solved
+      p.style.left=sx+'px';p.style.top=sy+'px';
+      p.dataset.hx=s.x;p.dataset.hy=s.y;p.locked=false;
+      wrap.appendChild(p);pieces.push(p);
+      drag(p);
+    });
+  }
+  function drag(p){
+    let ox=0,oy=0,active=false;
+    p.addEventListener('pointerdown',e=>{
+      if(p.locked)return;e.preventDefault();active=true;p.setPointerCapture(e.pointerId);
+      p.style.zIndex=50;p.style.transition='none';
+      const r=wrap.getBoundingClientRect();
+      ox=e.clientX-r.left-parseFloat(p.style.left);
+      oy=e.clientY-r.top-parseFloat(p.style.top);
+    });
+    p.addEventListener('pointermove',e=>{
+      if(!active)return;const r=wrap.getBoundingClientRect();
+      let nx=e.clientX-r.left-ox, ny=e.clientY-r.top-oy;
+      nx=Math.max(-PW*0.5,Math.min(BW-PW*0.5,nx));ny=Math.max(-PH*0.5,Math.min(BH-PH*0.5,ny));
+      p.style.left=nx+'px';p.style.top=ny+'px';
+    });
+    p.addEventListener('pointerup',e=>{
+      if(!active)return;active=false;
+      const hx=+p.dataset.hx,hy=+p.dataset.hy;
+      const dx=parseFloat(p.style.left)-hx,dy=parseFloat(p.style.top)-hy;
+      if(Math.hypot(dx,dy)<Math.min(PW,PH)*0.42){
+        p.style.left=hx+'px';p.style.top=hy+'px';p.locked=true;p.style.zIndex=1;
+        p.classList.add('locked','snap');clickSound();lockedCount++;
+        if(lockedCount===pieces.length)done.classList.add('show');
+      }else{p.style.zIndex=2;}
+    });
+  }
+  document.getElementById('pshuffle').addEventListener('click',build);
+  addEventListener('resize',()=>{clearTimeout(window.__pz);window.__pz=setTimeout(build,200);});
+  // build when scrolled into view (so sizing is correct)
+  const pio=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){build();pio.disconnect();}});},{threshold:0.2});
+  pio.observe(wrap);
+})();
+</script>
+</body>
+</html>
