@@ -61,6 +61,26 @@ section.block-sec{max-width:760px;margin:0 auto;padding:90px 28px 0;}
 .partners{max-width:760px;margin:30px auto 0;padding:0 28px;display:flex;flex-wrap:wrap;gap:10px;}
 .partners span{font-family:var(--grotesk);font-weight:700;font-size:13px;letter-spacing:0.02em;color:var(--ink-soft);border:1px solid var(--sep);border-radius:30px;padding:7px 16px;}
 
+/* campaign posters (masonry) */
+.promo-grid{max-width:1080px;margin:40px auto 0;padding:0 28px;column-count:3;column-gap:16px;}
+.promo-grid figure{margin:0 0 16px;break-inside:avoid;}
+.promo-grid img{width:100%;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,0.16);transition:transform .4s ease;}
+.promo-grid img:hover{transform:translateY(-5px);}
+.promo-grid figcaption{font-family:var(--grotesk);font-weight:500;font-size:11px;letter-spacing:0.02em;color:var(--muted);margin-top:8px;}
+@media(max-width:760px){.promo-grid{column-count:2;}}
+@media(max-width:480px){.promo-grid{column-count:1;}}
+
+/* film gallery (dark contact sheet) */
+.film-sec{margin-top:90px;padding:70px 28px;background:#171310;}
+.film-head{max-width:760px;margin:0 auto 34px;text-align:center;}
+.film-head .kicker{color:#d9c08a;}
+.film-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:-0.02em;color:#f3efe6;}
+.film-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.film-grid img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;filter:saturate(0.92);transition:transform .4s ease,filter .4s ease;}
+.film-grid img:hover{transform:scale(1.03);filter:saturate(1.05);}
+.film-sec .caption{color:rgba(255,255,255,0.4);}
+@media(max-width:760px){.film-grid{grid-template-columns:repeat(2,1fr);}}
+
 .pullquote{max-width:900px;margin:90px auto 0;padding:0 28px;text-align:center;}
 .pullquote p{font-family:var(--serif);font-size:clamp(26px,4.2vw,46px);font-weight:500;line-height:1.14;letter-spacing:-0.02em;}
 .pullquote .by{font-family:var(--grotesk);font-weight:600;font-size:13px;letter-spacing:0.04em;color:var(--muted);margin-top:20px;}
@@ -130,6 +150,21 @@ section.block-sec{max-width:760px;margin:0 auto;padding:90px 28px 0;}
     <p>As an e-board member on <strong>media + events</strong>, I help shape how Sandbox shows up — its content and social presence, and the programming that brings student founders and builders together, from build nights to its flagship makeathon.</p>
   </section>
 
+  <!-- THE CAMPAIGN (social/promo design) -->
+  <section class="block-sec reveal">
+    <p class="kicker">the campaign</p>
+    <h2>one event, told in <span class="accent">many voices</span>.</h2>
+    <p>To promote the makeathon I built a run of posters that each borrow a different cultural language — a sports-poster desert dunk, an album-cover water scene, a retro-Mac boot screen — all carrying the same Sandbox × Rêve mark. The point was reach: meet people where their taste already lives.</p>
+  </section>
+  <div class="promo-grid reveal">
+    <figure><img src="sandbox/web/promo-lebron.jpg" alt="makeathon poster — sports desert dunk"><figcaption>"makeathon" — sports poster cut</figcaption></figure>
+    <figure><img src="sandbox/web/promo-event.jpg" alt="makeathon event announcement poster"><figcaption>the event announcement — april 25</figcaption></figure>
+    <figure><img src="sandbox/web/promo-sza.jpg" alt="makeathon poster — album cover water scene"><figcaption>album-cover cut</figcaption></figure>
+    <figure><img src="sandbox/web/promo-mac.jpg" alt="sandbox retro macintosh boot screen poster"><figcaption>retro-mac boot screen</figcaption></figure>
+    <figure><img src="sandbox/web/promo-sandbox-red.jpg" alt="bold red sandbox poster"><figcaption>"sandbox" — bold cut</figcaption></figure>
+    <figure><img src="sandbox/web/promo-red-portrait.jpg" alt="makeathon cinematic portrait poster"><figcaption>cinematic portrait cut</figcaption></figure>
+  </div>
+
   <!-- MAKEATHON -->
   <section class="block-sec reveal">
     <p class="kicker">flagship event</p>
@@ -143,14 +178,33 @@ section.block-sec{max-width:760px;margin:0 auto;padding:90px 28px 0;}
     <p class="by">— sandbox sc × rêve</p>
   </div>
 
+  <!-- FILM GALLERY -->
+  <section class="film-sec">
+    <div class="film-head reveal">
+      <p class="kicker">the makeathon, on film</p>
+      <h2>three hours, shot on 35mm.</h2>
+    </div>
+    <div class="film-grid reveal">
+      <img src="sandbox/web/film-10.jpg" alt="reve x sandbox makeathon title slide">
+      <img src="sandbox/web/film-15.jpg" alt="group under the makeathon screen">
+      <img src="sandbox/web/film-03.jpg" alt="students at the makeathon">
+      <img src="sandbox/web/film-07.jpg" alt="builders at a table">
+      <img src="sandbox/web/film-19.jpg" alt="building at laptops">
+      <img src="sandbox/web/film-22.jpg" alt="working through the sprint">
+      <img src="sandbox/web/film-13.jpg" alt="makeathon candid">
+      <img src="sandbox/web/film-17.jpg" alt="makeathon attendees">
+      <img src="sandbox/web/film-18.jpg" alt="candid moment">
+      <img src="sandbox/web/film-20.jpg" alt="laptops and screens">
+      <img src="sandbox/web/film-08.jpg" alt="group at the makeathon">
+      <img src="sandbox/web/film-14.jpg" alt="makeathon group">
+    </div>
+    <p class="caption">rêve × sandbox makeathon · usc · april 2026</p>
+  </section>
+
   <div class="linkrow reveal">
     <a href="https://sandboxsc.org/" target="_blank" rel="noopener">sandboxsc.org ↗</a>
     <a href="https://sandboxsc.org/blog-reve-makeathon" target="_blank" rel="noopener">the rêve makeathon ↗</a>
     <a href="https://www.instagram.com/sandboxusc/" target="_blank" rel="noopener">@sandboxusc ↗</a>
-  </div>
-
-  <div class="note reveal">
-    <p>↳ drop your figma exports (brand boards, event graphics, social) into <strong>sandbox/</strong> and i'll build out a visual gallery here.</p>
   </div>
 
   <!-- NEXT -->
